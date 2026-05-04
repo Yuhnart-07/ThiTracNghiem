@@ -9,12 +9,19 @@ app.set('views', path.join(__dirname, 'views')); // PATH ĐỂ NỐI TÊN PROJEC
 // THIẾT LẬP PUB LÀM VIEW ENGINE
 app.set('view engine', 'pug');
 
+// THIẾT LẬP THƯ MỤC PUBLIC LÀ THƯ MỤC CHỨA FILE TĨNH
+app.use(express.static(path.join(__dirname, 'public')));
+
 app.get('/', (req, res) => {
-  res.render('client/pages/home') // RENDER DÙNG ĐỂ CHUYỂN TỪ CÚ PHÁP PUG SANG HTML
-})
+  res.render('client/pages/home', {
+    pageTitle: "Trang chủ"
+  }) // RENDER DÙNG ĐỂ CHUYỂN TỪ CÚ PHÁP PUG SANG HTML
+});
 
 app.get('/tour', (req, res) => {
-  res.render('client/pages/tour-list')
+  res.render('client/pages/tour-list', {
+    pageTitle: "Danh sách tour"
+  })
 })
 app.listen(port, () => {
   console.log(`Website đang chạy trên cổng ${port}`)
