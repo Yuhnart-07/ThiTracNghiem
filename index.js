@@ -7,15 +7,7 @@ const mongoose = require('mongoose');
 
 mongoose.connect(process.env.DATABASE); // KẾT NỐI CSDL
 
-const Tour = mongoose.model(
-  'Tour', 
-  { 
-    name: String,
-    time: String, 
-    vehicle: String
-  },
-  "tours" // TÊN COLLECTION
-);
+const { Tour } = require("./models/tour.model"); // IMPORT TOUR TRONG TOUR.MODEL
 
 
 // THIẾT LẬP THƯ MỤC CHỨA FILE VIEW
