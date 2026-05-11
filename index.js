@@ -23,8 +23,11 @@ app.set('view engine', 'pug');
 // THIẾT LẬP THƯ MỤC PUBLIC LÀ THƯ MỤC CHỨA FILE TĨNH
 app.use(express.static(path.join(__dirname, 'public')));
 
-// TẠO BIẾN TOÀN CỤC TRONG FILE PUG
+// TẠO BIẾN TOÀN CỤC TRONG FILE PUG (CHỈ DÙNG ĐƯỢC TRONG FILE PUG, KHÔNG DÙNG ĐƯỢC TRONG CÁC FILE JS)
 app.locals.pathAdmin = pathAdmin;
+
+// CHO PHÉP BE GỬI DỮ LIỆU BẰNG JSON && ĐỒNG THỜI CHUYỂN DỮ LIỆU TỪ JSON -> JS
+app.use(express.json());
 
 // THIẾT LẬP ĐƯỜNG DẪN
 app.use(`/${pathAdmin}`, adminRoutes);
