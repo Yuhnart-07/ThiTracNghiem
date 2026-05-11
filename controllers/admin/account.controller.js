@@ -10,3 +10,14 @@ module.exports.register =  (req, res) => {
   }) 
 };
 
+module.exports.forgetPassword =  (req, res) => {
+  res.render('admin/pages/forget-password', {
+    pageTitle: "Quên mật khẩu"
+  }) 
+};
+
+module.exports.otpPassword =  (req, res) => {
+  res.render('admin/pages/otp-password', {
+    pageTitle: "Nhập mã OTP"
+  }) 
+};
