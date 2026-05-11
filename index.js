@@ -3,12 +3,16 @@ require('dotenv').config();
 const path = require('path')
 const app = express()
 const port = 3000
-const mongoose = require('mongoose');
+const connectDB = require("./configs/database.config")
 
-mongoose.connect(process.env.DATABASE); // KẾT NỐI CSDL
+const adminRoutes = require("./routes/admin/index.route");
+const clientRoutes = require("./routes/client/index.route");
 
-const { Tour } = require("./models/tour.model"); // IMPORT TOUR TRONG TOUR.MODEL
+// PATH DÙNG CHUNG CHO FE
+const { pathAdmin } = require("./configs/variable.config");
 
+// KẾT NỐI CSDL
+connectDB(); 
 
 // THIẾT LẬP THƯ MỤC CHỨA FILE VIEW
 app.set('views', path.join(__dirname, 'views')); // PATH ĐỂ NỐI TÊN PROJECT VỚI /VIEW
@@ -19,21 +23,13 @@ app.set('view engine', 'pug');
 // THIẾT LẬP THƯ MỤC PUBLIC LÀ THƯ MỤC CHỨA FILE TĨNH
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.get('/', (req, res) => {
-  res.render('client/pages/home', {
-    pageTitle: "Trang chủ"
-  }) // RENDER DÙNG ĐỂ CHUYỂN TỪ CÚ PHÁP PUG SANG HTML
-});
+// TẠO BIẾN TOÀN CỤC TRONG FILE PUG
+app.locals.pathAdmin = pathAdmin;
 
-app.get('/tour', async (req, res) => {
-  const tourList = await Tour.find({}); // AWAIT LÀ CHỜ LẤY DỮ LIỆU DÒNG NÀY XONG MỚI CHẠY XUỐNG DÒNG DƯỚI
+// THIẾT LẬP ĐƯỜNG DẪN
+app.use(`/${pathAdmin}`, adminRoutes);
+app.use('/', clientRoutes);
 
-
-  res.render('client/pages/tour-list', {
-    pageTitle: "Danh sách tour",
-    tourList: tourList
-  })
-})
 app.listen(port, () => {
   console.log(`Website đang chạy trên cổng ${port}`)
 })

@@ -1,0 +1,38 @@
+extends ../layouts/default.pug
+
+block title
+	title Tạo danh mục
+
+block main
+	h1.box-title Tạo danh mục
+
+	.section-8
+		form(id="category-create-form")
+			.inner-group
+				label.inner-label(for="name") Tên danh mục *
+				input(type="text" id="name" name="name")
+			.inner-group
+				label.inner-label(for="parent") Danh mục cha
+				select(id="parent" name="parent")
+					option(value="") -- Chọn danh mục --
+					option(value="id-danh-muc-1") Danh mục 1
+					option(value="id-danh-muc-1") Danh mục 2
+			.inner-group
+				label.inner-label(for="position") Vị trí
+				input(type="number" id="position" name="position")
+			.inner-group
+				label.inner-label(for="status") Trạng thái
+				select(id="status" name="status")
+					option(value="active") Hoạt động
+					option(value="inactive") Tạm dừng
+			.inner-group.inner-two-col
+				label.inner-label(for="avatar") Ảnh đại diện
+				.inner-upload-image 
+					input(type="file" id="avatar" name="avatar" filepond-image)
+			.inner-group.inner-two-col
+				label.inner-label(for="description") Mô tả
+				textarea(id="description" name="description" textarea-mce)
+			.inner-button.inner-two-col
+				button Tạo mới
+		.inner-back
+			a(href="#") Quay lại danh sách

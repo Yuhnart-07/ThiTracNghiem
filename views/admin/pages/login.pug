@@ -1,0 +1,33 @@
+extends ../layouts/account.pug
+include ../mixins/checkbox.pug
+
+
+block main 
+  .form-account
+    h1.inner-title Đăng nhập
+    .inner-desc Vui lòng nhập email và mật khẩu để tiếp tục
+    form.inner-form(id="loginForm")
+      .inner-group
+        label.inner-label(for="email") Email
+        input.inner-control(
+          type="email"
+          id="email"
+          name="email"
+          placeholder="Ví dụ: levana@gmail.com"
+        )
+      .inner-group
+        label.inner-label(for="password") Mật khẩu
+        input.inner-control(
+          type="password"
+          id="password"
+          name="password"
+        )
+      .inner-meta
+        .inner-check
+          +checkbox-30("rememberPassword", "rememberPassword")
+          label(for="rememberPassword") Nhớ mật khẩu
+        a.inner-link(href=`/${pathAdmin}/account/forget-password`) Quên mật khẩu
+      button.inner-button Đăng nhập
+      .inner-more
+        span Bạn chưa có tài khoản?
+        a(href=`/${pathAdmin}/account/register`) Tạo tài khoản

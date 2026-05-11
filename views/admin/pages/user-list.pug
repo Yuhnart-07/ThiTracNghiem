@@ -1,0 +1,88 @@
+extends ../layouts/default.pug
+include ../mixins/checkbox.pug
+
+block title
+	title Quản lý người dùng
+
+block main
+	h1.box-title Quản lý người dùng
+
+	//- SECTION 4
+	.section-4
+		.inner-wrap
+			.inner-item.inner-label
+				<i class="fa-solid fa-filter"></i> Bộ lọc
+			.inner-item
+				select
+					option(value="") Trạng thái
+					option(value="") Hoạt động
+					option(value="") Tạm dừng
+			.inner-item.inner-date
+				input(type="date")
+				span -
+				input(type="date")
+			.inner-item.inner-reset
+				<i class="fa-solid fa-arrow-rotate-left"></i> Xóa bộ lọc
+	//- END SECTION 4
+
+	//- SECTION 5
+	.section-5
+		.inner-wrap
+			.inner-change-status
+				.inner-item
+					select
+						option(value="") -- Hành động --
+						option(value="") Hoạt động
+						option(value="") Dừng hoạt động
+						option(value="") Xóa
+				.inner-item
+					button Áp dụng
+			.inner-search
+				<i class="fa-solid fa-magnifying-glass"></i>
+				input(type="text" placeholder="Tìm kiếm")
+	//- END SECTION 5
+
+	//- SECTION 6
+	.section-6
+		.table-2
+			table
+				thead
+					tr
+						th.text-left
+							+checkbox-30("", "")
+						th.text-left Họ tên
+						th.text-center Ảnh đại diện
+						th.text-left Email
+						th.text-left Số điện thoại
+						th.text-left Địa chỉ
+						th.text-center Trạng thái
+						th.text-left Hành động
+				tbody
+					tr
+						td.text-left
+							+checkbox-30("", "")
+						td.text-left Lê Văn A
+						td.text-center
+							img.inner-avatar(src="/Project-2-pug/assets/images/avatar-admin.jpg", alt="")
+						td.text-left levana@gmail.com
+						td.text-left 0123456789
+						td.text-left Số 123, đường ABC,...
+						td.text-center
+							.tag.tag-orange Hoạt động
+						td.text-left
+							.box-actions
+								a.inner-edit(href="#")
+									<i class="fa-regular fa-pen-to-square"></i>
+								a.inner-remove(href="#")
+									<i class="fa-regular fa-trash-can"></i>
+					
+	//- END SECTION 6
+
+	//- SECTION 7
+	.section-7
+		div.inner-label Hiển thị 1 - 9 của 78
+		select.inner-pagination
+			option(value="") Trang 1
+			option(value="") Trang 2
+			option(value="") Trang 3
+	//- END SECTION 7

@@ -1,0 +1,85 @@
+extends ../layouts/default.pug
+include ../mixins/checkbox.pug
+
+block title
+	title Nhóm quyền
+
+block main
+	h1.box-title Nhóm quyền
+
+
+	//- SECTION 5
+	.section-5
+		.inner-wrap
+			.inner-change-status
+				.inner-item
+					select
+						option(value="") -- Hành động --
+						option(value="") Hoạt động
+						option(value="") Dừng hoạt động
+						option(value="") Xóa
+				.inner-item
+					button Áp dụng
+			.inner-search
+				<i class="fa-solid fa-magnifying-glass"></i>
+				input(type="text" placeholder="Tìm kiếm")
+			.inner-button-create
+				a(href="#")  + Tạo mới
+	//- END SECTION 5
+
+	//- SECTION 6
+	.section-6
+		.table-2
+			table
+				thead
+					tr
+						th.text-left
+							+checkbox-30("", "")
+						th.text-left Tên nhóm quyền
+						th.text-left Mô tả ngắn
+						th.text-left Hành động
+				tbody
+					tr
+						td.text-left
+							+checkbox-30("", "")
+						td.text-left Quản trị viên
+						td.text-left Có đầy đủ các quyền
+						td.text-left
+							.box-actions
+								a.inner-edit(href="#")
+									<i class="fa-regular fa-pen-to-square"></i>
+								a.inner-remove(href="#")
+									<i class="fa-regular fa-trash-can"></i>
+					tr
+						td.text-left
+							+checkbox-30("", "")
+						td.text-left Quản lý tour
+						td.text-left Có đầy đủ quyền liên quan đến tour
+						td.text-left
+							.box-actions
+								a.inner-edit(href="#")
+									<i class="fa-regular fa-pen-to-square"></i>
+								a.inner-remove(href="#")
+									<i class="fa-regular fa-trash-can"></i>
+					tr
+						td.text-left
+							+checkbox-30("", "")
+						td.text-left Quản lý đơn hàng
+						td.text-left Có đầy đủ quyền liên quan đến đơn hàng
+						td.text-left
+							.box-actions
+								a.inner-edit(href="#")
+									<i class="fa-regular fa-pen-to-square"></i>
+								a.inner-remove(href="#")
+									<i class="fa-regular fa-trash-can"></i>
+	//- END SECTION 6
+
+	//- SECTION 7
+	.section-7
+		div.inner-label Hiển thị 1 - 9 của 78
+		select.inner-pagination
+			option(value="") Trang 1
+			option(value="") Trang 2
+			option(value="") Trang 3
+	//- END SECTION 7
+
