@@ -1,3 +1,39 @@
+// KHỞI TẠO NOTYF (THÔNG BÁO)
+var notify = new Notyf({
+	duration: 3000, 
+	position: {
+		x: 'right',
+		y: 'top'
+	},
+	dismissible: true
+});
+// END NOTYF
+
+// HIỂN THỊ THÔNG BÁO TRONG SESSIONSTORAGE
+let notifySession = sessionStorage.getItem("notify");
+if(notifySession) {
+	notifySession = JSON.parse(notifySession);
+	if(notifySession.code == "error") {
+		notify.error(notifySession.message);
+	}
+	if(notifySession.code == "success") {
+		notify.success(notifySession.message);
+	}
+	sessionStorage.removeItem("notify");
+}
+// END HIỂN THỊ
+
+
+// VẼ THÔNG BÁO
+const drawNotify = (code, message) => {
+	const data = {
+		code: code,
+		message: message
+	}
+	sessionStorage.setItem("notify", JSON.stringify(data));
+}
+// END
+
 // LOGIN FORM
 const loginForm = document.querySelector("#loginForm");
 if(loginForm) {
@@ -125,10 +161,11 @@ if(registerForm) {
 					.then(res => res.json())
 					.then(data => {
 						if(data.code == "error") {
-							alert(data.message);
+							notify.error(data.message); // IN RA THÔNG BÁO NHƯNG KHÔNG LOAD LẠI TRANG
 						}
 
 						if(data.code == "success") {
+							drawNotify(data.code, data.message); // IN RA CÂU THÔNG BÁO NHƯNG LOAD LẠI TRANG
 							window.location.href = `/${pathAdmin}/account/register-success`;
 						}
 					})
