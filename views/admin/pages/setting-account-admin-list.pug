@@ -1,8 +1,6 @@
 extends ../layouts/default.pug
 include ../mixins/checkbox.pug
 
-block title
-	title Tài khoản quản trị
 
 block main
 	h1.box-title Tài khoản quản trị
@@ -47,7 +45,7 @@ block main
 				<i class="fa-solid fa-magnifying-glass"></i>
 				input(type="text" placeholder="Tìm kiếm")
 			.inner-button-create
-				a(href="#")  + Tạo mới
+				a(href=`/${pathAdmin}/setting/account-admin/create`)  + Tạo mới
 	//- END SECTION 5
 
 	//- SECTION 6
@@ -72,7 +70,7 @@ block main
 							+checkbox-30("", "")
 						td.text-left Lê Văn A
 						td.text-center
-							img.inner-avatar(src="/Project-2-pug/assets/images/avatar-admin.jpg", alt="")
+							img.inner-avatar(src="/admin/assets/images/avatar-admin.jpg", alt="")
 						td.text-left levana@gmail.com
 						td.text-left 0123456789
 						td.text-left Quản trị viên
