@@ -1,8 +1,6 @@
 extends ../layouts/default.pug
 include ../mixins/checkbox.pug
 
-block title
-	title Quản lý danh mục
 
 block main
 	h1.box-title Quản lý danh mục
@@ -46,7 +44,7 @@ block main
 				<i class="fa-solid fa-magnifying-glass"></i>
 				input(type="text" placeholder="Tìm kiếm")
 			.inner-button-create
-				a(href="#")  + Tạo mới
+				a(href=`/${pathAdmin}/category/create`)  + Tạo mới
 	//- END SECTION 5
 
 	//- SECTION 6
@@ -70,7 +68,7 @@ block main
 							+checkbox-30("", "")
 						td.text-left Danh mục 1
 						td.text-center
-							img.inner-avatar(src="/Project-2-pug/assets/images/tour.png", alt="")
+							img.inner-avatar(src="/admin/assets/images/tour.png", alt="")
 						td.text-center 1
 						td.text-center
 							.tag.tag-orange Hoạt động
@@ -82,16 +80,16 @@ block main
 							div.inner-small 16:30 - 20/10/2024
 						td.text-left
 							.box-actions
-								a.inner-edit(href="#")
+								a.inner-edit(href=`/${pathAdmin}/category/edit`)
 									<i class="fa-regular fa-pen-to-square"></i>
-								a.inner-remove(href="#")
+								a.inner-remove(href=`/${pathAdmin}/category/trash`)
 									<i class="fa-regular fa-trash-can"></i>
 					tr
 						td.text-left
 							+checkbox-30("", "")
 						td.text-left Danh mục 2
 						td.text-center
-							img.inner-avatar(src="/Project-2-pug/assets/images/tour.png", alt="")
+							img.inner-avatar(src="/admin/assets/images/tour.png", alt="")
 						td.text-center 1
 						td.text-center
 							.tag.tag-orange Hoạt động
