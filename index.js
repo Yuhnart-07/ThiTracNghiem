@@ -7,6 +7,7 @@ const { connectDB } = require("./configs/database.config")
 
 const adminRoutes = require("./routes/admin/index.route");
 const clientRoutes = require("./routes/client/index.route");
+const { moduleList } = require("./configs/modules.config");
 
 // PATH DÙNG CHUNG CHO FE
 const { pathAdmin } = require("./configs/variable.config");
@@ -27,6 +28,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // TẠO BIẾN TOÀN CỤC TRONG FILE PUG (CHỈ DÙNG ĐƯỢC TRONG FILE PUG, KHÔNG DÙNG ĐƯỢC TRONG CÁC FILE JS)
 app.locals.pathAdmin = pathAdmin;
+app.locals.adminModules = moduleList;
 
 // CHO PHÉP BE GỬI DỮ LIỆU BẰNG JSON && ĐỒNG THỜI CHUYỂN DỮ LIỆU TỪ JSON -> JS
 app.use(express.json());

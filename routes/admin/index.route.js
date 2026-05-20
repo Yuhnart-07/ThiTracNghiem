@@ -9,6 +9,11 @@ const giaoVienRoutes = require("./giao-vien.route");
 const boDeRoutes = require("./bo-de.route");
 const dangKyThiRoutes = require("./dang-ky-thi.route");
 const bangDiemRoutes = require("./bang-diem.route");
+const { pathAdmin } = require("../../configs/variable.config");
+
+router.get('/', (req, res) => {
+    res.redirect(`/${pathAdmin}/dashboard`);
+});
 
 router.use('/account', accountRoutes);
 router.use('/dashboard', dashboardRoutes);

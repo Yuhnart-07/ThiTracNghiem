@@ -5,14 +5,15 @@ block main
     section.client-section
       .container
         h1 Thi trac nghiem
-        p He thong duoc dung khung theo de tai SQL Server va database THITRACNGHIEM.
+        p He thong dang o Phase 2: khung module theo THITRACNGHIEM.sql, chua xu ly nghiep vu thi.
         .client-actions
           a(href="/thi") Vao man hinh thi
           a(href="/thi/ket-qua") Xem ket qua
+          a(href="/admin/dashboard") Vao quan tri
     section.client-section
       .container
-        h2 Pham vi Phase 1
+        h2 Pham vi Phase 2
         ul
-          li Ket noi SQL Server theo THITRACNGHIEM.sql.
-          li Dung khung module cho mon hoc, lop, sinh vien, giao vien, bo de, dang ky thi va bang diem.
-          li Chua xu ly auth, phan quyen, chon de, cham diem chi tiet.
+          li Chuan hoa route, sidebar, controller va metadata theo cac bang SQL.
+          li Moi module admin co trang danh sach, form skeleton va trang chi tiet metadata.
+          li Chua xu ly auth, phan quyen, CRUD that, chon de, cham diem chi tiet.

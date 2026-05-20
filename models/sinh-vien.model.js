@@ -1,9 +1,21 @@
 module.exports = {
   key: "sinh-vien",
+  icon: "fa-solid fa-user-graduate",
+  routeBase: "/sinh-vien",
   tableName: "SINHVIEN",
   title: "Sinh vien",
   pageTitle: "Quan ly sinh vien",
   primaryKey: "MASV",
-  fields: ["MASV", "HO", "TEN", "NGAYSINH", "DIACHI", "MALOP"],
+  fields: [
+    { name: "MASV", label: "Ma sinh vien", type: "nchar(8)", required: true },
+    { name: "HO", label: "Ho", type: "nvarchar(50)", required: false },
+    { name: "TEN", label: "Ten", type: "nvarchar(10)", required: false },
+    { name: "NGAYSINH", label: "Ngay sinh", type: "date", required: false },
+    { name: "DIACHI", label: "Dia chi", type: "nvarchar(100)", required: false },
+    { name: "MALOP", label: "Ma lop", type: "nchar(15)", required: false, references: "LOP.MALOP" },
+  ],
+  actions: ["list", "create"],
+  ownerHint: "CRUD sinh vien, can loc/them theo lop o phase CRUD.",
   note: "Sinh vien thuoc mot lop qua khoa ngoai MALOP.",
+  gaps: ["De bai mo ta form lop va sinh vien dang subform; skeleton hien tai tach module rieng de de chia viec."],
 };

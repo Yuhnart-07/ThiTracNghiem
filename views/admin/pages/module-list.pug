@@ -11,6 +11,8 @@ block main
 			.inner-item
 				span Khoa chinh: #{module.primaryKey}
 			.inner-item
+				span Duong dan: /#{pathAdmin}#{module.routeBase}
+			.inner-item
 				span #{module.note}
 
 	.section-5
@@ -24,7 +26,7 @@ block main
 			.inner-search
 				<i class="fa-solid fa-magnifying-glass"></i>
 				input(type="text" placeholder="Tim kiem" disabled)
-			if module.key !== "bang-diem"
+			if module.actions.includes("create")
 				.inner-button-create
 					a(href=`/${pathAdmin}/${module.key}/create`) + Tao moi
 
@@ -36,8 +38,8 @@ block main
 						th.text-left
 							+checkbox-30("", "")
 						each field in module.fields
-							th.text-left #{field}
-						th.text-left Trang thai
+							th.text-left #{field.name}
+						th.text-left Hanh dong
 				tbody
 					tr
 						td.text-left
@@ -45,7 +47,11 @@ block main
 						each field in module.fields
 							td.text-left Chua nap du lieu
 						td.text-left
-							.tag.tag-orange Skeleton
+							a(href=`/${pathAdmin}/${module.key}/detail`) Xem skeleton
 
 	.section-7
-		div.inner-label Phase 1 chi dung khung route/view. CRUD va query du lieu se lam o phase sau.
+		div.inner-label Phase 2 chi chuan hoa module/route/view. CRUD va query du lieu se lam o phase sau.
+		if module.gaps && module.gaps.length
+			ul
+				each gap in module.gaps
+					li #{gap}

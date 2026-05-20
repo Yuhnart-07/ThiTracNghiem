@@ -4,24 +4,13 @@ block main
   h1.box-title Tong quan he thong thi trac nghiem
 
   .section-1
-    .inner-item
-      .inner-icon
-        i.fa-solid.fa-book
-      .inner-content
-        .inner-title Mon hoc
-        .inner-number MONHOC
-    .inner-item
-      .inner-icon
-        i.fa-solid.fa-user-graduate
-      .inner-content
-        .inner-title Sinh vien
-        .inner-number SINHVIEN
-    .inner-item
-      .inner-icon
-        i.fa-solid.fa-circle-question
-      .inner-content
-        .inner-title Bo de
-        .inner-number BODE
+    each item in modules.slice(0, 3)
+      .inner-item
+        .inner-icon
+          i(class=item.icon)
+        .inner-content
+          .inner-title #{item.title}
+          .inner-number #{item.tableName}
 
   .section-3
     h2.inner-title-main Cac module theo THITRACNGHIEM.sql
@@ -31,12 +20,32 @@ block main
           tr
             th.text-left Module
             th.text-left Bang SQL
+            th.text-left Khoa chinh
+            th.text-left Pham vi nhom
             th.text-left Trang quan ly
         tbody
           each item in modules
             tr
-              td.text-left #{item.label}
+              td.text-left #{item.title}
               td.text-left
-                .text-primary #{item.table}
+                .text-primary #{item.tableName}
+              td.text-left #{item.primaryKey}
+              td.text-left #{item.ownerHint}
               td.text-left
                 a(href=`/${pathAdmin}/${item.key}/list`) Mo module
+
+  .section-3
+    h2.inner-title-main Ghi chu can chot
+    .table-2
+      table
+        thead
+          tr
+            th.text-left Module
+            th.text-left Ghi chu
+        tbody
+          each item in modules
+            if item.gaps && item.gaps.length
+              each gap in item.gaps
+                tr
+                  td.text-left #{item.title}
+                  td.text-left #{gap}

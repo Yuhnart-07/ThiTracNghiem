@@ -1,0 +1,35 @@
+extends ../layouts/default.pug
+
+block main
+	h1.box-title Chi tiet #{module.title.toLowerCase()}
+
+	.section-6
+		.table-2
+			table
+				thead
+					tr
+						th.text-left Thuoc tinh
+						th.text-left Mo ta
+						th.text-left Rang buoc
+				tbody
+					each field in module.fields
+						tr
+							td.text-left #{field.name}
+							td.text-left #{field.label} - #{field.type}
+							td.text-left
+								if field.references
+									div FK: #{field.references}
+								if field.allowedValues
+									div Gia tri: #{field.allowedValues.join(", ")}
+								if field.required
+									div Bat buoc
+								if !field.references && !field.allowedValues && !field.required
+									div -
+
+	.section-7
+		div.inner-label #{module.note}
+		if module.gaps && module.gaps.length
+			ul
+				each gap in module.gaps
+					li #{gap}
+		a(href=`/${pathAdmin}/${module.key}/list`) Quay lai danh sach
