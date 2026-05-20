@@ -1,5 +1,5 @@
 {
-  "name": "project-5",
+  "name": "thi-trac-nghiem",
   "version": "1.0.0",
   "main": "index.js",
   "license": "MIT",
@@ -9,7 +9,7 @@
   "dependencies": {
     "dotenv": "^17.4.2",
     "express": "^5.2.1",
-    "mongoose": "^9.6.1",
+    "mssql": "^11.0.1",
     "nodemon": "^3.1.14",
     "pug": "^3.0.4"
   }

@@ -5,15 +5,21 @@ include ../mixins/checkbox.pug
 block main 
   .form-account
     h1.inner-title Đăng nhập
-    .inner-desc Vui lòng nhập email và mật khẩu để tiếp tục
+    .inner-desc Khung giao diện đăng nhập, chưa xử lý auth/phân quyền ở Phase 1
     form.inner-form(id="loginForm")
       .inner-group
-        label.inner-label(for="email") Email
+        label.inner-label(for="role") Vai trò
+        select.inner-control(id="role" name="role")
+          option(value="PGV") PGV
+          option(value="Giangvien") Giảng viên
+          option(value="Sinhvien") Sinh viên
+      .inner-group
+        label.inner-label(for="email") Login / Mã SV
         input.inner-control(
-          type="email"
+          type="text"
           id="email"
           name="email"
-          placeholder="Ví dụ: levana@gmail.com"
+          placeholder="Ví dụ: TH123 hoặc MASV"
         )
       .inner-group
         label.inner-label(for="password") Mật khẩu
@@ -22,12 +28,4 @@ block main
           id="password"
           name="password"
         )
-      .inner-meta
-        .inner-check
-          +checkbox-30("rememberPassword", "rememberPassword")
-          label(for="rememberPassword") Nhớ mật khẩu
-        a.inner-link(href=`/${pathAdmin}/account/forget-password`) Quên mật khẩu
-      button.inner-button Đăng nhập
-      .inner-more
-        span Bạn chưa có tài khoản?
-        a(href=`/${pathAdmin}/account/register`) Tạo tài khoản
+      button.inner-button(type="button") Đăng nhập

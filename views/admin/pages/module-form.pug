@@ -1,0 +1,18 @@
+extends ../layouts/default.pug
+
+block main
+	h1.box-title Them #{module.title.toLowerCase()}
+
+	.section-8
+		form
+			each field in module.fields
+				.inner-group
+					label.inner-label(for=field) #{field}
+					if field == "NOIDUNG"
+						textarea(id=field name=field rows="4" disabled placeholder="Se xu ly CRUD o phase sau")
+					else
+						input(id=field name=field type="text" disabled placeholder="Se xu ly CRUD o phase sau")
+			.inner-button
+				button(type="button" disabled) Ghi
+			.inner-back
+				a(href=`/${pathAdmin}/${module.key}/list`) Quay lai danh sach

@@ -2,23 +2,23 @@ const router = require("express").Router();
 
 const accountRoutes = require("./account.route");
 const dashboardRoutes = require("./dashboard.route");
-const categoryRoutes = require("./category.route");
-const tourRoutes = require("./tour.route");
-const orderRoutes = require("./order.route");
-const userRoutes = require("./user.route");
-const contactRoutes = require("./contact.route");
-const settingRoutes = require("./setting.route");
-const profileRoutes = require("./profile.route");
+const monHocRoutes = require("./mon-hoc.route");
+const lopRoutes = require("./lop.route");
+const sinhVienRoutes = require("./sinh-vien.route");
+const giaoVienRoutes = require("./giao-vien.route");
+const boDeRoutes = require("./bo-de.route");
+const dangKyThiRoutes = require("./dang-ky-thi.route");
+const bangDiemRoutes = require("./bang-diem.route");
 
 router.use('/account', accountRoutes);
 router.use('/dashboard', dashboardRoutes);
-router.use('/category', categoryRoutes);
-router.use('/tour',tourRoutes);
-router.use('/order',orderRoutes);
-router.use('/user',userRoutes);
-router.use('/contact',contactRoutes);
-router.use('/setting',settingRoutes);
-router.use('/profile',profileRoutes);
+router.use('/mon-hoc', monHocRoutes);
+router.use('/lop', lopRoutes);
+router.use('/sinh-vien', sinhVienRoutes);
+router.use('/giao-vien', giaoVienRoutes);
+router.use('/bo-de', boDeRoutes);
+router.use('/dang-ky-thi', dangKyThiRoutes);
+router.use('/bang-diem', bangDiemRoutes);
 
 router.use((req,res) => {
     res.render('admin/pages/error-404', {

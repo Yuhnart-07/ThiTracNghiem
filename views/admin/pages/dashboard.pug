@@ -1,93 +1,42 @@
 extends ../layouts/default.pug
 
+block main
+  h1.box-title Tong quan he thong thi trac nghiem
 
-block main 
-  h1.box-title Tổng quan
-
-  //- SECTION 1
   .section-1
-    .inner-item 
+    .inner-item
       .inner-icon
-        img(src="/admin/assets/images/Icon.svg", alt="")
-      .inner-content 
-        .inner-title Người dùng
-        .inner-number 1.200
-    .inner-item 
+        i.fa-solid.fa-book
+      .inner-content
+        .inner-title Mon hoc
+        .inner-number MONHOC
+    .inner-item
       .inner-icon
-        img(src="/admin/assets/images/Icon-1.svg", alt="")
-      .inner-content 
-        .inner-title Đơn hàng
-        .inner-number 3.600
-    .inner-item 
+        i.fa-solid.fa-user-graduate
+      .inner-content
+        .inner-title Sinh vien
+        .inner-number SINHVIEN
+    .inner-item
       .inner-icon
-        img(src="/admin/assets/images/Icon-2.svg", alt="")
-      .inner-content 
-        .inner-title Doanh thu
-        .inner-number 300.000.000đ
-  //- END SECTION 1
+        i.fa-solid.fa-circle-question
+      .inner-content
+        .inner-title Bo de
+        .inner-number BODE
 
-
-  //- SECTION 2
-  .section-2 
-    .inner-head 
-      h2.inner-title Biểu đồ doanh thu 
-      input.inner-filter(type="month")
-    .inner-chart 
-      canvas(id = "revenue-chart")
-  //- END SECTION 2
-
-
-  //- SECION 3 
-  .section-3 
-    h2.inner-title-main Đơn hàng mới 
-
-    .table-1 
-      table 
-        thead 
-          tr 
-            th.text-left Mã
-            th.text-left Thông tin khách hàng
-            th.text-left Danh sách tour
-            th.text-left Thanh toán 
-            th.text-left Trạng thái
-            th.text-right Ngày đặt
-        tbody 
-          tr 
-            td.text-left
-              .text-primary OD000001
-            td.text-left
-              div Họ tên: Lê Văn A
-              div SDT: 0123456789
-              div Ghi chú: Test...
-            td.text-left
-              .tour-list  
-                .tour-item 
-                  img.inner-image(src="/admin/assets/images/tour.png", alt="")
-                  .inner-content 
-                    .inner-name Tour Hạ Long 
-                    .inner-desc 
-                      div Người lớn: 3 x 1.500.000đ
-                      div Trẻ em: 2 x 1.300.000đ
-                      div Em bé: 2 x 1.000.000đ
-                .tour-item 
-                  img.inner-image(src="/admin/assets/images/tour.png", alt="")
-                  .inner-content 
-                    .inner-name Tour Hạ Long 
-                    .inner-desc 
-                      div Người lớn: 3 x 1.500.000đ
-                      div Trẻ em: 2 x 1.300.000đ
-                      div Em bé: 2 x 1.000.000đ
-            td.text-left
-              div Tổng tiền: 10.000.000đ
-              div Giảm: 400.000đ
-              div Mã giảm: TOURMUAHE2024
-              div Thanh toán: 9.600.000đ
-              div PTTT: Ví Momo
-              div TTTT: Đã thanh toán
-            td.text-left
-              .tag.tag-orange Khởi tạo 
-            td.text-right
-              div 16:20
-              div 01/01/2024
-
-  //- END SECTION 3
+  .section-3
+    h2.inner-title-main Cac module theo THITRACNGHIEM.sql
+    .table-2
+      table
+        thead
+          tr
+            th.text-left Module
+            th.text-left Bang SQL
+            th.text-left Trang quan ly
+        tbody
+          each item in modules
+            tr
+              td.text-left #{item.label}
+              td.text-left
+                .text-primary #{item.table}
+              td.text-left
+                a(href=`/${pathAdmin}/${item.key}/list`) Mo module

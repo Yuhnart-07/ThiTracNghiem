@@ -1,5 +1,5 @@
 doctype html 
-html
+html(lang="vi")
   head
     title #{pageTitle}
     meta(charset="UTF-8")
@@ -7,26 +7,11 @@ html
       content="width=device-width, initial-scale=1.0" 
       name="viewport"
       )
-    title Project 1
+    title Thi trac nghiem
     link(
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" 
       rel="stylesheet"
       )
-    link(
-      rel="stylesheet" 
-      href="https://unpkg.com/aos@2.3.1/dist/aos.css"
-      )
-    // LINK THƯ VIỆN AOS
-    link(
-      href="https://cdn.jsdelivr.net/npm/swiper@12/swiper-bundle.min.css" 
-      rel="stylesheet"
-      )
-    // THƯ VIỆN SWIPER
-    link(
-      href="https://cdnjs.cloudflare.com/ajax/libs/viewerjs/1.11.7/viewer.css" 
-      rel="stylesheet"
-      )
-    // THƯ VIỆN VIEWER
     link(rel="stylesheet", href="/client/assets/css/style.css")
   body
     include ../partials/top-header.pug
@@ -35,16 +20,4 @@ html
     block main
 
     include ../partials/footer.pug
-    include ../partials/box-contact.pug
-
-
-    // JS
-    script(src="https://unpkg.com/aos@2.3.1/dist/aos.js")
-    // LINK THƯ VIỆN AOS
-    script(src="https://cdn.jsdelivr.net/npm/swiper@12/swiper-bundle.min.js")
-    // THƯ VIỆN SWIPER
-    script(src="https://cdnjs.cloudflare.com/ajax/libs/viewerjs/1.11.7/viewer.js")
-    // THƯ VIỆN VIEWER
-    script(src="https://unpkg.com/just-validate@latest/dist/just-validate.production.min.js")
-    // THƯ VIỆN VALIDATE
     script(src="/client/assets/js/script.js")
