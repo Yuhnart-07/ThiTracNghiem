@@ -1,17 +1,17 @@
 # Đóng góp
 
-Project được chuẩn bị cho team nhỏ 2 người. Hãy giữ thay đổi nhỏ, rõ ràng và dễ review.
+Project được chuẩn bị cho team nhỏ 2 người. Hãy giữ thay đổi nhỏ, rõ ràng và dễ theo dõi.
 
 ## Branch Naming
 
-Dùng tên branch ngắn gọn, mô tả đúng việc đang làm:
+Project chỉ dùng 2 branch:
 
 ```text
-feature/mon-hoc-crud
-feature/sinh-vien-list
-fix/sql-connection
-docs/readme-update
+main     code ổn định
+develop  code hằng ngày
 ```
+
+Làm việc hằng ngày trên `develop`. Chỉ cập nhật `main` khi code trên `develop` đã ổn và team thống nhất.
 
 ## Commit Naming
 
@@ -29,30 +29,29 @@ chore: configure prettier
 Trước khi bắt đầu:
 
 ```bash
-git checkout main
-git pull origin main
-git checkout -b feature/your-task
+git checkout develop
+git pull origin develop
 ```
 
-Trước khi push:
+Sau khi code xong:
 
 ```bash
 npm run lint
 npm run format:check
 git status
 git add .
-git commit -m "feat: short message"
-git push origin feature/your-task
+git commit -m "message"
+git push origin develop
 ```
 
-Sau đó tạo Pull Request trên GitHub.
+Khi cần cập nhật bản ổn định, merge `develop` vào `main` sau khi cả team đã thống nhất.
 
 ## Avoiding Git Conflicts
 
 - Mỗi thời điểm nên có một người phụ trách chính một module.
 - Không format toàn bộ project khi đang làm một feature nhỏ.
 - Tránh sửa file dùng chung như `index.js`, `configs/modules.config.js` và layout nếu không cần thiết.
-- Pull `main` mới nhất trước khi bắt đầu task mới.
+- Pull `develop` mới nhất trước khi bắt đầu task mới.
 - Nếu hai người cần sửa cùng một file, hãy thống nhất phạm vi sửa trước.
 
 ## Project Rules

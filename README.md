@@ -10,6 +10,15 @@ Codebase hiện tại là phần nền đã được dọn và dựng khung qua 
 
 Chưa triển khai auth thật, sinh đề thi, chấm điểm hoặc CRUD hoàn chỉnh.
 
+## Tính năng chính
+
+- Quản lý môn học
+- Quản lý lớp
+- Quản lý sinh viên
+- Quản lý đề thi
+- Thi trắc nghiệm online
+- Chấm điểm
+
 ## Tech Stack
 
 - Node.js
@@ -74,12 +83,25 @@ docs/         Ghi chú project và module map
 
 ## Git Workflow
 
-1. Pull `main` mới nhất trước khi làm.
-2. Tạo branch feature, ví dụ `feature/mon-hoc-crud`.
-3. Commit các thay đổi nhỏ, tập trung.
-4. Push branch lên GitHub.
-5. Tạo Pull Request và nhờ teammate review.
-6. Chỉ merge sau khi đã review và kiểm tra conflict.
+Project chỉ dùng 2 branch:
+
+- `develop`: branch code hằng ngày.
+- `main`: branch stable, chỉ cập nhật khi code trên `develop` đã ổn.
+
+Workflow hằng ngày trên `develop`:
+
+```bash
+git checkout develop
+git pull origin develop
+
+# code
+
+git add .
+git commit -m "message"
+git push origin develop
+```
+
+Khi cần cập nhật bản ổn định, merge `develop` vào `main` sau khi team đã thống nhất.
 
 ## Coding Rules
 
