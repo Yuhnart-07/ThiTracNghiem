@@ -1,10 +1,10 @@
-# Contributing
+# Đóng góp
 
-This project is prepared for a small 2-person team. Keep changes small and easy to review.
+Project được chuẩn bị cho team nhỏ 2 người. Hãy giữ thay đổi nhỏ, rõ ràng và dễ review.
 
 ## Branch Naming
 
-Use short, descriptive branch names:
+Dùng tên branch ngắn gọn, mô tả đúng việc đang làm:
 
 ```text
 feature/mon-hoc-crud
@@ -15,7 +15,7 @@ docs/readme-update
 
 ## Commit Naming
 
-Use clear commit messages:
+Dùng commit message rõ nghĩa:
 
 ```text
 feat: add mon hoc list skeleton
@@ -26,7 +26,7 @@ chore: configure prettier
 
 ## Pull / Push Workflow
 
-Before starting:
+Trước khi bắt đầu:
 
 ```bash
 git checkout main
@@ -34,7 +34,7 @@ git pull origin main
 git checkout -b feature/your-task
 ```
 
-Before pushing:
+Trước khi push:
 
 ```bash
 npm run lint
@@ -45,18 +45,18 @@ git commit -m "feat: short message"
 git push origin feature/your-task
 ```
 
-Then open a Pull Request on GitHub.
+Sau đó tạo Pull Request trên GitHub.
 
 ## Avoiding Git Conflicts
 
-- One person should own one module at a time.
-- Do not reformat the whole project while working on a feature.
-- Avoid changing shared files like `index.js`, `configs/modules.config.js`, and layout files unless needed.
-- Pull latest `main` before starting a new task.
-- If two people need the same file, agree on the edit boundary first.
+- Mỗi thời điểm nên có một người phụ trách chính một module.
+- Không format toàn bộ project khi đang làm một feature nhỏ.
+- Tránh sửa file dùng chung như `index.js`, `configs/modules.config.js` và layout nếu không cần thiết.
+- Pull `main` mới nhất trước khi bắt đầu task mới.
+- Nếu hai người cần sửa cùng một file, hãy thống nhất phạm vi sửa trước.
 
 ## Project Rules
 
-- Do not add auth, exam logic, scoring, or new database tables without team agreement.
-- Keep code aligned with the existing Express + Pug + SQL Server structure.
-- Use `THITRACNGHIEM.sql` as database source of truth.
+- Không thêm auth, logic thi, chấm điểm hoặc bảng database mới nếu team chưa thống nhất.
+- Giữ code bám theo cấu trúc Express + Pug + SQL Server hiện có.
+- Dùng `THITRACNGHIEM.sql` làm source of truth cho database.

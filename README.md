@@ -1,14 +1,14 @@
 # Thi Trac Nghiem
 
-Node.js + Express + Pug scaffold for a SQL Server based multiple-choice exam project.
+Project thi trắc nghiệm dùng Node.js + Express + Pug và SQL Server.
 
-The current codebase is a clean foundation after:
+Codebase hiện tại là phần nền đã được dọn và dựng khung qua các phase:
 
-- Phase 1: SQL Server scaffold and old-domain cleanup
-- Phase 1.5: public script/asset cleanup
-- Phase 2: module structure skeleton based on `THITRACNGHIEM.sql`
+- Phase 1: dựng scaffold SQL Server và dọn domain cũ
+- Phase 1.5: dọn public script/asset
+- Phase 2: dựng skeleton module dựa trên `THITRACNGHIEM.sql`
 
-No real auth, exam generation, scoring, or full CRUD has been implemented yet.
+Chưa triển khai auth thật, sinh đề thi, chấm điểm hoặc CRUD hoàn chỉnh.
 
 ## Tech Stack
 
@@ -27,13 +27,13 @@ npm install
 
 ## Environment Setup
 
-Create a local `.env` file from `.env.example`:
+Tạo file `.env` local từ `.env.example`:
 
 ```bash
 copy .env.example .env
 ```
 
-Fill in local SQL Server values:
+Điền thông tin SQL Server trên máy local:
 
 ```env
 PORT=3000
@@ -46,7 +46,7 @@ DB_ENCRYPT=false
 DB_TRUST_SERVER_CERTIFICATE=true
 ```
 
-Never commit `.env`.
+Không commit file `.env`.
 
 ## Run Project
 
@@ -54,41 +54,41 @@ Never commit `.env`.
 npm start
 ```
 
-Main paths:
+Các đường dẫn chính:
 
-- Client home: `http://localhost:3000/`
-- Exam skeleton: `http://localhost:3000/thi`
-- Admin dashboard: `http://localhost:3000/admin/dashboard`
+- Trang client: `http://localhost:3000/`
+- Khung màn hình thi: `http://localhost:3000/thi`
+- Dashboard admin: `http://localhost:3000/admin/dashboard`
 
 ## Folder Structure
 
 ```text
-configs/      Shared configuration, database config, module metadata
-controllers/  Express controller handlers
-models/       SQL table metadata and data-access foundation
-routes/       Admin/client route definitions
-views/        Pug layouts, pages, partials, mixins
-public/       Static CSS, JS, images
-docs/         Project notes and module map
+configs/      Cấu hình chung, database config, metadata module
+controllers/  Controller xử lý request Express
+models/       Metadata bảng SQL và nền data-access
+routes/       Định nghĩa route admin/client
+views/        Layout, page, partial, mixin Pug
+public/       File tĩnh CSS, JS, image
+docs/         Ghi chú project và module map
 ```
 
 ## Git Workflow
 
-1. Pull latest `main` before starting work.
-2. Create a feature branch, for example `feature/mon-hoc-crud`.
-3. Commit small, focused changes.
-4. Push your branch.
-5. Open a Pull Request and ask teammate to review.
-6. Merge only after review and conflict check.
+1. Pull `main` mới nhất trước khi làm.
+2. Tạo branch feature, ví dụ `feature/mon-hoc-crud`.
+3. Commit các thay đổi nhỏ, tập trung.
+4. Push branch lên GitHub.
+5. Tạo Pull Request và nhờ teammate review.
+6. Chỉ merge sau khi đã review và kiểm tra conflict.
 
 ## Coding Rules
 
-- Do not change database schema unless the team agrees.
-- Keep modules aligned with `THITRACNGHIEM.sql`.
-- Do not mix unrelated modules in one commit.
-- Avoid moving folders or renaming routes without discussion.
-- Keep controller/model/view changes scoped to the module being worked on.
-- Run checks before pushing:
+- Không đổi database schema nếu team chưa thống nhất.
+- Giữ module bám theo `THITRACNGHIEM.sql`.
+- Không trộn nhiều module không liên quan trong cùng một commit.
+- Không tự ý move folder hoặc đổi route nếu chưa trao đổi.
+- Chỉ sửa controller/model/view trong phạm vi module đang làm.
+- Chạy kiểm tra trước khi push:
 
 ```bash
 npm run lint
