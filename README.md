@@ -81,28 +81,6 @@ public/       File tĩnh CSS, JS, image
 docs/         Ghi chú project và module map
 ```
 
-## Git Workflow
-
-Project chỉ dùng 2 branch:
-
-- `develop`: branch code hằng ngày.
-- `main`: branch stable, chỉ cập nhật khi code trên `develop` đã ổn.
-
-Workflow hằng ngày trên `develop`:
-
-```bash
-git checkout develop
-git pull origin develop
-
-# code
-
-git add .
-git commit -m "message"
-git push origin develop
-```
-
-Khi cần cập nhật bản ổn định, merge `develop` vào `main` sau khi team đã thống nhất.
-
 ## Coding Rules
 
 - Không đổi database schema nếu team chưa thống nhất.
