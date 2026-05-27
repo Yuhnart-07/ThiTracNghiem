@@ -1,0 +1,96 @@
+extends ../layouts/default.pug
+include ../mixins/crud.pug
+
+block main
+	// FORM
+	.section-1.cols-2
+		form.inner-form(id="subjectForm")
+			.inner-wrap
+				.group-item
+					label.inner-label(for="subjectCode")
+						| Mã môn học 
+						span.inner-required *
+
+					input.inner-control(
+						type="text"
+						id="subjectCode"
+						name="subjectCode"
+						placeholder="e.g. CS101"
+					)
+
+					p.inner-help
+						| Yêu cầu mã môn duy nhất *
+
+				.group-item
+					label.inner-label(for="subjectName")
+						| Tên môn học 
+						span.inner-required *
+
+					input.inner-control(
+						type="text"
+						id="subjectName"
+						name="subjectName"
+						placeholder="e.g. Advanced Algorithms"
+					)
+
+
+	+crud()
+
+	// TABLE
+	.section-3
+		.inner-head
+			h2.inner-title-main
+				span.inner-dot
+				span DANH SÁCH MÔN HỌC
+
+			.inner-tools
+				.inner-filter
+					span.material-symbols-outlined
+						| search
+
+					input.inner-filter-input(
+						type="text"
+						id="tableFilter"
+						placeholder="Tìm kiếm..."
+					)
+
+				button.inner-filter-button(
+					type="button"
+				)
+					span.material-symbols-outlined
+						| filter_list
+
+		.table-2
+			table
+				thead
+					tr
+						th.text-left Mã môn học
+						th.text-left Tên môn học
+						th.text-right Hành động
+
+				tbody#recordsTableBody
+					//- Render by javascript
+
+		// PAGINATION
+		.inner-pagination
+			p.inner-pagination-text
+				| Displaying 0 of 0 records
+
+			.inner-pagination-buttons
+				button.inner-page-button(
+					type="button"
+					id="btnPrevPage"
+				)
+					span.material-symbols-outlined
+						| chevron_left
+
+				.inner-page-list(
+					id="pageList"
+				)
+
+				button.inner-page-button(
+					type="button"
+					id="btnNextPage"
+				)
+					span.material-symbols-outlined
+						| chevron_right

@@ -3,19 +3,20 @@ require('dotenv').config();
 const path = require('path')
 const app = express()
 const port = process.env.PORT || 3000
-const { connectDB } = require("./configs/database.config")
+// const { connectDB } = require("./configs/database.config")
 
 const adminRoutes = require("./routes/admin/index.route");
-const clientRoutes = require("./routes/client/index.route");
-const { moduleList } = require("./configs/modules.config");
+// const clientRoutes = require("./routes/client/index.route");
+const accountRoutes = require("./routes/account/index.route");
+const lecturerRoutes = require("./routes/lecturer/index.route");
 
 // PATH DÙNG CHUNG CHO FE
 const { pathAdmin } = require("./configs/variable.config");
 
 // KẾT NỐI CSDL
-connectDB().catch(() => {
-  console.log("Ung dung van khoi dong de nhom co the tiep tuc dung khung UI.");
-});
+// connectDB().catch(() => {
+//   console.log("Ung dung van khoi dong de nhom co the tiep tuc dung khung UI.");
+// });
 
 // THIẾT LẬP THƯ MỤC CHỨA FILE VIEW
 app.set('views', path.join(__dirname, 'views')); // PATH ĐỂ NỐI TÊN PROJECT VỚI /VIEW
@@ -28,7 +29,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // TẠO BIẾN TOÀN CỤC TRONG FILE PUG (CHỈ DÙNG ĐƯỢC TRONG FILE PUG, KHÔNG DÙNG ĐƯỢC TRONG CÁC FILE JS)
 app.locals.pathAdmin = pathAdmin;
-app.locals.adminModules = moduleList;
+
 
 // CHO PHÉP BE GỬI DỮ LIỆU BẰNG JSON && ĐỒNG THỜI CHUYỂN DỮ LIỆU TỪ JSON -> JS
 app.use(express.json());
@@ -36,7 +37,10 @@ app.use(express.urlencoded({ extended: true }));
 
 // THIẾT LẬP ĐƯỜNG DẪN
 app.use(`/${pathAdmin}`, adminRoutes);
-app.use('/', clientRoutes);
+// app.use('/client', clientRoutes);
+app.use('/lecturer', lecturerRoutes);
+app.use('/', accountRoutes);
+
 
 app.listen(port, () => {
   console.log(`Website đang chạy trên cổng ${port}`)
@@ -44,3 +48,4 @@ app.listen(port, () => {
 
 // phucnguyen1182005_db_user
 // NRPMxNzTlpJU4WaY
+

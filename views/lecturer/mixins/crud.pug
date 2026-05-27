@@ -1,0 +1,61 @@
+mixin crud()
+	.section-2
+		.inner-wrap
+			.inner-left
+				span.inner-badge
+					| VIEW MODE
+
+				.inner-divider
+
+				button.inner-button.inner-button-primary(
+					type="button"
+					id="btnAdd"
+				)
+					span.material-symbols-outlined
+						| add
+					span Thêm
+
+				button.inner-button.disabled(
+					type="button"
+					id="btnEdit"
+					disabled
+				)
+					span.material-symbols-outlined
+						| edit
+					span Hiệu chỉnh
+
+				button.inner-button.disabled(
+					type="button"
+					id="btnDelete"
+					disabled
+				)
+					span.material-symbols-outlined
+						| delete
+					span Xóa
+
+				button.inner-button.disabled(
+					type="button"
+					id="btnUndo"
+					disabled
+				)
+					span.material-symbols-outlined
+						| undo
+					span Phục hồi
+
+			.inner-right
+				button.inner-button(
+					type="button"
+					id="btnSearch"
+				)
+					span.material-symbols-outlined
+						| search
+					span Tìm
+
+				button.inner-button.disabled(
+					type="button"
+					id="btnSave"
+					disabled
+				)
+					span.material-symbols-outlined
+						| save
+					span Ghi

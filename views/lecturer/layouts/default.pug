@@ -1,8 +1,6 @@
 doctype html
 html(lang="vi")
 	head
-		script.
-			const pathAdmin = "#{pathAdmin}";
 		meta(charset="UTF-8")
 		meta(name="viewport" content="width=device-width, initial-scale=1.0")
 		title #{pageTitle}
@@ -13,7 +11,7 @@ html(lang="vi")
 			rel="stylesheet"
 			href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0"
 		)
-		link(rel="stylesheet" href="/admin/assets/css/style.css")
+		link(rel="stylesheet" href="/lecturer/assets/css/style.css")
 		script(src="https://cdn.tiny.cloud/1/zz0v7syap80e12imb4l9z687h2b2tltv43an3xriefdfpsop/tinymce/8/tinymce.min.js" referrerpolicy="origin" crossorigin="anonymous")
 	body
 		include ../partials/header.pug
@@ -27,4 +25,4 @@ html(lang="vi")
 		script(src="https://unpkg.com/filepond@^4/dist/filepond.js")
 		script(src="https://cdn.jsdelivr.net/npm/chart.js")
 		script(src="https://unpkg.com/just-validate@latest/dist/just-validate.production.min.js")
-		script(src="/admin/assets/js/script.js")
+		script(src="/lecturer/assets/js/script.js")

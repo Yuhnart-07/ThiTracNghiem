@@ -1,0 +1,282 @@
+extends ../layouts/default.pug
+include ../mixins/crud.pug
+
+block main
+
+	// SECTION 4
+	.section-1
+		form.inner-form(id="questionBankForm")
+			.inner-wrap
+				// LEFT COLUMN
+				.inner-left
+					.group-item
+						label.inner-label(for="subjectCode")
+							| Mã môn học 
+							span.inner-required *
+
+						input.inner-control(
+							type="text"
+							id="subjectCode"
+							name="subjectCode"
+							placeholder="e.g. CS101"
+						)
+
+						p.inner-help
+							| Yêu cầu mã môn duy nhất *
+
+					.group-item
+						label.inner-label(for="subjectSelect")
+							| Môn học
+							span.inner-required *
+
+						select.inner-select(
+							id="subjectSelect"
+							name="subject"
+							required
+						)
+							option(value="DBMS")
+								| Database Management Systems
+
+							option(value="AlgoDS")
+								| Data Structures & Algorithms
+
+							option(value="WebTech")
+								| Web Technologies
+
+							option(value="SE")
+								| Software Engineering
+					.group-item
+						label.inner-label(for="lecturerCode")
+							| Mã giáo viên 
+							span.inner-required *
+
+						input.inner-control(
+							type="text"
+							id="lecturerCode"
+							name="lecturerCode"
+							placeholder="e.g. CS101"
+						)
+
+						p.inner-help
+							| Yêu cầu mã giảng viên duy nhất *
+
+					.group-item
+						label.inner-label
+							| Trình độ 
+							span.inner-required *
+						//- LEVEL LIST
+						.level-list
+
+							.level-item
+								input(
+									type="radio"
+									name="level"
+									value="A"
+								)
+
+								.level-box
+									| A
+
+							.level-item
+								input(
+									type="radio"
+									name="level"
+									value="B"
+									checked
+								)
+
+								.level-box
+									| B
+
+							.level-item
+								input(
+									type="radio"
+									name="level"
+									value="C"
+								)
+
+								.level-box
+									| C
+
+				// RIGHT COLUMN
+				.inner-right
+
+					.group-item
+						label.inner-label(for="questionContent")
+							| Nội dung 
+							span.inner-required *
+
+						textarea.textarea(
+							id="questionContent"
+							name="questionContent"
+							rows="4"
+							placeholder="Nhập nội dung câu hỏi..."
+							required
+						) Which of the following normal forms is based on the concept of multi-valued dependency?
+					//- ANSWER LIST
+					.answer-list
+
+						// ANSWER A
+						.answer-item
+
+							label.inner-label(for="answerA")
+								| Đáp án A
+								span.inner-required *
+
+							.answer-wrap
+
+								input.answer-radio(
+									type="radio"
+									name="correctAnswer"
+									value="A"
+								)
+
+								input.inner-control(
+									type="text"
+									id="answerA"
+									name="answerA"
+									value="Second Normal Form (2NF)"
+									required
+								)
+
+						// ANSWER B
+						.answer-item
+
+							label.inner-label(for="answerB")
+								| Đáp án B
+								span.inner-required *
+
+							.answer-wrap
+
+								input.answer-radio(
+									type="radio"
+									name="correctAnswer"
+									value="B"
+								)
+
+								input.inner-control(
+									type="text"
+									id="answerB"
+									name="answerB"
+									value="Third Normal Form (3NF)"
+									required
+								)
+
+						// ANSWER C
+						.answer-item
+
+							label.inner-label(for="answerC")
+								| Đáp án C
+								span.inner-required *
+
+							.answer-wrap
+
+								input.answer-radio(
+									type="radio"
+									name="correctAnswer"
+									value="C"
+									checked
+								)
+
+								input.inner-control(
+									type="text"
+									id="answerC"
+									name="answerC"
+									value="Fourth Normal Form (4NF)"
+									required
+								)
+
+						// ANSWER D
+						.answer-item
+
+							label.inner-label(for="answerD")
+								| Đáp án D
+								span.inner-required *
+
+							.answer-wrap
+
+								input.answer-radio(
+									type="radio"
+									name="correctAnswer"
+									value="D"
+								)
+
+								input.inner-control(
+									type="text"
+									id="answerD"
+									name="answerD"
+									value="Boyce-Codd Normal Form (BCNF)"
+									required
+								)
+
+	+crud()
+
+	// SECTION 3 - TABLE
+	.section-3
+
+		.inner-head
+
+			h2.inner-title-main
+				span.inner-dot
+				span DANH SÁCH CÂU HỎI
+
+			.inner-tools
+
+				.inner-filter
+					span.material-symbols-outlined
+						| search
+
+					input.inner-filter-input(
+						type="text"
+						id="tableFilter"
+						placeholder="Tìm kiếm..."
+					)
+
+				button.inner-filter-button(
+					type="button"
+				)
+					span.material-symbols-outlined
+						| filter_list
+
+		.table-2
+
+			table
+
+				thead
+					tr
+						th.text-left Mã câu hỏi
+						th.text-left Tên môn học
+						th.text-left Độ khó
+						th.text-left Nội dung câu hỏi
+						th.text-right Hành động
+
+				tbody#recordsTableBody
+					tr
+						td(colspan="5" class="text-center")
+							| Không có dữ liệu
+
+		// PAGINATION
+		.inner-pagination
+
+			p.inner-pagination-text
+				| Displaying 0 of 0 records
+
+			.inner-pagination-buttons
+
+				button.inner-page-button(
+					type="button"
+					id="btnPrevPage"
+				)
+					span.material-symbols-outlined
+						| chevron_left
+
+				.inner-page-list(
+					id="pageList"
+				)
+
+				button.inner-page-button(
+					type="button"
+					id="btnNextPage"
+				)
+					span.material-symbols-outlined
+						| chevron_right

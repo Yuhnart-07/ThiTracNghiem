@@ -1,0 +1,134 @@
+doctype html
+html(lang="vi")
+  head
+    meta(charset="utf-8")
+    meta(name="viewport" content="width=device-width, initial-scale=1.0")
+
+    title #{pageTitle}
+
+    link(
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Manrope:wght@600;700;800&display=swap"
+    )
+    link(rel="stylesheet" href="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.css")
+    link(rel="stylesheet" href="/account/assets/css/style.css")
+
+  body
+    .form-account
+      .background-decor
+        .circle-light-blue
+        .circle-light-teal
+        .ambient-fade
+
+      .inner-wrap
+        .inner-header
+          .inner-image
+            svg.logo-svg(
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            )
+              path(d="M22 10v6")
+              path(d="M2 10l10-5 10 5-10 5z")
+              path(d="M6 12v5c0 2 2 3 6 3s6-1 6-3v-5")
+
+          h1.inner-title HP EXAM
+
+          p.inner-desc
+            | Hệ Thống Thi Trắc Nghiệm
+
+        form.inner-form(
+          id="loginForm"
+          method="POST"
+          action="#"
+        )
+
+          .inner-role
+            input.hidden-radio(
+              type="radio"
+              id="student"
+              name="role"
+              value="student"
+              checked
+            )
+
+            input.hidden-radio(
+              type="radio"
+              id="lecturer-admin"
+              name="role"
+              value="admin"
+            )
+
+            .inner-role-bg
+
+            label.inner-role-item(for="student")
+              | Sinh Viên
+            
+            label.inner-role-item(for="lecturer-admin")
+              | Giảng Viên / PGV 
+
+          div.inner-sub-form.active(id="formLecturerAmin")
+            .inner-group
+              label.inner-label(for="username")
+                | Tài khoản
+
+              .inner-input-wrap
+                span.inner-icon 👤
+
+                input.inner-control(
+                  type="text"
+                  id="username"
+                  name="username"
+                  placeholder="Tên đăng nhập"
+                )
+
+            .inner-group
+              label.inner-label(for="password")
+                | Mật khẩu
+
+              .inner-input-wrap
+                span.inner-icon 🔒
+
+                input.inner-control(
+                  type="password"
+                  id="password"
+                  name="password"
+                  placeholder="••••••••"
+                )
+
+          
+          div.inner-sub-form(id="formStudent")
+
+            .inner-group
+              label.inner-label(for="student_id")
+                | Mã sinh viên
+
+              .inner-input-wrap
+                span.inner-icon 🪪
+
+                input.inner-control(
+                  type="text"
+                  id="student_id"
+                  name="student_id"
+                  placeholder="Ví dụ: SV123456"
+                )
+
+            .inner-info
+              span.inner-info-icon ℹ️
+
+              p.inner-info-text
+                | Sinh viên vui lòng nhập đúng Mã SV đã ghi danh tại phòng đào tạo để bắt đầu ca kiểm tra trắc nghiệm.
+
+          
+
+          button.inner-button(type="submit")
+            span Đăng nhập
+            span.inner-arrow ➔
+
+
+    script(src="https://unpkg.com/just-validate@latest/dist/just-validate.production.min.js")
+    script(src="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.js")
+    script(src="account/assets/js/scripts.js")
