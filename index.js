@@ -3,7 +3,7 @@ require('dotenv').config();
 const path = require('path')
 const app = express()
 const port = process.env.PORT || 3000
-// const { connectDB } = require("./configs/database.config")
+const { connectDB } = require("./configs/database.config")
 
 const adminRoutes = require("./routes/admin/index.route");
 // const clientRoutes = require("./routes/client/index.route");
@@ -14,9 +14,9 @@ const lecturerRoutes = require("./routes/lecturer/index.route");
 const { pathAdmin } = require("./configs/variable.config");
 
 // KẾT NỐI CSDL
-// connectDB().catch(() => {
-//   console.log("Ung dung van khoi dong de nhom co the tiep tuc dung khung UI.");
-// });
+connectDB().catch(() => {
+  console.log("Ung dung van khoi dong de nhom co the tiep tuc dung khung UI.");
+});
 
 // THIẾT LẬP THƯ MỤC CHỨA FILE VIEW
 app.set('views', path.join(__dirname, 'views')); // PATH ĐỂ NỐI TÊN PROJECT VỚI /VIEW
@@ -48,4 +48,3 @@ app.listen(port, () => {
 
 // phucnguyen1182005_db_user
 // NRPMxNzTlpJU4WaY
-
