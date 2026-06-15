@@ -1,0 +1,192 @@
+extends ../layouts/default.pug
+include ../mixins/crud.pug
+
+block main
+	// FORM
+	.section-1
+		form.inner-form(id="examRegistrationForm")
+			.inner-wrap
+				.group-item
+					label.inner-label(for="classSelect")
+						| Tên lớp
+						span.inner-required *
+
+					select.inner-select(
+						id="classSelect"
+						name="className"
+						required
+					)
+						option(value="DBMS")
+							| Database Management Systems
+
+						option(value="AlgoDS")
+							| Data Structures & Algorithms
+
+						option(value="WebTech")
+							| Web Technologies
+
+						option(value="SE")
+							| Software Engineering
+				.group-item
+					label.inner-label(for="subjectSelect")
+						| Môn học
+						span.inner-required *
+
+					select.inner-select(
+						id="subjectSelect"
+						name="subject"
+						required
+					)
+						option(value="DBMS")
+							| Database Management Systems
+
+						option(value="AlgoDS")
+							| Data Structures & Algorithms
+
+						option(value="WebTech")
+							| Web Technologies
+
+						option(value="SE")
+							| Software Engineering
+				.group-item
+					label.inner-label
+						| Trình độ 
+						span.inner-required *
+
+					.level-list
+
+						label.level-item
+							input(
+								type="radio"
+								name="level"
+								value="A"
+							)
+
+							.level-box
+								| A
+
+						label.level-item
+							input(
+								type="radio"
+								name="level"
+								value="B"
+								checked
+							)
+
+							.level-box
+								| B
+
+						label.level-item
+							input(
+								type="radio"
+								name="level"
+								value="C"
+							)
+
+							.level-box
+								| C
+				.group-item
+					label.inner-label(for="count")
+						| Lần thi
+						span.inner-required *
+
+					input.inner-control(
+						type="number"
+						id="count"
+						name="count"
+					)
+				.group-item
+					label.inner-label(for="countQuestion")
+						| Số câu thi
+						span.inner-required *
+
+					input.inner-control(
+						type="number"
+						id="countQuestion"
+						name="countQuestion"
+					)
+				.group-item
+					label.inner-label(for="date")
+						| Ngày thi
+						span.inner-required *
+
+					input.inner-control(
+						type="date"
+						id="date"
+						name="date"
+					)
+				.group-item
+					label.inner-label(for="time")
+						| Thời gian thi
+						span.inner-required *
+
+					input.inner-control(
+						type="number"
+						id="time"
+						name="time"
+					)
+	+crud()
+
+	// TABLE
+	.section-3
+		.inner-head
+			h2.inner-title-main
+				span.inner-dot
+				span DANH SÁCH ĐĂNG KÝ THI
+
+			.inner-tools
+				.inner-filter
+					span.material-symbols-outlined
+						| search
+
+					input.inner-filter-input(
+						type="text"
+						id="tableFilter"
+						placeholder="Tìm kiếm..."
+					)
+
+				button.inner-filter-button(
+					type="button"
+				)
+					span.material-symbols-outlined
+						| filter_list
+
+		.table-2
+			table
+				thead
+					tr
+						th.text-left Tên lớp
+						th.text-left Môn học
+						th.text-left Trình độ
+						th.text-left Lần thi
+						th.text-left Số câu thi
+						th.text-left Ngày thi
+						th.text-left Thời gian thi
+						th.text-right Hành động
+
+				tbody#recordsTableBody
+					//- Render by javascript
+
+		// PAGINATION
+		.inner-pagination
+			p.inner-pagination-text
+				| Displaying 0 of 0 records
+
+			.inner-pagination-buttons
+				button.inner-page-button(
+					type="button"
+					id="btnPrevPage"
+				)
+					span.material-symbols-outlined
+						| chevron_left
+
+				.inner-page-list(
+					id="pageList"
+				)
+
+				button.inner-page-button(
+					type="button"
+					id="btnNextPage"
+				)
+					span.material-symbols-outlined
+						| chevron_right

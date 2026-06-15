@@ -1,0 +1,124 @@
+extends ../layouts/default.pug
+include ../mixins/crud.pug
+
+block main
+	// FORM
+	.section-1
+		form.inner-form(id="gradeReportForm")
+			.inner-wrap
+				.group-item
+					label.inner-label(for="classSelect")
+						| Tên lớp
+						span.inner-required *
+
+					select.inner-select(
+						id="classSelect"
+						name="className"
+						required
+					)
+						option(value="DBMS")
+							| Database Management Systems
+
+						option(value="AlgoDS")
+							| Data Structures & Algorithms
+
+						option(value="WebTech")
+							| Web Technologies
+
+						option(value="SE")
+							| Software Engineering
+				.group-item
+					label.inner-label(for="subjectSelect")
+						| Tên môn học
+						span.inner-required *
+
+					select.inner-select(
+						id="subjectSelect"
+						name="subjectName"
+						required
+					)
+						option(value="DBMS")
+							| Database Management Systems
+
+						option(value="AlgoDS")
+							| Data Structures & Algorithms
+
+						option(value="WebTech")
+							| Web Technologies
+
+						option(value="SE")
+							| Software Engineering
+				.group-item
+					label.inner-label(for="count")
+						| Lần thi
+						span.inner-required *
+
+					input.inner-control(
+						type="number"
+						id="count"
+						name="count"
+					)
+
+
+	// TABLE
+	.section-3
+		.inner-head
+			h2.inner-title-main
+				span.inner-dot
+				span DANH SÁCH SINH VIÊN
+
+			.inner-tools
+				.inner-filter
+					span.material-symbols-outlined
+						| search
+
+					input.inner-filter-input(
+						type="text"
+						id="tableFilter"
+						placeholder="Tìm kiếm..."
+					)
+
+				button.inner-filter-button(
+					type="button"
+				)
+					span.material-symbols-outlined
+						| filter_list
+
+		.table-2
+			table
+				thead
+					tr
+						th.text-left STT
+						th.text-left Mã sinh viên
+						th.text-left Họ
+						th.text-left Tên 
+						th.text-left Điểm
+						th.text-left Điểm chữ
+						th.text-right Hành động
+
+				tbody#recordsTableBody
+					//- Render by javascript
+
+		// PAGINATION
+		.inner-pagination
+			p.inner-pagination-text
+				| Displaying 0 of 0 records
+
+			.inner-pagination-buttons
+				button.inner-page-button(
+					type="button"
+					id="btnPrevPage"
+				)
+					span.material-symbols-outlined
+						| chevron_left
+
+				.inner-page-list(
+					id="pageList"
+				)
+
+				button.inner-page-button(
+					type="button"
+					id="btnNextPage"
+				)
+					span.material-symbols-outlined
+						| chevron_right
