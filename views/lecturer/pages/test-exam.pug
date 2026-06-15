@@ -1,0 +1,244 @@
+extends ../layouts/default.pug
+include ../mixins/crud.pug
+
+block main
+
+	// SECTION 4 - EXAM SIMULATOR
+	.section-4
+
+
+			// TOP NAVBAR
+			header.exam-header
+
+				.exam-user
+
+					.exam-avatar
+						img(
+							src="https://lh3.googleusercontent.com/aida-public/AB6AXuCbd1sR2J9DZXaRCXGFrz8rzKiTEzbH1m4d2T9duQELu8T13wOPp4yIZBFqUO2889_veq_QUzn5LL75eKuWDZS6Mhg3CT8sKzJnIi1_VM1Kzr_jprqIZyJdxGJwpx9o4ZLGOphZZbjg7DQQyk6scNcfQalm2ivGvPgvwxhc3wMlY-MVa9BaVWc2XqZYeJZebUwLg-nSAlMHnQXHjIuWNjw3_wBfKlPBnB6yWSsEZEXBcAuom8p59nCr3TXE7CM06BQ62nJISvkrbBo"
+							alt="Alexander"
+						)
+
+					.exam-user-info
+
+						h1
+							| Alexander Hamilton
+
+						p
+							| ID: CS-404 | EXAMCORE PRO
+
+
+
+				.exam-header-actions
+
+					.exam-timer
+
+						span.material-symbols-outlined
+							| timer
+
+						span#countdown
+							| 00:45:00
+
+
+					button.exam-submit-top(
+						type="button"
+						id="btn-submit-top"
+					)
+						| Nộp Bài
+
+
+
+			// BODY AREA
+			.exam-body
+
+
+				// SIDEBAR
+				.exam-sidebar
+
+					.sidebar-title
+
+						h2
+							| Section A: Core Logic
+
+						p
+							| 40 Questions Total
+
+
+
+					.sidebar-label
+						| Question Palette Map
+
+
+
+					.question-grid(
+						id="palette-grid"
+					)
+
+
+
+					.sidebar-actions
+
+
+						button.sidebar-button(
+							type="button"
+							id="btn-flagged"
+						)
+
+							span.material-symbols-outlined
+								| flag
+
+							span
+								| Flagged Items
+
+
+							span.badge
+								| 1
+
+
+
+						button.sidebar-button(
+							type="button"
+							id="btn-calc-trigger"
+						)
+
+							span.material-symbols-outlined
+								| calculate
+
+							span
+								| Calculator Tool
+
+
+
+						button.sidebar-button(
+							type="button"
+							id="btn-inst-trigger"
+						)
+
+							span.material-symbols-outlined
+								| info
+
+							span
+								| Instructions Map
+
+
+
+
+
+				// MAIN QUESTION CONTENT
+
+				main.exam-content
+
+
+					.question-card
+
+
+						.question-header
+
+
+							span.question-token(
+								id="question-index-token"
+							)
+								| Question 12 of 40
+
+
+
+							button.bookmark-button(
+								type="button"
+								id="btn-bookmark-flag"
+							)
+
+								span.material-symbols-outlined
+									| flag
+
+								span
+									| Mark for Review
+
+
+
+
+						.question-content
+
+
+							h2(
+								id="question-text"
+							)
+								| According to the "Kinetic Ledger" design philosophy, how should structural boundaries be established between high-density data grids and navigation elements?
+
+
+
+
+							.question-image
+
+								img(
+									src="https://lh3.googleusercontent.com/aida-public/AB6AXuCCtADq3iruOql7CdfSmgKtg2aI93qW5DTG2OMliXaAh4VyEiO6LFvekZ0LadnvzY9O6QAs6vPo-YvTMUpUTUXFT9edUr6sa6Tx5d653H8GcmKMzMbNx9pjXjXGfHjphiYofTDQBnWYxemCRci1tOLlMYJxDR-BMblKWy--6JYesYCCblYSNI3c7PsRbwiOydHA4FXbEWZdcs5U5_fF1jLCZH7AoPtF0e_mKUKxAiQlM9fiVOWEOa0Zjzkd8KV6WIhYcAEhskv8JCg"
+									alt="Kinetic Ledger Blueprint"
+								)
+
+
+								span
+									| MODEL DICTATORSHIP
+
+
+
+
+							.answer-container(
+								id="options-container"
+							)
+
+								// JS render answers
+
+
+
+
+
+					// FOOTER CONTROL
+
+					.exam-footer
+
+
+						.footer-left
+
+
+							button.control-button(
+								type="button"
+								id="btn-prev"
+							)
+								| Prev Question
+
+
+
+							button.control-button.primary(
+								type="button"
+								id="btn-next"
+							)
+								| Next Question
+
+
+
+
+						.footer-right
+
+
+							.progress-box
+
+
+								p
+									| Current Progress
+
+
+								.progress-line
+
+									.progress-value(
+										id="progress-bar"
+										style="width:30%"
+									)
+
+
+
+							button.submit-button(
+								type="button"
+								id="btn-submit-main"
+							)
+								| FINISH & SUBMIT
+
+
+

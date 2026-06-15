@@ -1,0 +1,137 @@
+extends ../layouts/default.pug
+include ../mixins/crud.pug
+
+block main
+	// FORM
+	.section-1.cols-2
+		form.inner-form(id="accountCreateForm")
+			.inner-wrap
+				.group-item
+					label.inner-label(for="fullName")
+						| Họ tên
+						span.inner-required *
+
+					select.inner-select(
+						id="fullName"
+						name="fullName"
+					)
+						option(value="DBMS")
+							| Database Management Systems
+
+						option(value="AlgoDS")
+							| Data Structures & Algorithms
+
+						option(value="WebTech")
+							| Web Technologies
+
+						option(value="SE")
+							| Software Engineering
+				.group-item
+					label.inner-label(for="lecturerCode")
+						| Mã giáo viên
+
+					input.inner-control(
+						type="text"
+						id="lecturerCode"
+						name="lecturerCode"
+						readonly
+					)
+				.group-item
+					label.inner-label(for="username")
+						| Tài khoản
+
+					input.inner-control(
+						type="text"
+						id="username"
+						name="username"
+					)
+
+
+				.group-item
+					label.inner-label(for="password")
+						| Mật khẩu 
+
+					input.inner-control(
+						type="password"
+						id="password"
+						name="password"
+					)
+				.group-item
+					label.inner-label(for="role")
+						| Nhóm quyền 
+
+					select.inner-select(
+						id="role"
+						name="role"
+					)
+						option(value="admin")
+							| PGV
+
+						option(value="lecturer")
+							| GIÁO VIÊN
+
+
+				
+	+crud()
+
+	// TABLE
+	.section-3
+		.inner-head
+			h2.inner-title-main
+				span.inner-dot
+				span DANH SÁCH GIÁO VIÊN
+
+			.inner-tools
+				.inner-filter
+					span.material-symbols-outlined
+						| search
+
+					input.inner-filter-input(
+						type="text"
+						id="tableFilter"
+						placeholder="Tìm kiếm..."
+					)
+
+				button.inner-filter-button(
+					type="button"
+				)
+					span.material-symbols-outlined
+						| filter_list
+
+		.table-2
+			table
+				thead
+					tr
+						th.text-left Mã giáo viên 
+						th.text-left Họ 
+						th.text-left Tên
+						th.text-left SDT
+						th.text-left Địa chỉ
+						th.text-right Hành động
+
+				tbody#recordsTableBody
+					//- Render by javascript
+
+		// PAGINATION
+		.inner-pagination
+			p.inner-pagination-text
+				| Displaying 0 of 0 records
+
+			.inner-pagination-buttons
+				button.inner-page-button(
+					type="button"
+					id="btnPrevPage"
+				)
+					span.material-symbols-outlined
+						| chevron_left
+
+				.inner-page-list(
+					id="pageList"
+				)
+
+				button.inner-page-button(
+					type="button"
+					id="btnNextPage"
+				)
+					span.material-symbols-outlined
+						| chevron_right
