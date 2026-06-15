@@ -3,15 +3,47 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+    container_name: thi-trac-nghiem-app
+    depends_on:
+      db:
+        condition: service_healthy
     environment:
-      PORT: ${PORT:-3000}
-      DB_SERVER: ${DB_SERVER:-}
-      DB_PORT: ${DB_PORT:-1433}
-      DB_DATABASE: ${DB_DATABASE:-}
-      DB_USER: ${DB_USER:-}
-      DB_PASSWORD: ${DB_PASSWORD:-}
-      DB_ENCRYPT: ${DB_ENCRYPT:-false}
-      DB_TRUST_SERVER_CERTIFICATE: ${DB_TRUST_SERVER_CERTIFICATE:-true}
+      PORT: 3000
+      DB_SERVER: db
+      DB_PORT: 1433
+      DB_DATABASE: THITRACNGHIEM
+      DB_USER: sa
+      DB_PASSWORD: ThiTracNghiem@2026
+      DB_ENCRYPT: "false"
+      DB_TRUST_SERVER_CERTIFICATE: "true"
     ports:
-      - "${PORT:-3000}:3000"
+      - "3000:3000"
+    volumes:
+      - .:/app
+      - /app/node_modules
     restart: unless-stopped
+
+  db:
+    build:
+      context: .
+      dockerfile: docker/mssql/Dockerfile
+    container_name: thi-trac-nghiem-db
+    environment:
+      ACCEPT_EULA: "Y"
+      MSSQL_SA_PASSWORD: ThiTracNghiem@2026
+      MSSQL_PID: Developer
+      DB_NAME: THITRACNGHIEM
+    ports:
+      - "1433:1433"
+    volumes:
+      - mssql-data:/var/opt/mssql
+    healthcheck:
+      test: ["CMD-SHELL", "test -f /var/opt/mssql/.thi-trac-nghiem-init-done || exit 1; SQLCMD=$$(command -v sqlcmd || true); [ -z \"$$SQLCMD\" ] && [ -x /opt/mssql-tools18/bin/sqlcmd ] && SQLCMD=/opt/mssql-tools18/bin/sqlcmd; [ -z \"$$SQLCMD\" ] && [ -x /opt/mssql-tools/bin/sqlcmd ] && SQLCMD=/opt/mssql-tools/bin/sqlcmd; [ -n \"$$SQLCMD\" ] && \"$$SQLCMD\" -S localhost -U sa -P \"$${MSSQL_SA_PASSWORD}\" -C -Q \"SELECT 1\""]
+      interval: 10s
+      timeout: 5s
+      retries: 30
+      start_period: 30s
+    restart: unless-stopped
+
+volumes:
+  mssql-data:
