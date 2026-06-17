@@ -4,6 +4,7 @@ const path = require('path')
 const app = express()
 const port = process.env.PORT || 3000
 const { connectDB } = require("./configs/database.config")
+const { getAuthUserFromRequest } = require("./configs/auth.config")
 
 const adminRoutes = require("./routes/admin/index.route");
 // const clientRoutes = require("./routes/client/index.route");
@@ -12,11 +13,6 @@ const lecturerRoutes = require("./routes/lecturer/index.route");
 
 // PATH DÙNG CHUNG CHO FE
 const { pathAdmin } = require("./configs/variable.config");
-
-// KẾT NỐI CSDL
-connectDB().catch(() => {
-  console.log("Ung dung van khoi dong de nhom co the tiep tuc dung khung UI.");
-});
 
 // THIẾT LẬP THƯ MỤC CHỨA FILE VIEW
 app.set('views', path.join(__dirname, 'views')); // PATH ĐỂ NỐI TÊN PROJECT VỚI /VIEW
@@ -35,6 +31,17 @@ app.locals.pathAdmin = pathAdmin;
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+app.use((req, res, next) => {
+  const authUser = getAuthUserFromRequest(req);
+
+  if (authUser) {
+    req.user = authUser;
+    res.locals.currentUser = authUser;
+  }
+
+  next();
+});
+
 // THIẾT LẬP ĐƯỜNG DẪN
 app.use(`/${pathAdmin}`, adminRoutes);
 // app.use('/client', clientRoutes);
@@ -42,9 +49,21 @@ app.use('/lecturer', lecturerRoutes);
 app.use('/', accountRoutes);
 
 
-app.listen(port, () => {
-  console.log(`Website đang chạy trên cổng ${port}`)
-})
+const startServer = async () => {
+  try {
+    // KẾT NỐI CSDL TRƯỚC KHI NHẬN REQUEST
+    await connectDB();
+
+    app.listen(port, () => {
+      console.log(`Website đang chạy trên cổng ${port}`)
+    })
+  } catch (error) {
+    console.error("Khong the ket noi database, dung ung dung:", error.message);
+    process.exit(1);
+  }
+};
+
+startServer();
 
 // phucnguyen1182005_db_user
 // NRPMxNzTlpJU4WaY

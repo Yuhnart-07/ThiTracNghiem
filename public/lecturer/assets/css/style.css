@@ -281,13 +281,24 @@ textarea {
 	position: relative;
 }
 
-.section-3 .inner-filter .material-symbols-outlined {
+.section-3 .inner-filter-search {
 	position: absolute;
 	top: 50%;
 	left: 10px;
 	transform: translateY(-50%);
-	font-size: 18px;
+	width: 24px;
+	height: 24px;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	border: none;
+	background-color: transparent;
 	color: var(--color-text-light);
+	cursor: pointer;
+}
+
+.section-3 .inner-filter-search .material-symbols-outlined {
+	font-size: 18px;
 }
 
 .section-3 .inner-filter-input {
@@ -318,6 +329,41 @@ textarea {
 	background-color: var(--color-bg-light);
 
 	cursor: pointer;
+}
+
+.question-filter-panel {
+	margin-bottom: 20px;
+	padding: 16px;
+	border: 1px solid var(--color-border);
+	border-radius: 8px;
+	background-color: var(--color-bg-light);
+}
+
+.filter-grid {
+	display: grid;
+	grid-template-columns: minmax(220px, 1fr) minmax(160px, 220px) auto;
+	align-items: end;
+	gap: 16px;
+}
+
+.filter-actions {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+}
+
+.filter-summary {
+	margin-top: 12px;
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	color: var(--color-primary);
+	font-size: 12px;
+	font-weight: 700;
+}
+
+.filter-summary .material-symbols-outlined {
+	font-size: 18px;
 }
 
 /* TABLE */
@@ -361,6 +407,85 @@ textarea {
 
 .table-2 tbody tr:hover {
 	background-color: #F8FAFC;
+}
+
+.table-2 tbody tr.selected td {
+	background-color: #EAF3FF;
+}
+
+.question-content-cell {
+	max-width: 420px;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.table-action {
+	border: 1px solid var(--color-border);
+	border-radius: 6px;
+	background-color: var(--white);
+	color: var(--color-primary);
+	font-size: 12px;
+	font-weight: 700;
+	padding: 7px 10px;
+	cursor: pointer;
+}
+
+.table-action:hover {
+	background-color: var(--color-bg-light);
+}
+
+.status-badge {
+	display: inline-flex;
+	align-items: center;
+	min-height: 24px;
+	padding: 4px 8px;
+	border-radius: 6px;
+	font-size: 11px;
+	font-weight: 800;
+}
+
+.status-badge.open {
+	background-color: #E7F6EF;
+	color: #137A4B;
+}
+
+.status-badge.locked {
+	background-color: #FFF1E8;
+	color: #B45309;
+}
+
+.question-bank-message {
+	display: none;
+	margin-bottom: 16px;
+	padding: 10px 12px;
+	border-radius: 6px;
+	font-size: 13px;
+	font-weight: 700;
+}
+
+.question-bank-message.active {
+	display: block;
+}
+
+.question-bank-message[data-type="info"] {
+	background-color: #EAF3FF;
+	color: var(--color-primary);
+}
+
+.question-bank-message[data-type="success"] {
+	background-color: #E7F6EF;
+	color: #137A4B;
+}
+
+.question-bank-message[data-type="warning"] {
+	background-color: #FFF7E6;
+	color: #9A5B00;
+}
+
+.question-bank-message[data-type="error"] {
+	background-color: #FDECEC;
+	color: var(--error);
 }
 
 .text-left {
@@ -559,6 +684,15 @@ textarea {
 	background-color: rgba(0, 72, 141, 0.04);
 }
 
+.level-list .level-item:has(input[type="radio"]:disabled) {
+	cursor: not-allowed;
+}
+
+.level-list .level-item:has(input[type="radio"]:disabled) .level-box {
+	color: #A0AEC0;
+	background-color: #F8FAFC;
+}
+
 .level-list .level-item input[type="radio"]:checked + .level-box {
 	background-color: var(--primary);
 	color: var(--on-primary);
@@ -652,6 +786,10 @@ textarea {
 	.section-2 .inner-left,
 	.section-2 .inner-right {
 		flex-wrap: wrap;
+	}
+
+	.filter-grid {
+		grid-template-columns: 1fr;
 	}
 }
 

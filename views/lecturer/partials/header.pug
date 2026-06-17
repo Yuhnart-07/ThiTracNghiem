@@ -6,8 +6,7 @@ header.header
 	.inner-wrap
 		.inner-account
 			.inner-text
-				.inner-name Lê văn A
-				.inner-role Admin
+				.inner-name #{currentUser ? `${currentUser.ho || ""} ${currentUser.ten || currentUser.username || ""}` : "Chưa đăng nhập"}
+				.inner-role #{currentUser ? currentUser.role : ""}
 		.inner-button-menu
 			i.fa-solid.fa-bars
-

@@ -41,10 +41,21 @@ echo "Creating database ${db_name} if needed..."
 "$sqlcmd" -S localhost -U sa -P "$MSSQL_SA_PASSWORD" -C -Q "IF DB_ID(N'${db_name}') IS NULL CREATE DATABASE [${db_name}]"
 
 echo "Importing THITRACNGHIEM.sql..."
+if head -c 2 /docker-entrypoint-initdb.d/THITRACNGHIEM.sql | od -An -tx1 | grep -qi "ff fe"; then
+  iconv -f UTF-16LE -t UTF-8 /docker-entrypoint-initdb.d/THITRACNGHIEM.sql > /tmp/THITRACNGHIEM.utf8.sql
+else
+  cp /docker-entrypoint-initdb.d/THITRACNGHIEM.sql /tmp/THITRACNGHIEM.utf8.sql
+fi
+
 awk '
-  /^USE \[THITRACNGHIEM\]$/ { started = 1 }
+  index($0, "USE [THITRACNGHIEM]") > 0 { started = 1 }
   started { print }
-' /docker-entrypoint-initdb.d/THITRACNGHIEM.sql > /tmp/THITRACNGHIEM.container.sql
+' /tmp/THITRACNGHIEM.utf8.sql > /tmp/THITRACNGHIEM.container.sql
+
+if [ ! -s /tmp/THITRACNGHIEM.container.sql ]; then
+  echo "Filtered SQL script is empty. Check THITRACNGHIEM.sql encoding or USE statement."
+  exit 1
+fi
 
 "$sqlcmd" -S localhost -U sa -P "$MSSQL_SA_PASSWORD" -C -b -i /tmp/THITRACNGHIEM.container.sql
 

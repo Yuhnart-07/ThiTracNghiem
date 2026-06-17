@@ -29,22 +29,6 @@ if(notifySession) {
 }
 // END HIỂN THỊ THÔNG BÁO
 
-
-
-// DRAW NOTIFY
-const drawNotify = (code, message) => {
-  const data = {
-    code: code,
-    message: message
-  };
-
-  sessionStorage.setItem("notify", JSON.stringify(data));
-}
-// END DRAW NOTIFY
-
-
-
-
 // ROLE LOGIN FORM
 const loginForm = document.querySelector("#loginForm");
 
@@ -136,14 +120,6 @@ if(loginForm) {
         },
         errorMessage: "Vui lòng nhập tài khoản!"
       },
-      {
-        validator: (value) => {
-          if(!isLecturerLogin()) return true;
-
-          return value.trim().length >= 5;
-        },
-        errorMessage: "Tài khoản phải có ít nhất 5 ký tự!"
-      }
     ])
     // END USERNAME
 
@@ -159,46 +135,6 @@ if(loginForm) {
         },
         errorMessage: "Vui lòng nhập mật khẩu!"
       },
-      {
-        validator: (value) => {
-          if(!isLecturerLogin()) return true;
-
-          return value.length >= 8;
-        },
-        errorMessage: "Mật khẩu phải có ít nhất 8 ký tự!"
-      },
-      {
-        validator: (value) => {
-          if(!isLecturerLogin()) return true;
-
-          return /[a-z]/.test(value);
-        },
-        errorMessage: "Mật khẩu phải chứa ký tự thường!"
-      },
-      {
-        validator: (value) => {
-          if(!isLecturerLogin()) return true;
-
-          return /[A-Z]/.test(value);
-        },
-        errorMessage: "Mật khẩu phải chứa ký tự hoa!"
-      },
-      {
-        validator: (value) => {
-          if(!isLecturerLogin()) return true;
-
-          return /\d/.test(value);
-        },
-        errorMessage: "Mật khẩu phải chứa chữ số!"
-      },
-      {
-        validator: (value) => {
-          if(!isLecturerLogin()) return true;
-
-          return /[\W_]/.test(value);
-        },
-        errorMessage: "Mật khẩu phải chứa ký tự đặc biệt!"
-      }
     ])
     // END PASSWORD
 
@@ -210,14 +146,7 @@ if(loginForm) {
 
       // LOGIN STUDENT
       if(isStudentLogin()) {
-        const studentId = event.target.student_id.value;
-
-        console.log(studentId);
-
-        notify.success("Đăng nhập sinh viên thành công!");
-
-        // DEMO
-        drawNotify("success", "Đăng nhập sinh viên thành công!");
+        notify.error("Sinh viên không được truy cập module nhập câu hỏi thi!");
       }
       // END LOGIN STUDENT
 
@@ -226,16 +155,7 @@ if(loginForm) {
 
       // LOGIN LECTURER ADMIN
       if(isLecturerLogin()) {
-        const username = event.target.username.value;
-        const password = event.target.password.value;
-
-        console.log(username);
-        console.log(password);
-
-        notify.success("Đăng nhập giảng viên thành công!");
-
-        // DEMO
-        drawNotify("success", "Đăng nhập giảng viên thành công!");
+        event.target.submit();
       }
       // END LOGIN LECTURER ADMIN
 

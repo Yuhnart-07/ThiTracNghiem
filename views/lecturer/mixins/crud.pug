@@ -2,8 +2,8 @@ mixin crud()
 	.section-2
 		.inner-wrap
 			.inner-left
-				span.inner-badge
-					| VIEW MODE
+				span.inner-badge(id="modeBadge")
+					| ĐANG XEM
 
 				.inner-divider
 
@@ -42,15 +42,16 @@ mixin crud()
 						| undo
 					span Phục hồi
 
-			.inner-right
-				button.inner-button(
+				button.inner-button.disabled(
 					type="button"
-					id="btnSearch"
+					id="btnExitMode"
+					disabled
 				)
 					span.material-symbols-outlined
-						| search
-					span Tìm
+						| close
+					span Thoát
 
+			.inner-right
 				button.inner-button.disabled(
 					type="button"
 					id="btnSave"

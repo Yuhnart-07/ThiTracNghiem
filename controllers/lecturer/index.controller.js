@@ -1,7 +1,111 @@
-module.exports.questionBank =  (req, res) => {
-  res.render('lecturer/pages/question-bank', {
-    pageTitle: "Quản lý câu hỏi thi"
-  }) 
+const questionBankService = require("../../services/lecturer/question-bank.service");
+const { getAuthUserFromRequest } = require("../../configs/auth.config");
+
+const getCurrentUser = (req, res) =>
+  req.user ||
+  req.session?.user ||
+  res.locals.currentUser ||
+  res.locals.user ||
+  getAuthUserFromRequest(req);
+
+const sendQuestionBankError = (res, error) => {
+  const statusCode = error.statusCode || 500;
+
+  return res.status(statusCode).json({
+    success: false,
+    message: error.message || "Có lỗi xảy ra khi xử lý module nhập câu hỏi thi.",
+  });
+};
+
+module.exports.questionBank = async (req, res) => {
+  try {
+    // Controller chỉ lấy user đang đăng nhập và chuyển xuống service để kiểm tra quyền module 4.5.
+    const pageData = await questionBankService.getQuestionBankPageData(getCurrentUser(req, res));
+
+    return res.render("lecturer/pages/question-bank", {
+      pageTitle: "Quản lý câu hỏi thi",
+      subjects: pageData.subjects,
+      currentUser: pageData.user,
+    });
+  } catch (error) {
+    const statusCode = error.statusCode || 500;
+    return res.status(statusCode).send(error.message);
+  }
+};
+
+module.exports.getQuestionSubjects = async (req, res) => {
+  try {
+    const subjects = await questionBankService.getSubjects(getCurrentUser(req, res));
+
+    return res.json({
+      success: true,
+      data: subjects,
+    });
+  } catch (error) {
+    return sendQuestionBankError(res, error);
+  }
+};
+
+module.exports.getQuestionList = async (req, res) => {
+  try {
+    const questions = await questionBankService.getQuestions(getCurrentUser(req, res), req.query);
+
+    return res.json({
+      success: true,
+      data: questions,
+    });
+  } catch (error) {
+    return sendQuestionBankError(res, error);
+  }
+};
+
+module.exports.createQuestion = async (req, res) => {
+  try {
+    const result = await questionBankService.createQuestion(getCurrentUser(req, res), req.body);
+
+    return res.status(201).json({
+      success: true,
+      message: result?.ThongBao || "Thêm câu hỏi thành công.",
+      data: {
+        cauHoi: result?.CAUHOI,
+      },
+    });
+  } catch (error) {
+    return sendQuestionBankError(res, error);
+  }
+};
+
+module.exports.updateQuestion = async (req, res) => {
+  try {
+    const result = await questionBankService.updateOwnQuestion(
+      getCurrentUser(req, res),
+      req.params.questionId,
+      req.body,
+    );
+
+    return res.json({
+      success: true,
+      message: result?.ThongBao || "Sửa câu hỏi thành công.",
+    });
+  } catch (error) {
+    return sendQuestionBankError(res, error);
+  }
+};
+
+module.exports.deleteQuestion = async (req, res) => {
+  try {
+    const result = await questionBankService.deleteOwnQuestionIfUnused(
+      getCurrentUser(req, res),
+      req.params.questionId,
+    );
+
+    return res.json({
+      success: true,
+      message: result?.ThongBao || "Xóa câu hỏi thành công.",
+    });
+  } catch (error) {
+    return sendQuestionBankError(res, error);
+  }
 };
 
 

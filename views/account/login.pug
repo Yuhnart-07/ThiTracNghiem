@@ -43,8 +43,13 @@ html(lang="vi")
         form.inner-form(
           id="loginForm"
           method="POST"
-          action="#"
+          action="/login"
         )
+          if errorMessage
+            .inner-info
+              span.inner-info-icon !
+              p.inner-info-text
+                | #{errorMessage}
 
           .inner-role
             input.hidden-radio(

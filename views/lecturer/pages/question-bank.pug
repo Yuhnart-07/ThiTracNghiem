@@ -2,28 +2,22 @@ extends ../layouts/default.pug
 include ../mixins/crud.pug
 
 block main
+	- const canMutateQuestions = currentUser && currentUser.role === "GIANGVIEN";
+	- const initialSubjects = subjects || [];
 
 	// SECTION 4
 	.section-1
-		form.inner-form(id="questionBankForm")
+		form.inner-form(
+			id="questionBankForm"
+			data-can-mutate=canMutateQuestions ? "true" : "false"
+			data-user-role=currentUser ? currentUser.role : ""
+		)
+			input(type="hidden" id="questionId" name="questionId" value="")
+			.question-bank-message(id="questionBankMessage" role="status")
+
 			.inner-wrap
 				// LEFT COLUMN
 				.inner-left
-					.group-item
-						label.inner-label(for="subjectCode")
-							| Mã môn học 
-							span.inner-required *
-
-						input.inner-control(
-							type="text"
-							id="subjectCode"
-							name="subjectCode"
-							placeholder="e.g. CS101"
-						)
-
-						p.inner-help
-							| Yêu cầu mã môn duy nhất *
-
 					.group-item
 						label.inner-label(for="subjectSelect")
 							| Môn học
@@ -34,31 +28,24 @@ block main
 							name="subject"
 							required
 						)
-							option(value="DBMS")
-								| Database Management Systems
-
-							option(value="AlgoDS")
-								| Data Structures & Algorithms
-
-							option(value="WebTech")
-								| Web Technologies
-
-							option(value="SE")
-								| Software Engineering
-					.group-item
-						label.inner-label(for="lecturerCode")
-							| Mã giáo viên 
-							span.inner-required *
-
-						input.inner-control(
-							type="text"
-							id="lecturerCode"
-							name="lecturerCode"
-							placeholder="e.g. CS101"
-						)
+							option(value="")
+								| Chọn môn học
+							each subject in initialSubjects
+								option(value=subject.maMonHoc)
+									| #{subject.maMonHoc} - #{subject.tenMonHoc}
 
 						p.inner-help
-							| Yêu cầu mã giảng viên duy nhất *
+							| Chọn từ danh sách môn học trong hệ thống.
+
+					.group-item
+						label.inner-label
+							| Vai trò hiện tại
+
+						input.inner-control.control-readonly(
+							type="text"
+							value=currentUser ? currentUser.role : "Chưa đăng nhập"
+							readonly
+						)
 
 					.group-item
 						label.inner-label
@@ -111,8 +98,9 @@ block main
 							name="questionContent"
 							rows="4"
 							placeholder="Nhập nội dung câu hỏi..."
+							maxlength="500"
 							required
-						) Which of the following normal forms is based on the concept of multi-valued dependency?
+						)
 					//- ANSWER LIST
 					.answer-list
 
@@ -135,7 +123,7 @@ block main
 									type="text"
 									id="answerA"
 									name="answerA"
-									value="Second Normal Form (2NF)"
+									maxlength="200"
 									required
 								)
 
@@ -158,7 +146,7 @@ block main
 									type="text"
 									id="answerB"
 									name="answerB"
-									value="Third Normal Form (3NF)"
+									maxlength="200"
 									required
 								)
 
@@ -182,7 +170,7 @@ block main
 									type="text"
 									id="answerC"
 									name="answerC"
-									value="Fourth Normal Form (4NF)"
+									maxlength="200"
 									required
 								)
 
@@ -205,7 +193,7 @@ block main
 									type="text"
 									id="answerD"
 									name="answerD"
-									value="Boyce-Codd Normal Form (BCNF)"
+									maxlength="200"
 									required
 								)
 
@@ -223,8 +211,14 @@ block main
 			.inner-tools
 
 				.inner-filter
-					span.material-symbols-outlined
-						| search
+					button.inner-filter-search(
+						type="button"
+						id="btnKeywordSearch"
+						aria-label="Tìm câu hỏi"
+						title="Tìm câu hỏi"
+					)
+						span.material-symbols-outlined
+							| search
 
 					input.inner-filter-input(
 						type="text"
@@ -234,9 +228,65 @@ block main
 
 				button.inner-filter-button(
 					type="button"
+					id="btnToggleFilters"
+					aria-label="Bộ lọc câu hỏi"
+					title="Bộ lọc câu hỏi"
 				)
 					span.material-symbols-outlined
 						| filter_list
+
+		.question-filter-panel(id="questionFilterPanel" hidden)
+			.filter-grid
+				.group-item
+					label.inner-label(for="filterSubject")
+						| Lọc theo môn học
+
+					select.inner-select(
+						id="filterSubject"
+					)
+						option(value="")
+							| Tất cả môn học
+						each subject in initialSubjects
+							option(value=subject.maMonHoc)
+								| #{subject.maMonHoc} - #{subject.tenMonHoc}
+
+				.group-item
+					label.inner-label(for="filterLevel")
+						| Lọc theo trình độ
+
+					select.inner-select(
+						id="filterLevel"
+					)
+						option(value="")
+							| Tất cả trình độ
+						option(value="A")
+							| A
+						option(value="B")
+							| B
+						option(value="C")
+							| C
+
+				.filter-actions
+					button.inner-button.inner-button-primary(
+						type="button"
+						id="btnApplyFilters"
+					)
+						span.material-symbols-outlined
+							| search
+						span Tìm
+
+					button.inner-button(
+						type="button"
+						id="btnClearFilters"
+					)
+						span.material-symbols-outlined
+							| restart_alt
+						span Xóa lọc
+
+			.filter-summary(id="filterSummary")
+				span.material-symbols-outlined
+					| filter_list
+				span Chưa áp dụng bộ lọc
 
 		.table-2
 
@@ -246,20 +296,22 @@ block main
 					tr
 						th.text-left Mã câu hỏi
 						th.text-left Tên môn học
-						th.text-left Độ khó
+						th.text-left Trình độ
 						th.text-left Nội dung câu hỏi
+						th.text-left Đáp án
+						th.text-left Trạng thái
 						th.text-right Hành động
 
 				tbody#recordsTableBody
 					tr
-						td(colspan="5" class="text-center")
-							| Không có dữ liệu
+						td(colspan="7" class="text-center")
+							| Đang tải dữ liệu...
 
 		// PAGINATION
 		.inner-pagination
 
 			p.inner-pagination-text
-				| Displaying 0 of 0 records
+				| Đang tải 0 câu hỏi
 
 			.inner-pagination-buttons
 
@@ -280,3 +332,6 @@ block main
 				)
 					span.material-symbols-outlined
 						| chevron_right
+
+block scripts
+	script(src="/lecturer/assets/js/question-bank.js")
