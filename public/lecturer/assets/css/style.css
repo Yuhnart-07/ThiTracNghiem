@@ -237,6 +237,10 @@ textarea {
 	cursor: not-allowed;
 }
 
+.inner-button.disabled:hover {
+	transform: none;
+}
+
 /* SECTION 3 */
 .section-3 {
 	background-color: var(--white);
@@ -558,9 +562,18 @@ textarea {
 }
 
 .section-1 .inner-wrap {
+	position: relative;
 	display: grid;
 	grid-template-columns: 1fr;
 	gap: 24px;
+}
+
+.section-1 .inner-form.form-locked > .inner-wrap::after {
+	content: "";
+	position: absolute;
+	inset: 0;
+	z-index: 2;
+	cursor: not-allowed;
 }
 
 

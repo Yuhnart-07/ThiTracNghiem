@@ -31,6 +31,7 @@ if (questionBankForm) {
     btnPrevPage: document.querySelector("#btnPrevPage"),
     btnNextPage: document.querySelector("#btnNextPage"),
     pageList: document.querySelector("#pageList"),
+    formBody: questionBankForm.querySelector(".inner-wrap"),
   };
 
   const canMutate = questionBankForm.dataset.canMutate === "true";
@@ -55,6 +56,10 @@ if (questionBankForm) {
     elements.message.dataset.type = type;
     elements.message.classList.toggle("active", Boolean(message));
   };
+
+  const isEditing = () => state.mode === "create" || state.mode === "edit";
+
+  const getSelectedQuestion = () => state.questions.find((question) => question.cauHoi === state.selectedQuestionId);
 
   const setModeBadge = (mode) => {
     if (!elements.modeBadge) return;
@@ -96,6 +101,30 @@ if (questionBankForm) {
     if (input) input.checked = true;
   };
 
+  const normalizeAnswerForCompare = (answer) => answer.trim().replace(/\s+/g, " ").toLowerCase();
+
+  const findDuplicatedAnswerPair = (payload) => {
+    const answers = [
+      ["A", payload.dapAnA],
+      ["B", payload.dapAnB],
+      ["C", payload.dapAnC],
+      ["D", payload.dapAnD],
+    ];
+    const seenAnswers = new Map();
+
+    for (const [label, answer] of answers) {
+      const normalizedAnswer = normalizeAnswerForCompare(answer);
+
+      if (seenAnswers.has(normalizedAnswer)) {
+        return [seenAnswers.get(normalizedAnswer), label];
+      }
+
+      seenAnswers.set(normalizedAnswer, label);
+    }
+
+    return null;
+  };
+
   const getPayload = () => ({
     maMonHoc: elements.subject.value,
     trinhDo: questionBankForm.querySelector("input[name='level']:checked")?.value || "",
@@ -119,6 +148,10 @@ if (questionBankForm) {
     if ([payload.dapAnA, payload.dapAnB, payload.dapAnC, payload.dapAnD].some((answer) => answer.length > 200)) {
       return "Mỗi đáp án không được vượt quá 200 ký tự.";
     }
+    const duplicatedAnswerPair = findDuplicatedAnswerPair(payload);
+    if (duplicatedAnswerPair) {
+      return `Đáp án ${duplicatedAnswerPair[0]} và ${duplicatedAnswerPair[1]} không được trùng nhau.`;
+    }
 
     return "";
   };
@@ -131,6 +164,7 @@ if (questionBankForm) {
           input.disabled = disabled;
         }
       });
+    questionBankForm.classList.toggle("form-locked", disabled);
   };
 
   const setLevel = (level) => {
@@ -139,20 +173,91 @@ if (questionBankForm) {
   };
 
   const setButtonState = () => {
-    const selectedQuestion = state.questions.find((question) => question.cauHoi === state.selectedQuestionId);
+    const selectedQuestion = getSelectedQuestion();
     const canChangeSelected = canMutate && selectedQuestion && !selectedQuestion.daSuDung;
-    const editing = state.mode === "create" || state.mode === "edit";
+    const editing = isEditing();
 
-    elements.btnAdd.disabled = !canMutate || editing;
-    elements.btnEdit.disabled = !canChangeSelected || editing;
-    elements.btnDelete.disabled = !canChangeSelected || editing;
-    elements.btnUndo.disabled = !editing;
-    elements.btnExitMode.disabled = !editing;
-    elements.btnSave.disabled = !editing;
+    const buttonStates = [
+      [elements.btnAdd, !canMutate || editing],
+      [elements.btnEdit, !canChangeSelected || editing],
+      [elements.btnDelete, !canChangeSelected || editing],
+      [elements.btnUndo, !editing],
+      [elements.btnExitMode, !editing],
+      [elements.btnSave, !editing],
+    ];
 
-    [elements.btnAdd, elements.btnEdit, elements.btnDelete, elements.btnUndo, elements.btnExitMode, elements.btnSave].forEach((button) => {
-      button.classList.toggle("disabled", button.disabled);
+    buttonStates.forEach(([button, locked]) => {
+      button.disabled = false;
+      button.classList.toggle("disabled", locked);
+      button.setAttribute("aria-disabled", locked ? "true" : "false");
     });
+  };
+
+  const getLockedActionMessage = (action) => {
+    const selectedQuestion = getSelectedQuestion();
+
+    if (!canMutate && ["add", "edit", "delete", "save"].includes(action)) {
+      return "PGV chỉ được xem danh sách câu hỏi, không được thêm, sửa hoặc xóa.";
+    }
+
+    if (action === "add") {
+      if (isEditing()) return "Đang thao tác, hãy Ghi hoặc Thoát trước khi thêm câu hỏi mới.";
+      return "";
+    }
+
+    if (action === "edit") {
+      if (isEditing()) return "Đang thao tác, hãy Ghi hoặc Thoát trước khi hiệu chỉnh câu hỏi khác.";
+      if (!selectedQuestion) return "Vui lòng chọn câu hỏi cần hiệu chỉnh.";
+      if (selectedQuestion.daSuDung) return "Câu hỏi đã phát sinh bài thi nên không được hiệu chỉnh.";
+      return "";
+    }
+
+    if (action === "delete") {
+      if (isEditing()) return "Đang thao tác, hãy Ghi hoặc Thoát trước khi xóa câu hỏi.";
+      if (!selectedQuestion) return "Vui lòng chọn câu hỏi cần xóa.";
+      if (selectedQuestion.daSuDung) return "Câu hỏi đã phát sinh bài thi nên không được xóa.";
+      return "";
+    }
+
+    if (action === "undo") {
+      return isEditing() ? "" : "Chưa có thao tác thêm hoặc hiệu chỉnh nào để phục hồi.";
+    }
+
+    if (action === "exit") {
+      return isEditing() ? "" : "Hiện không có thao tác thêm hoặc hiệu chỉnh nào để thoát.";
+    }
+
+    if (action === "save") {
+      return isEditing() ? "" : "Vui lòng chọn chức năng Thêm hoặc Hiệu chỉnh trước khi ghi.";
+    }
+
+    return "";
+  };
+
+  const showLockedActionMessage = (action) => {
+    const message = getLockedActionMessage(action);
+
+    if (!message) return false;
+    setMessage(message, "warning");
+    return true;
+  };
+
+  const getLockedFormMessage = () => {
+    const selectedQuestion = getSelectedQuestion();
+
+    if (!canMutate) {
+      return "PGV chỉ được xem danh sách câu hỏi, không được nhập hoặc hiệu chỉnh.";
+    }
+
+    if (!selectedQuestion) {
+      return "Vui lòng bấm Thêm để nhập câu hỏi mới, hoặc chọn một câu hỏi rồi bấm Hiệu chỉnh.";
+    }
+
+    if (selectedQuestion.daSuDung) {
+      return "Câu hỏi đã phát sinh bài thi nên chỉ được xem, không được hiệu chỉnh.";
+    }
+
+    return "Bấm Hiệu chỉnh để sửa câu hỏi đã chọn, hoặc bấm Thêm để nhập câu hỏi mới.";
   };
 
   const clearForm = () => {
@@ -301,7 +406,16 @@ if (questionBankForm) {
     if (button) selectQuestion(button.dataset.questionId);
   });
 
+  elements.formBody.addEventListener("pointerdown", (event) => {
+    if (!questionBankForm.classList.contains("form-locked")) return;
+
+    event.preventDefault();
+    setMessage(getLockedFormMessage(), "warning");
+  });
+
   elements.btnAdd.addEventListener("click", () => {
+    if (showLockedActionMessage("add")) return;
+
     clearForm();
     state.selectedQuestionId = null;
     setMode("create");
@@ -309,13 +423,16 @@ if (questionBankForm) {
   });
 
   elements.btnEdit.addEventListener("click", () => {
-    if (!state.selectedQuestionId) return;
+    if (showLockedActionMessage("edit")) return;
+
     setMode("edit");
     setMessage("Đang hiệu chỉnh câu hỏi đã chọn.", "info");
   });
 
   elements.btnUndo.addEventListener("click", () => {
-    const question = state.questions.find((item) => item.cauHoi === state.selectedQuestionId);
+    if (showLockedActionMessage("undo")) return;
+
+    const question = getSelectedQuestion();
     if (state.mode === "create") {
       clearForm();
       setMode("create");
@@ -336,7 +453,9 @@ if (questionBankForm) {
   });
 
   elements.btnExitMode.addEventListener("click", () => {
-    const question = state.questions.find((item) => item.cauHoi === state.selectedQuestionId);
+    if (showLockedActionMessage("exit")) return;
+
+    const question = getSelectedQuestion();
     if (question) fillForm(question);
     else clearForm();
     setMode("view");
@@ -344,6 +463,8 @@ if (questionBankForm) {
   });
 
   elements.btnSave.addEventListener("click", async () => {
+    if (showLockedActionMessage("save")) return;
+
     const payload = getPayload();
     const validationMessage = validatePayload(payload);
     if (validationMessage) {
@@ -373,7 +494,8 @@ if (questionBankForm) {
   });
 
   elements.btnDelete.addEventListener("click", async () => {
-    if (!state.selectedQuestionId) return;
+    if (showLockedActionMessage("delete")) return;
+
     const confirmed = window.confirm("Xóa câu hỏi đã chọn?");
     if (!confirmed) return;
 

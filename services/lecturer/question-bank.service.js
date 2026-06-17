@@ -16,6 +16,8 @@ const ROLE = {
 
 const normalizeText = (value) => (typeof value === "string" ? value.trim() : "");
 
+const normalizeAnswerForCompare = (value) => normalizeText(value).replace(/\s+/g, " ").toLowerCase();
+
 const normalizeUser = (user) => {
   if (!user) return null;
 
@@ -135,6 +137,24 @@ const validateQuestionPayload = (payload) => {
 
   if (!["A", "B", "C", "D"].includes(payload.dapAnDung)) {
     throw new QuestionBankError("Đáp án đúng chỉ được là A, B, C hoặc D.", 400);
+  }
+
+  const answers = [
+    ["A", payload.dapAnA],
+    ["B", payload.dapAnB],
+    ["C", payload.dapAnC],
+    ["D", payload.dapAnD],
+  ];
+  const seenAnswers = new Map();
+
+  for (const [label, answer] of answers) {
+    const normalizedAnswer = normalizeAnswerForCompare(answer);
+
+    if (seenAnswers.has(normalizedAnswer)) {
+      throw new QuestionBankError(`Đáp án ${seenAnswers.get(normalizedAnswer)} và ${label} không được trùng nhau.`, 400);
+    }
+
+    seenAnswers.set(normalizedAnswer, label);
   }
 };
 
