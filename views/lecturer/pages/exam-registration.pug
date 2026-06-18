@@ -1,10 +1,10 @@
 extends ../layouts/default.pug
-include ../../lecturer/mixins/crud.pug
+include ../mixins/crud.pug
 
 block main
-	- const canMutate = false
+	- const canMutate = currentUser && currentUser.role === "GIANGVIEN"
 	.section-1
-		form.inner-form#examRegistrationForm(data-can-mutate=canMutate ? "true" : "false" data-api-base="/admin/exam-registration")
+		form.inner-form#examRegistrationForm(data-can-mutate=canMutate ? "true" : "false" data-api-base="/lecturer/exam-registration")
 			input(type="hidden" id="originalSubject")
 			input(type="hidden" id="originalClass")
 			input(type="hidden" id="originalAttempt")

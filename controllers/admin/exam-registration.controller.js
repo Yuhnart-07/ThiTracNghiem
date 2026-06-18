@@ -1,5 +1,4 @@
-module.exports.test =  (req, res) => {
-  res.render('admin/pages/exam-registration', {
-    pageTitle: "Đăng kí thi"
-  }) 
-};
+const service=require("../../services/lecturer/exam-registration.service");
+const assertPgv=(req)=>{if(String(req.user?.role||"").toUpperCase()!=="PGV"){const error=new Error("Chỉ PGV được truy cập màn hình theo dõi đăng ký thi.");error.statusCode=req.user?403:401;throw error;}};
+module.exports.page=async(req,res)=>{try{assertPgv(req);const data=await service.getPageData(req.user);return res.render("admin/pages/exam-registration",{pageTitle:"Theo dõi đăng ký thi",currentUser:data.user,classes:data.classes,subjects:data.subjects});}catch(e){return res.status(e.statusCode||500).send(e.message);}};
+module.exports.list=async(req,res)=>{try{assertPgv(req);return res.json({success:true,data:await service.getRegistrations(req.user,req.query)});}catch(e){return res.status(e.statusCode||500).json({success:false,message:e.message});}};

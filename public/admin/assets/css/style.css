@@ -253,6 +253,30 @@ header .inner-account .inner-role {
   }
 }
 
+/* Module 4.6 - đăng ký thi */
+#examRegistrationForm .inner-wrap { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.exam-registration-actions { display:flex; flex-wrap:wrap; gap:10px; margin-top:20px; }
+.question-bank-message { display:none; padding:12px 14px; margin-bottom:16px; border-radius:8px; background:#edf5ff; color:#174a7a; }
+.question-bank-message.active { display:block; }
+.question-bank-message[data-type="error"] { background:#fff0f0; color:#a12020; }
+.question-bank-message[data-type="warning"] { background:#fff8e5; color:#755400; }
+.question-bank-message[data-type="success"] { background:#eaf8ef; color:#176b39; }
+.registration-filter-panel { margin-bottom:20px; padding:16px; border:1px solid var(--color-border); border-radius:8px; background:var(--color-bg-light); }
+.registration-filter-panel .filter-grid { display:grid; grid-template-columns:repeat(3,minmax(180px,1fr)) auto; align-items:end; gap:16px; }
+.filter-actions { display:flex; gap:8px; }
+.filter-summary { display:flex; align-items:center; gap:8px; margin-top:12px; color:var(--color-primary); font-size:12px; font-weight:700; }
+.availability-status { display:flex; align-items:center; gap:10px; margin-top:18px; padding:12px 14px; border-radius:8px; background:#F1F5F9; color:#475569; font-size:13px; font-weight:700; }
+.availability-status[data-state="checking"] { background:#EAF3FF; color:var(--color-primary); }
+.availability-status[data-state="valid"] { background:#E7F6EF; color:#137A4B; }
+.availability-status[data-state="invalid"] { background:#FDECEC; color:var(--error); }
+.status-badge { display:inline-flex; padding:4px 8px; border-radius:6px; font-size:11px; font-weight:800; }
+.status-badge.open { background:#E7F6EF; color:#137A4B; }
+.status-badge.locked { background:#FFF1E8; color:#B45309; }
+@media (max-width: 991.98px) { #examRegistrationForm .inner-wrap { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 991.98px) { .registration-filter-panel .filter-grid { grid-template-columns:1fr 1fr; } }
+@media (max-width: 575.98px) { #examRegistrationForm .inner-wrap { grid-template-columns: 1fr; } }
+@media (max-width: 575.98px) { .registration-filter-panel .filter-grid { grid-template-columns:1fr; } }
+
 /* END HEADER */
 
 
