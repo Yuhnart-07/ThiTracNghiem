@@ -1,117 +1,192 @@
 extends ../layouts/default.pug
-include ../../lecturer/mixins/crud.pug
+include ../mixins/crud.pug
 
 block main
-	- const canMutate = false
+	// FORM
 	.section-1
-		form.inner-form#examRegistrationForm(data-can-mutate=canMutate ? "true" : "false" data-api-base="/admin/exam-registration")
-			input(type="hidden" id="originalSubject")
-			input(type="hidden" id="originalClass")
-			input(type="hidden" id="originalAttempt")
-			.question-bank-message#examRegistrationMessage(role="status")
+		form.inner-form(id="examRegistrationForm")
 			.inner-wrap
 				.group-item
-					label.inner-label(for="classSelect") Tên lớp #[span.inner-required *]
-					select.inner-select#classSelect(required)
-						option(value="") Chọn lớp
-						each item in classes
-							option(value=item.maLop) #{item.maLop} - #{item.tenLop}
-				.group-item
-					label.inner-label(for="subjectSelect") Môn học #[span.inner-required *]
-					select.inner-select#subjectSelect(required)
-						option(value="") Chọn môn học
-						each item in subjects
-							option(value=item.maMonHoc) #{item.maMonHoc} - #{item.tenMonHoc}
-				.group-item
-					label.inner-label(for="levelSelect") Trình độ #[span.inner-required *]
-					select.inner-select#levelSelect(required)
-						option(value="A") A
-						option(value="B") B
-						option(value="C") C
-				.group-item
-					label.inner-label(for="attemptInput") Lần thi #[span.inner-required *]
-					input.inner-control#attemptInput(type="number" min="1" max="2" value="1" required)
-				.group-item
-					label.inner-label(for="questionCountInput") Số câu thi #[span.inner-required *]
-					input.inner-control#questionCountInput(type="number" min="10" max="100" value="20" required)
-				.group-item
-					label.inner-label(for="examDateInput") Ngày và giờ thi #[span.inner-required *]
-					input.inner-control#examDateInput(type="datetime-local" required)
-				.group-item
-					label.inner-label(for="durationInput") Thời gian (phút) #[span.inner-required *]
-					input.inner-control#durationInput(type="number" min="5" max="60" value="30" required)
-				.group-item
-					label.inner-label Vai trò
-					input.inner-control.control-readonly(value=currentUser ? currentUser.role : "" readonly)
-			.availability-status#questionAvailabilityStatus(data-state="idle" aria-live="polite")
-				span.material-symbols-outlined#availabilityIcon hourglass_empty
-				span#availabilityText Chọn môn học, trình độ và số câu để hệ thống tự kiểm tra.
+					label.inner-label(for="classSelect")
+						| Tên lớp
+						span.inner-required *
 
+					select.inner-select(
+						id="classSelect"
+						name="className"
+						required
+					)
+						option(value="DBMS")
+							| Database Management Systems
+
+						option(value="AlgoDS")
+							| Data Structures & Algorithms
+
+						option(value="WebTech")
+							| Web Technologies
+
+						option(value="SE")
+							| Software Engineering
+				.group-item
+					label.inner-label(for="subjectSelect")
+						| Môn học
+						span.inner-required *
+
+					select.inner-select(
+						id="subjectSelect"
+						name="subject"
+						required
+					)
+						option(value="DBMS")
+							| Database Management Systems
+
+						option(value="AlgoDS")
+							| Data Structures & Algorithms
+
+						option(value="WebTech")
+							| Web Technologies
+
+						option(value="SE")
+							| Software Engineering
+				.group-item
+					label.inner-label
+						| Trình độ 
+						span.inner-required *
+
+					.level-list
+
+						label.level-item
+							input(
+								type="radio"
+								name="level"
+								value="A"
+							)
+
+							.level-box
+								| A
+
+						label.level-item
+							input(
+								type="radio"
+								name="level"
+								value="B"
+								checked
+							)
+
+							.level-box
+								| B
+
+						label.level-item
+							input(
+								type="radio"
+								name="level"
+								value="C"
+							)
+
+							.level-box
+								| C
+				.group-item
+					label.inner-label(for="count")
+						| Lần thi
+						span.inner-required *
+
+					input.inner-control(
+						type="number"
+						id="count"
+						name="count"
+					)
+				.group-item
+					label.inner-label(for="countQuestion")
+						| Số câu thi
+						span.inner-required *
+
+					input.inner-control(
+						type="number"
+						id="countQuestion"
+						name="countQuestion"
+					)
+				.group-item
+					label.inner-label(for="date")
+						| Ngày thi
+						span.inner-required *
+
+					input.inner-control(
+						type="date"
+						id="date"
+						name="date"
+					)
+				.group-item
+					label.inner-label(for="time")
+						| Thời gian thi
+						span.inner-required *
+
+					input.inner-control(
+						type="number"
+						id="time"
+						name="time"
+					)
 	+crud()
 
+	// TABLE
 	.section-3
 		.inner-head
 			h2.inner-title-main
 				span.inner-dot
 				span DANH SÁCH ĐĂNG KÝ THI
+
 			.inner-tools
 				.inner-filter
-					button.inner-filter-search#btnKeywordSearch(type="button" aria-label="Tìm đăng ký" title="Tìm đăng ký")
-						span.material-symbols-outlined search
-					input.inner-filter-input#tableFilter(type="text" placeholder="Tìm lớp hoặc môn học...")
-				button.inner-filter-button#btnToggleFilters(type="button" aria-label="Bộ lọc đăng ký" title="Bộ lọc đăng ký")
-					span.material-symbols-outlined filter_list
-		.registration-filter-panel#registrationFilterPanel(hidden)
-			.filter-grid
-				.group-item
-					label.inner-label(for="filterClass") Lọc theo lớp
-					select.inner-select#filterClass
-						option(value="") Tất cả lớp
-						each item in classes
-							option(value=item.maLop) #{item.maLop} - #{item.tenLop}
-				.group-item
-					label.inner-label(for="filterSubject") Lọc theo môn học
-					select.inner-select#filterSubject
-						option(value="") Tất cả môn học
-						each item in subjects
-							option(value=item.maMonHoc) #{item.maMonHoc} - #{item.tenMonHoc}
-				.group-item
-					label.inner-label(for="filterLevel") Lọc theo trình độ
-					select.inner-select#filterLevel
-						option(value="") Tất cả trình độ
-						option(value="A") A
-						option(value="B") B
-						option(value="C") C
-				.filter-actions
-					button.inner-button.inner-button-primary#btnApplyFilters(type="button") Áp dụng
-					button.inner-button#btnClearFilters(type="button") Xóa lọc
-			.filter-summary#filterSummary
-				span.material-symbols-outlined filter_list
-				span Chưa áp dụng bộ lọc
+					span.material-symbols-outlined
+						| search
+
+					input.inner-filter-input(
+						type="text"
+						id="tableFilter"
+						placeholder="Tìm kiếm..."
+					)
+
+				button.inner-filter-button(
+					type="button"
+				)
+					span.material-symbols-outlined
+						| filter_list
+
 		.table-2
 			table
 				thead
 					tr
-						th Lớp
-						th Môn học
-						th Trình độ
-						th Lần
-						th Số câu
-						th Ngày giờ thi
-						th Phút
-						th Trạng thái
-						th Giảng viên
-				tbody#recordsTableBody
-					tr
-						td(colspan="9") Đang tải dữ liệu...
-		.inner-pagination
-			p.inner-pagination-text Đang tải 0 đăng ký
-			.inner-pagination-buttons
-				button.inner-page-button#btnPrevPage(type="button")
-					span.material-symbols-outlined chevron_left
-				.inner-page-list#pageList
-				button.inner-page-button#btnNextPage(type="button")
-					span.material-symbols-outlined chevron_right
+						th.text-left Tên lớp
+						th.text-left Môn học
+						th.text-left Trình độ
+						th.text-left Lần thi
+						th.text-left Số câu thi
+						th.text-left Ngày thi
+						th.text-left Thời gian thi
+						th.text-right Hành động
 
-block scripts
-	script(src="/lecturer/assets/js/exam-registration.js")
+				tbody#recordsTableBody
+					//- Render by javascript
+
+		// PAGINATION
+		.inner-pagination
+			p.inner-pagination-text
+				| Displaying 0 of 0 records
+
+			.inner-pagination-buttons
+				button.inner-page-button(
+					type="button"
+					id="btnPrevPage"
+				)
+					span.material-symbols-outlined
+						| chevron_left
+
+				.inner-page-list(
+					id="pageList"
+				)
+
+				button.inner-page-button(
+					type="button"
+					id="btnNextPage"
+				)
+					span.material-symbols-outlined
+						| chevron_right

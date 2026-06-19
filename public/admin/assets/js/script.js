@@ -5,18 +5,17 @@
   const initMobileMenu = () => {
     const buttonMenu = qs(".header .inner-button-menu");
     const sider = qs(".sider");
-    const overlay = qs(".sider-overlay");
+    const main = qs(".main");
+    const iconMenu = qs(".inner-button-menu i");
 
-    if (!buttonMenu || !sider || !overlay) return;
+    if (!buttonMenu || !sider) return;
 
     buttonMenu.addEventListener("click", () => {
-      sider.classList.add("active");
-      overlay.classList.add("active");
-    });
+        sider.classList.toggle("active");
+        main.classList.toggle("active");
 
-    overlay.addEventListener("click", () => {
-      sider.classList.remove("active");
-      overlay.classList.remove("active");
+        iconMenu.classList.toggle("fa-indent");
+        iconMenu.classList.toggle("fa-outdent");
     });
   };
 

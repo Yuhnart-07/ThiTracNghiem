@@ -3,14 +3,43 @@
 :root {
   --color-1: #4880FF;
   --color-2: #202224;
-}
 
+  --background: #F5F6FA;
+  --white: #ffffff;
+
+  --color-primary: #00488D;
+  --color-primary-2: #005FB8;
+
+  --color-text: #171C1F;
+  --color-text-light: #6B7280;
+
+  --color-border: #E0E0E0;
+  --color-border-2: #D6DAE1;
+
+  --color-bg-light: #F8FAFC;
+  --color-bg-blue: #D0E1FB;
+
+  --surface-container-lowest: #ffffff;
+  --surface-container-low: #f3f6fa;
+
+  --primary: #00488D;
+  --on-primary: #ffffff;
+  --on-surface: #171C1F;
+  --on-surface-variant: #6B7280;
+  --outline-variant: #D6DAE1;
+
+  --error: #d93025;
+}
 * {
-  font-family: "Nunito Sans", sans-serif;
+  margin: 0;
+  padding: 0;
   box-sizing: border-box;
+  font-family: "Nunito Sans", sans-serif;
 }
 
 body {
+  background-color: var(--background);
+  color: var(--color-text);
   margin: 0;
 }
 
@@ -23,6 +52,7 @@ button,
 select,
 textarea {
   outline: none;
+  font-family: inherit;
 }
 
 /* CHECKBOX WRAPPER 30 */
@@ -135,7 +165,6 @@ textarea {
 
 .header .inner-logo {
   width: 240px;
-
   display: flex;
   align-items: center;
   justify-content: center;
@@ -155,49 +184,19 @@ textarea {
 }
 
 .header .inner-wrap {
-  flex: 1;
-
   display: flex;
   align-items: center;
-  justify-content: flex-end;
-  gap: 40px;
-
-  margin-right: 30px;
+  gap: 30px;
+  flex: 1;
+  margin-left: 30px;
 }
 
-.header .inner-notify {
-  position: relative;
-}
-
-.header .inner-notify img {
-  height: 25px;
-  width: auto;
-}
-
-.header .inner-notify span {
-  width: 16px;
-  height: 16px;
-
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-
-  position: absolute;
-  top: -5px;
-  right: -5px;
-
-  border-radius: 50%;
-  background-color: #F93C65;
-
-  font-size: 12px;
-  font-weight: 700;
-  color: white;
-}
 
 .header .inner-account {
   display: flex;
+  justify-content: flex-end;
   align-items: center;
-  gap: 10px;
+  margin-right:200px;
 }
 
 .header .inner-account .inner-avatar img {
@@ -227,55 +226,10 @@ header .inner-account .inner-role {
 }
 
 .header .inner-button-menu {
-  display: none;
-}
-
-@media (max-width: 991.98px) {
-  .header .inner-button-menu {
     display: inline-block;
     font-size: 24px;
-  }
-
-  .header .inner-logo {
-    width: auto;
-    margin-left: 30px;
-  }
+    order: -1;
 }
-
-@media (max-width: 575.98px) {
-  .header .inner-logo {
-    margin-left: 15px;
-  }
-
-  .header .inner-wrap {
-    margin-right: 15px;
-    gap: 20px;
-  }
-}
-
-/* Module 4.6 - đăng ký thi */
-#examRegistrationForm .inner-wrap { grid-template-columns: repeat(4, minmax(0, 1fr)); }
-.exam-registration-actions { display:flex; flex-wrap:wrap; gap:10px; margin-top:20px; }
-.question-bank-message { display:none; padding:12px 14px; margin-bottom:16px; border-radius:8px; background:#edf5ff; color:#174a7a; }
-.question-bank-message.active { display:block; }
-.question-bank-message[data-type="error"] { background:#fff0f0; color:#a12020; }
-.question-bank-message[data-type="warning"] { background:#fff8e5; color:#755400; }
-.question-bank-message[data-type="success"] { background:#eaf8ef; color:#176b39; }
-.registration-filter-panel { margin-bottom:20px; padding:16px; border:1px solid var(--color-border); border-radius:8px; background:var(--color-bg-light); }
-.registration-filter-panel .filter-grid { display:grid; grid-template-columns:repeat(3,minmax(180px,1fr)) auto; align-items:end; gap:16px; }
-.filter-actions { display:flex; gap:8px; }
-.filter-summary { display:flex; align-items:center; gap:8px; margin-top:12px; color:var(--color-primary); font-size:12px; font-weight:700; }
-.availability-status { display:flex; align-items:center; gap:10px; margin-top:18px; padding:12px 14px; border-radius:8px; background:#F1F5F9; color:#475569; font-size:13px; font-weight:700; }
-.availability-status[data-state="checking"] { background:#EAF3FF; color:var(--color-primary); }
-.availability-status[data-state="valid"] { background:#E7F6EF; color:#137A4B; }
-.availability-status[data-state="invalid"] { background:#FDECEC; color:var(--error); }
-.status-badge { display:inline-flex; padding:4px 8px; border-radius:6px; font-size:11px; font-weight:800; }
-.status-badge.open { background:#E7F6EF; color:#137A4B; }
-.status-badge.locked { background:#FFF1E8; color:#B45309; }
-@media (max-width: 991.98px) { #examRegistrationForm .inner-wrap { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
-@media (max-width: 991.98px) { .registration-filter-panel .filter-grid { grid-template-columns:1fr 1fr; } }
-@media (max-width: 575.98px) { #examRegistrationForm .inner-wrap { grid-template-columns: 1fr; } }
-@media (max-width: 575.98px) { .registration-filter-panel .filter-grid { grid-template-columns:1fr; } }
 
 /* END HEADER */
 
@@ -294,6 +248,7 @@ header .inner-account .inner-role {
 
   background-color: white;
   border-right: 1px solid #E0E0E0;
+  display: none;
 }
 
 .sider .inner-menu {
@@ -361,32 +316,12 @@ header .inner-account .inner-role {
   border: 1px solid #E0E0E0;
 }
 
-@media (max-width: 991.98px) {
-  .sider {
+.sider {
     display: none;
-  }
+}
 
-  .sider.active {
-    display: block;
-    z-index: 10000;
-    top: 0;
-    height: 100%;
-  }
-
-  .sider-overlay.active {
-    display: block;
-
-    position: fixed;
-    top: 0;
-    left: 0;
-    z-index: 9999;
-
-    width: 100%;
-    height: 100%;
-
-    background-color: rgba(0, 0, 0, 0.449);
-    cursor: pointer;
-  }
+.sider.active {
+  display: inline-block;
 }
 
 /* END SIDER */
@@ -395,43 +330,23 @@ header .inner-account .inner-role {
 /* MAIN */
 
 .main {
-  width: calc(100% - 240px);
+  width: 100%;
   min-height: calc(100vh - 70px);
 
   position: absolute;
   top: 70px;
-  left: 240px;
+  left: 0;
 
   padding: 30px;
 
   background-color: #F5F6FA;
+  
+  transition: all 0.3s ease;
 }
-
-@media (max-width: 991.98px) {
-  .main {
-    left: 0;
-    width: 100%;
-  }
+.main.active {
+  width: calc(100% - 240px);
+  left: 240px;
 }
-
-@media (max-width: 575.98px) {
-  .main {
-    padding: 30px 15px;
-  }
-}
-
-@media (max-width: 1199.98px) {
-  .section-1 {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
-@media (max-width: 767.98px) {
-  .section-1 {
-    grid-template-columns: repeat(1, 1fr);
-  }
-}
-
 /* END MAIN */
 
 
@@ -447,66 +362,6 @@ header .inner-account .inner-role {
 }
 
 /* END BOX TITLE */
-
-@import url('https://fonts.googleapis.com/css2?family=Lexend:wght@100..900&family=Nunito+Sans:ital,opsz,wght@0,6..12,200..1000;1,6..12,200..1000&display=swap');
-
-:root {
-  --color-1: #4880FF;
-  --color-2: #202224;
-
-  --background: #F5F6FA;
-  --white: #ffffff;
-
-  --color-primary: #00488D;
-  --color-primary-2: #005FB8;
-
-  --color-text: #171C1F;
-  --color-text-light: #6B7280;
-
-  --color-border: #E0E0E0;
-  --color-border-2: #D6DAE1;
-
-  --color-bg-light: #F8FAFC;
-  --color-bg-blue: #D0E1FB;
-
-  --surface-container-lowest: #ffffff;
-  --surface-container-low: #f3f6fa;
-
-  --primary: #00488D;
-  --on-primary: #ffffff;
-  --on-surface: #171C1F;
-  --on-surface-variant: #6B7280;
-  --outline-variant: #D6DAE1;
-
-  --error: #d93025;
-}
-
-
-/* RESET */
-
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  font-family: "Nunito Sans", sans-serif;
-}
-
-body {
-  background-color: var(--background);
-  color: var(--color-text);
-}
-
-a {
-  text-decoration: none;
-}
-
-input,
-button,
-select,
-textarea {
-  outline: none;
-  font-family: inherit;
-}
 
 
 /* SECTION 1 */
@@ -928,3 +783,49 @@ textarea {
 	box-shadow: 0 4px 10px rgba(0, 72, 141, 0.18);
 	transform: translateY(-1px);
 }
+
+/* Module 4.6 - đăng ký thi */
+
+#examRegistrationForm .inner-wrap { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+
+.exam-registration-actions { display:flex; flex-wrap:wrap; gap:10px; margin-top:20px; }
+
+.question-bank-message { display:none; padding:12px 14px; margin-bottom:16px; border-radius:8px; background:#edf5ff; color:#174a7a; }
+
+.question-bank-message.active { display:block; }
+
+.question-bank-message[data-type="error"] { background:#fff0f0; color:#a12020; }
+
+.question-bank-message[data-type="warning"] { background:#fff8e5; color:#755400; }
+
+.question-bank-message[data-type="success"] { background:#eaf8ef; color:#176b39; }
+
+.registration-filter-panel { margin-bottom:20px; padding:16px; border:1px solid var(--color-border); border-radius:8px; background:var(--color-bg-light); }
+
+.registration-filter-panel .filter-grid { display:grid; grid-template-columns:repeat(3,minmax(180px,1fr)) auto; align-items:end; gap:16px; }
+
+.filter-actions { display:flex; gap:8px; }
+
+.filter-summary { display:flex; align-items:center; gap:8px; margin-top:12px; color:var(--color-primary); font-size:12px; font-weight:700; }
+
+.availability-status { display:flex; align-items:center; gap:10px; margin-top:18px; padding:12px 14px; border-radius:8px; background:#F1F5F9; color:#475569; font-size:13px; font-weight:700; }
+
+.availability-status[data-state="checking"] { background:#EAF3FF; color:var(--color-primary); }
+
+.availability-status[data-state="valid"] { background:#E7F6EF; color:#137A4B; }
+
+.availability-status[data-state="invalid"] { background:#FDECEC; color:var(--error); }
+
+.status-badge { display:inline-flex; padding:4px 8px; border-radius:6px; font-size:11px; font-weight:800; }
+
+.status-badge.open { background:#E7F6EF; color:#137A4B; }
+
+.status-badge.locked { background:#FFF1E8; color:#B45309; }
+
+@media (max-width: 991.98px) { #examRegistrationForm .inner-wrap { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+
+@media (max-width: 991.98px) { .registration-filter-panel .filter-grid { grid-template-columns:1fr 1fr; } }
+
+@media (max-width: 575.98px) { #examRegistrationForm .inner-wrap { grid-template-columns: 1fr; } }
+
+@media (max-width: 575.98px) { .registration-filter-panel .filter-grid { grid-template-columns:1fr; } }

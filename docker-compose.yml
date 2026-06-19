@@ -13,7 +13,7 @@ services:
       DB_PORT: 1433
       DB_DATABASE: THITRACNGHIEM
       DB_USER: sa
-      DB_PASSWORD: ThiTracNghiem@2026
+      DB_PASSWORD: 1182005@Phuc
       DB_ENCRYPT: "false"
       DB_TRUST_SERVER_CERTIFICATE: "true"
     ports:
@@ -30,11 +30,11 @@ services:
     container_name: thi-trac-nghiem-db
     environment:
       ACCEPT_EULA: "Y"
-      MSSQL_SA_PASSWORD: ThiTracNghiem@2026
+      MSSQL_SA_PASSWORD: 1182005@Phuc
       MSSQL_PID: Developer
       DB_NAME: THITRACNGHIEM
     ports:
-      - "1433:1433"
+      - "1434:1433"
     volumes:
       - mssql-data:/var/opt/mssql
     healthcheck:

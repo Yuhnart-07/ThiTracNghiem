@@ -9,11 +9,11 @@ const toBoolean = (value, defaultValue) => {
 };
 
 const dbConfig = {
-  server: process.env.DB_SERVER || 'ThiTracNghiem',
+  server: process.env.DB_SERVER || 'localhost',
   port: Number(process.env.DB_PORT) || 1433,
   database: process.env.DB_DATABASE || 'THITRACNGHIEM',
   user: process.env.DB_USER || 'sa',
-  password: process.env.DB_PASSWORD || 'ThiTracNghiem@2026',
+  password: process.env.DB_PASSWORD || '1182005@Phuc',
   options: {
     encrypt: toBoolean(process.env.DB_ENCRYPT, false),
     trustServerCertificate: toBoolean(process.env.DB_TRUST_SERVER_CERTIFICATE, true),
