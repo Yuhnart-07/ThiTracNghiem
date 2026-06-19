@@ -29,11 +29,40 @@ module.exports.examRegistration = async (req, res) => {
     return res.render("lecturer/pages/exam-registration", { pageTitle: "Đăng ký thi", currentUser: data.user, classes: data.classes, subjects: data.subjects });
   } catch (error) { return res.status(error.statusCode || 500).send(error.message); }
 };
-module.exports.getExamRegistrations = async (req,res)=>{try{return res.json({success:true,data:await examRegistrationService.getRegistrations(getCurrentUser(req,res),req.query)});}catch(e){return sendExamRegistrationError(res,e);}};
-module.exports.checkExamQuestions = async (req,res)=>{try{return res.json({success:true,data:await examRegistrationService.checkQuestions(getCurrentUser(req,res),req.body)});}catch(e){return sendExamRegistrationError(res,e);}};
-module.exports.createExamRegistration = async (req,res)=>{try{const data=await examRegistrationService.create(getCurrentUser(req,res),req.body);return res.status(201).json({success:true,message:data?.ThongBao||"Đăng ký thi thành công."});}catch(e){return sendExamRegistrationError(res,e);}};
-module.exports.updateExamRegistration = async (req,res)=>{try{const data=await examRegistrationService.update(getCurrentUser(req,res),req.params,req.body);return res.json({success:true,message:data?.ThongBao||"Cập nhật đăng ký thi thành công."});}catch(e){return sendExamRegistrationError(res,e);}};
-module.exports.deleteExamRegistration = async (req,res)=>{try{const data=await examRegistrationService.remove(getCurrentUser(req,res),req.params);return res.json({success:true,message:data?.ThongBao||"Xóa đăng ký thi thành công."});}catch(e){return sendExamRegistrationError(res,e);}};
+module.exports.getExamRegistrations = async (req,res)=>{
+  try{
+    return res.json({success:true,data:await examRegistrationService.getRegistrations(getCurrentUser(req,res),req.query)});
+  }catch(e){
+    return sendExamRegistrationError(res,e);
+  }};
+
+module.exports.checkExamQuestions = async (req,res)=>{
+  try{
+    return res.json({success:true,data:await examRegistrationService.checkQuestions(getCurrentUser(req,res),req.body)});
+  }catch(e){
+    return sendExamRegistrationError(res,e);
+  }};
+
+module.exports.createExamRegistration = async (req,res)=>{
+  try{const data=await examRegistrationService.create(getCurrentUser(req,res),req.body);
+    return res.status(201).json({success:true,message:data?.ThongBao||"Đăng ký thi thành công."});
+  }catch(e){
+    return sendExamRegistrationError(res,e);
+  }};
+
+module.exports.updateExamRegistration = async (req,res)=>{
+  try{const data=await examRegistrationService.update(getCurrentUser(req,res),req.params,req.body);
+    return res.json({success:true,message:data?.ThongBao||"Cập nhật đăng ký thi thành công."});
+  }catch(e){
+    return sendExamRegistrationError(res,e);
+  }};
+
+module.exports.deleteExamRegistration = async (req,res)=>{
+  try{const data=await examRegistrationService.remove(getCurrentUser(req,res),req.params);
+    return res.json({success:true,message:data?.ThongBao||"Xóa đăng ký thi thành công."});
+  }catch(e){
+    return sendExamRegistrationError(res,e);
+  }};
 
 module.exports.questionBank = async (req, res) => {
   try {
