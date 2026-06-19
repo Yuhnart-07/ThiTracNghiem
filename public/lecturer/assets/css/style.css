@@ -424,19 +424,9 @@ textarea {
 	text-overflow: ellipsis;
 }
 
-.table-action {
-	border: 1px solid var(--color-border);
-	border-radius: 6px;
-	background-color: var(--white);
-	color: var(--color-primary);
-	font-size: 12px;
-	font-weight: 700;
-	padding: 7px 10px;
-	cursor: pointer;
-}
-
-.table-action:hover {
-	background-color: var(--color-bg-light);
+.table-2 tbody tr:focus-visible {
+	outline: 2px solid var(--color-primary);
+	outline-offset: -2px;
 }
 
 .status-badge {

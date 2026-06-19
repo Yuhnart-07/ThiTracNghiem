@@ -248,7 +248,7 @@ const createQuestion = async (currentUser, body) => {
   validateQuestionPayload(payload);
   await assertReferenceDataExists(payload);
 
-  // Database tự sinh CAUHOI bằng SEQUENCE bên trong sp_ThemCauHoi.
+  // Database tự cấp CAUHOI liên tục bên trong sp_ThemCauHoi.
   return questionBankRepository.createQuestion(payload);
 };
 

@@ -318,12 +318,12 @@ if (questionBankForm) {
     const visibleQuestions = questions.slice(startIndex, startIndex + pageSize);
 
     if (visibleQuestions.length === 0) {
-      elements.tableBody.innerHTML = `<tr><td colspan="7" class="text-center">Không có dữ liệu</td></tr>`;
+      elements.tableBody.innerHTML = `<tr><td colspan="6" class="text-center">Không có dữ liệu</td></tr>`;
     } else {
       elements.tableBody.innerHTML = visibleQuestions
         .map(
           (question) => `
-            <tr data-question-id="${question.cauHoi}" class="${question.cauHoi === state.selectedQuestionId ? "selected" : ""}">
+            <tr data-question-id="${question.cauHoi}" tabindex="0" title="Nhấn để chọn câu hỏi" aria-selected="${question.cauHoi === state.selectedQuestionId}" class="${question.cauHoi === state.selectedQuestionId ? "selected" : ""}">
               <td class="text-left">${question.cauHoi}</td>
               <td class="text-left">${escapeHtml(question.tenMonHoc || question.maMonHoc)}</td>
               <td class="text-left">${escapeHtml(question.trinhDo)}</td>
@@ -333,11 +333,6 @@ if (questionBankForm) {
                 <span class="status-badge ${question.daSuDung ? "locked" : "open"}">
                   ${question.daSuDung ? "Đã dùng" : "Có thể sửa"}
                 </span>
-              </td>
-              <td class="text-right">
-                <button class="table-action" type="button" data-action="select" data-question-id="${question.cauHoi}">
-                  Chọn
-                </button>
               </td>
             </tr>
           `,
@@ -402,8 +397,16 @@ if (questionBankForm) {
   };
 
   elements.tableBody.addEventListener("click", (event) => {
-    const button = event.target.closest("[data-question-id]");
-    if (button) selectQuestion(button.dataset.questionId);
+    const row = event.target.closest("tr[data-question-id]");
+    if (row) selectQuestion(row.dataset.questionId);
+  });
+
+  elements.tableBody.addEventListener("keydown", (event) => {
+    if (!["Enter", " "].includes(event.key)) return;
+    const row = event.target.closest("tr[data-question-id]");
+    if (!row) return;
+    event.preventDefault();
+    selectQuestion(row.dataset.questionId);
   });
 
   elements.formBody.addEventListener("pointerdown", (event) => {
