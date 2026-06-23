@@ -15,4 +15,18 @@ const checkQuestions=async(u,b)=>{assertWrite(u);const p=payloadOf(b,"");if(!p.m
 const create=async(u,b)=>{try{const x=assertWrite(u);rejectIdentity(b);const p=payloadOf(b,x.maGiangVien);validate(p);return await repo.createRegistration(p);}catch(e){return sqlError(e);}};
 const update=async(u,k,b)=>{try{const x=assertWrite(u);rejectIdentity(b);const p=payloadOf(b,x.maGiangVien);validate(p);return await repo.updateRegistration(keyOf(k),p);}catch(e){return sqlError(e);}};
 const remove=async(u,k)=>{try{const x=assertWrite(u);return await repo.deleteRegistration(keyOf(k),x.maGiangVien);}catch(e){return sqlError(e);}};
-module.exports={ExamRegistrationError,getPageData,getRegistrations,checkQuestions,create,update,remove};
+const removeMultiple=async(u,items)=>{
+  try{
+    const x=assertWrite(u);
+    if(!Array.isArray(items) || items.length === 0){
+      throw new ExamRegistrationError("Danh sách đăng ký cần xóa không hợp lệ.",400);
+    }
+    for(const item of items){
+      await repo.deleteRegistration(keyOf(item), x.maGiangVien);
+    }
+    return { ThongBao: "Xóa các đăng ký thi thành công." };
+  }catch(e){
+    return sqlError(e);
+  }
+};
+module.exports={ExamRegistrationError,getPageData,getRegistrations,checkQuestions,create,update,remove,removeMultiple};

@@ -1,101 +1,313 @@
 extends ../layouts/default.pug
 include ../mixins/crud.pug
+include ../mixins/checkbox.pug
 
 block main
-	// FORM
-	.section-1.cols-2
-		form.inner-form(id="subjectForm")
+	// ALERT MESSAGE
+	.inner-message-alert(id="alertMessage" style="display:none; padding: 12px; margin-bottom: 15px; border-radius: 6px; font-weight: 500;")
+	
+	// ==========================================================
+	// VIEW CHẾ ĐỘ QUẢN LÝ LỚP HỌC (CLASS VIEW)
+	// ==========================================================
+	div(id="classViewContainer")
+		// FORM LỚP
+		.section-1.cols-2
+			form.inner-form(id="classForm" data-api-base="/admin/class-management")
+				.inner-wrap
+					.group-item
+						label.inner-label(for="classCode")
+							| Mã lớp
+							span.inner-required *
+
+						input.inner-control(
+							type="text"
+							id="classCode"
+							name="classCode"
+							placeholder="e.g. D15CNPM"
+						)
+
+						p.inner-help
+							| Yêu cầu mã lớp duy nhất *
+
+					.group-item
+						label.inner-label(for="className")
+							| Tên lớp
+							span.inner-required *
+
+						input.inner-control(
+							type="text"
+							id="className"
+							name="className"
+							placeholder="e.g. Công nghệ phần mềm K15"
+						)
+
+						p.inner-help
+							| Tên lớp học hiển thị trong báo cáo *
+
+		// CRUD CHO LỚP
+		+crud()
+
+		// BẢNG DANH SÁCH LỚP HỌC
+		.section-3
+			.inner-head
+				h2.inner-title-main
+					span.inner-dot
+					span DANH SÁCH LỚP HỌC
+
+				.inner-tools
+					.inner-filter
+						span.material-symbols-outlined
+							| search
+
+						input.inner-filter-input(
+							type="text"
+							id="classTableFilter"
+							placeholder="Tìm kiếm lớp..."
+						)
+
+			.table-2
+				table
+					thead
+						tr
+							th.text-left(style="width: 50px;")
+								+checkbox-30("checkAllClasses", "checkAllClasses", "all")
+							th.text-left Mã lớp
+							th.text-left Tên lớp
+							th.text-center Số lượng SV
+							th.text-right Hành động
+					tbody#classTableBody
+						tr
+							td(colspan="5" style="text-align: center; padding: 20px; color: #a0aec0;") Đang tải danh sách lớp...
+
+			// PAGINATION CHO LỚP
+			.inner-pagination
+				p.inner-pagination-text(id="classPaginationText")
+					| Displaying 0 of 0 records
+
+				.inner-pagination-buttons
+					button.inner-page-button(
+						type="button"
+						id="btnClassPrevPage"
+					)
+						span.material-symbols-outlined
+							| chevron_left
+
+					.inner-page-list(
+						id="classPageList"
+					)
+
+					button.inner-page-button(
+						type="button"
+						id="btnClassNextPage"
+					)
+						span.material-symbols-outlined
+							| chevron_right
+
+			// Nút thao tác chuyển subform nhanh
+			.inner-tools(style="margin-top: 15px; display: flex; justify-content: flex-end;")
+				button.inner-button(
+					type="button"
+					id="btnGoToSubform"
+					disabled
+					class="disabled"
+					style="background: #3182ce; color: #fff; padding: 10px 20px;"
+				)
+					span.material-symbols-outlined(style="margin-right: 5px;")
+						| group
+					span Quản lý Sinh viên lớp đang chọn
+
+	// ==========================================================
+	// SUBFORM QUẢN LÝ SINH VIÊN (STUDENT SUBFORM)
+	// ==========================================================
+	div(id="studentSubformContainer" style="display:none;")
+		// THANH HEADER CỦA SUBFORM
+		.section-2(style="margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center;")
+			button.inner-button(
+				type="button"
+				id="btnBackToClass"
+				style="background: #718096; color: #fff;"
+			)
+				span.material-symbols-outlined
+					| arrow_back
+				span Quay lại Danh sách lớp
+			
+			h2.inner-title-main(style="margin: 0; font-size: 1.4rem; color: #2d3748;")
+				span.inner-dot(style="background: #3182ce;")
+				| QUẢN LÝ SINH VIÊN - LỚP: 
+				span(id="selectedClassNameLabel" style="color: #3182ce; font-weight: 700;") ...
+
+		// FORM SINH VIÊN
+		.section-1.cols-2(style="margin-bottom: 15px;")
+			form.inner-form(id="studentForm")
+				.inner-wrap
+					.group-item
+						label.inner-label(for="studentId")
+							| Mã sinh viên
+							span.inner-required *
+						input.inner-control(
+							type="text"
+							id="studentId"
+							name="studentId"
+							placeholder="e.g. SV000001"
+						)
+					.group-item
+						label.inner-label(for="studentLastName")
+							| Họ sinh viên
+							span.inner-required *
+						input.inner-control(
+							type="text"
+							id="studentLastName"
+							name="studentLastName"
+							placeholder="e.g. Nguyễn Văn"
+						)
+					.group-item
+						label.inner-label(for="studentFirstName")
+							| Tên sinh viên
+							span.inner-required *
+						input.inner-control(
+							type="text"
+							id="studentFirstName"
+							name="studentFirstName"
+							placeholder="e.g. An"
+						)
+					.group-item
+						label.inner-label(for="studentBirth")
+							| Ngày sinh
+						input.inner-control(
+							type="date"
+							id="studentBirth"
+							name="studentBirth"
+						)
+					.group-item
+						label.inner-label(for="studentAddress")
+							| Địa chỉ
+						input.inner-control(
+							type="text"
+							id="studentAddress"
+							name="studentAddress"
+							placeholder="e.g. Quận 1, TP. HCM"
+						)
+
+		// CRUD CHO SINH VIÊN
+		.section-2
 			.inner-wrap
-				.group-item
-					label.inner-label(for="subjectCode")
-						| Mã lớp
-						span.inner-required *
+				.inner-left
+					span.inner-badge(id="svModeBadge")
+						| VIEW MODE
 
-					input.inner-control(
-						type="text"
-						id="subjectCode"
-						name="subjectCode"
-						placeholder="e.g. CS101"
+					.inner-divider
+
+					button.inner-button.inner-button-primary(
+						type="button"
+						id="svBtnAdd"
+					)
+						span.material-symbols-outlined
+							| add
+						span Thêm
+
+					button.inner-button.disabled(
+						type="button"
+						id="svBtnEdit"
+						disabled
+					)
+						span.material-symbols-outlined
+							| edit
+						span Hiệu chỉnh
+
+					button.inner-button.disabled(
+						type="button"
+						id="svBtnDelete"
+						disabled
+					)
+						span.material-symbols-outlined
+							| delete
+						span Xóa
+
+					button.inner-button.disabled(
+						type="button"
+						id="svBtnUndo"
+						disabled
+					)
+						span.material-symbols-outlined
+							| undo
+						span Phục hồi
+
+				.inner-right
+					button.inner-button(
+						type="button"
+						id="svBtnSearch"
+					)
+						span.material-symbols-outlined
+							| search
+						span Tìm
+
+					button.inner-button.disabled(
+						type="button"
+						id="svBtnSave"
+						disabled
+					)
+						span.material-symbols-outlined
+							| save
+						span Ghi
+
+		// DANH SÁCH SINH VIÊN CỦA LỚP
+		.section-3(style="margin-top: 20px;")
+			.inner-head
+				h3.inner-title-main(style="font-size: 1.2rem;")
+					span.inner-dot(style="background: #48bb78;")
+					span DANH SÁCH SINH VIÊN
+
+				.inner-tools
+					.inner-filter
+						span.material-symbols-outlined
+							| search
+
+						input.inner-filter-input(
+							type="text"
+							id="studentTableFilter"
+							placeholder="Tìm kiếm sinh viên..."
+						)
+
+			.table-2
+				table
+					thead
+						tr
+							th.text-left(style="width: 50px;")
+								+checkbox-30("checkAllStudents", "checkAllStudents", "all")
+							th.text-left Mã sinh viên
+							th.text-left Họ và tên
+							th.text-left Ngày sinh
+							th.text-left Địa chỉ
+							th.text-right Hành động
+					tbody#studentTableBody
+						tr
+							td(colspan="6" style="text-align: center; padding: 20px; color: #a0aec0;") Vui lòng chọn lớp để hiển thị danh sách sinh viên.
+
+			// PAGINATION CHO SINH VIÊN
+			.inner-pagination
+				p.inner-pagination-text(id="studentPaginationText")
+					| Displaying 0 of 0 records
+
+				.inner-pagination-buttons
+					button.inner-page-button(
+						type="button"
+						id="btnStudentPrevPage"
+					)
+						span.material-symbols-outlined
+							| chevron_left
+
+					.inner-page-list(
+						id="studentPageList"
 					)
 
-					p.inner-help
-						| Yêu cầu mã môn duy nhất *
-
-				.group-item
-					label.inner-label(for="subjectName")
-						| Tên lớp
-						span.inner-required *
-
-					input.inner-control(
-						type="text"
-						id="subjectName"
-						name="subjectName"
-						placeholder="e.g. Advanced Algorithms"
+					button.inner-page-button(
+						type="button"
+						id="btnStudentNextPage"
 					)
+						span.material-symbols-outlined
+							| chevron_right
 
-					p.inner-help
-						| Tên môn học hiển thị trong báo cáo *
-
-	+crud()
-
-	// TABLE
-	.section-3
-		.inner-head
-			h2.inner-title-main
-				span.inner-dot
-				span MÔN HỌC
-
-			.inner-tools
-				.inner-filter
-					span.material-symbols-outlined
-						| search
-
-					input.inner-filter-input(
-						type="text"
-						id="tableFilter"
-						placeholder="Tìm kiếm..."
-					)
-
-				button.inner-filter-button(
-					type="button"
-				)
-					span.material-symbols-outlined
-						| filter_list
-
-		.table-2
-			table
-				thead
-					tr
-						th.text-left Mã sinh viên
-						th.text-left Họ
-						th.text-left Tên 
-						th.text-left Giới tính 
-						th.text-left Ngày Sinh
-						th.text-right Hành động
-
-				tbody#recordsTableBody
-					//- Render by javascript
-
-		// PAGINATION
-		.inner-pagination
-			p.inner-pagination-text
-				| Displaying 0 of 0 records
-
-			.inner-pagination-buttons
-				button.inner-page-button(
-					type="button"
-					id="btnPrevPage"
-				)
-					span.material-symbols-outlined
-						| chevron_left
-
-				.inner-page-list(
-					id="pageList"
-				)
-
-				button.inner-page-button(
-					type="button"
-					id="btnNextPage"
-				)
-					span.material-symbols-outlined
-						| chevron_right
+	// IMPORT SCRIPTS
+	script(src="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.js")
+	link(rel="stylesheet" href="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.css")
+	script(src="/admin/assets/js/class-management.js")

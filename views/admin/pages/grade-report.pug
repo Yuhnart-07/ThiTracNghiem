@@ -13,20 +13,14 @@ block main
 
 					select.inner-select(
 						id="classSelect"
-						name="className"
+						name="maLop"
 						required
 					)
-						option(value="DBMS")
-							| Database Management Systems
+						option(value="") -- Chọn lớp --
+						if classes && classes.length
+							each cls in classes
+								option(value=cls.maLop) #{cls.tenLop} (#{cls.maLop})
 
-						option(value="AlgoDS")
-							| Data Structures & Algorithms
-
-						option(value="WebTech")
-							| Web Technologies
-
-						option(value="SE")
-							| Software Engineering
 				.group-item
 					label.inner-label(for="subjectSelect")
 						| Tên môn học
@@ -34,20 +28,14 @@ block main
 
 					select.inner-select(
 						id="subjectSelect"
-						name="subjectName"
+						name="maMonHoc"
 						required
 					)
-						option(value="DBMS")
-							| Database Management Systems
+						option(value="") -- Chọn môn học --
+						if subjects && subjects.length
+							each sub in subjects
+								option(value=sub.maMonHoc) #{sub.tenMonHoc} (#{sub.maMonHoc})
 
-						option(value="AlgoDS")
-							| Data Structures & Algorithms
-
-						option(value="WebTech")
-							| Web Technologies
-
-						option(value="SE")
-							| Software Engineering
 				.group-item
 					label.inner-label(for="count")
 						| Lần thi
@@ -56,7 +44,10 @@ block main
 					input.inner-control(
 						type="number"
 						id="count"
-						name="count"
+						name="lanThi"
+						value="1"
+						min="1"
+						required
 					)
 
 
@@ -65,7 +56,7 @@ block main
 		.inner-head
 			h2.inner-title-main
 				span.inner-dot
-				span DANH SÁCH SINH VIÊN
+				span BẢNG ĐIỂM CHI TIẾT
 
 			.inner-tools
 				.inner-filter
@@ -78,12 +69,6 @@ block main
 						placeholder="Tìm kiếm..."
 					)
 
-				button.inner-filter-button(
-					type="button"
-				)
-					span.material-symbols-outlined
-						| filter_list
-
 		.table-2
 			table
 				thead
@@ -92,16 +77,16 @@ block main
 						th.text-left Mã sinh viên
 						th.text-left Họ
 						th.text-left Tên 
-						th.text-left Điểm
+						th.text-left Điểm số
 						th.text-left Điểm chữ
-						th.text-right Hành động
 
 				tbody#recordsTableBody
-					//- Render by javascript
+					tr
+						td(colspan="6" style="text-align: center; padding: 20px; color: #a0aec0;") Vui lòng chọn Lớp, Môn học và Lần thi để xem bảng điểm.
 
 		// PAGINATION
 		.inner-pagination
-			p.inner-pagination-text
+			p.inner-pagination-text(id="paginationText")
 				| Displaying 0 of 0 records
 
 			.inner-pagination-buttons
@@ -122,3 +107,8 @@ block main
 				)
 					span.material-symbols-outlined
 						| chevron_right
+
+	// IMPORT SCRIPTS
+	script(src="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.js")
+	link(rel="stylesheet" href="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.css")
+	script(src="/admin/assets/js/grade-report.js")

@@ -146,7 +146,7 @@ if(loginForm) {
 
       // LOGIN STUDENT
       if(isStudentLogin()) {
-        notify.error("Sinh viên không được truy cập module nhập câu hỏi thi!");
+        event.target.submit();
       }
       // END LOGIN STUDENT
 

@@ -1,43 +1,119 @@
 const { getPool, sql } = require("../../configs/database.config");
 
 const mapRow = (row) => ({
-  maGiangVien: row.MAGV?.trim(), hoTenGiangVien: `${row.HO_GV || ""} ${row.TEN_GV || ""}`.trim(),
-  maLop: row.MALOP?.trim(), tenLop: row.TENLOP, maMonHoc: row.MAMH?.trim(), tenMonHoc: row.TENMH,
-  trinhDo: row.TRINHDO?.trim(), ngayThi: row.NGAYTHI, lan: row.LAN, soCauThi: row.SOCAUTHI,
-  thoiGian: row.THOIGIAN, daKhoa: Boolean(row.DA_KHOA),
+  maGiangVien: row.MAGV?.trim(),
+  hoTenGiangVien: `${row.HO_GV || ""} ${row.TEN_GV || ""}`.trim(),
+  maLop: row.MALOP?.trim(),
+  tenLop: row.TENLOP?.trim(),
+  maMonHoc: row.MAMH?.trim(),
+  tenMonHoc: row.TENMH?.trim(),
+  trinhDo: row.TRINHDO?.trim(),
+  ngayThi: row.NGAYTHI,
+  lan: row.LAN,
+  soCauThi: row.SOCAUTHI,
+  thoiGian: row.THOIGIAN,
+  daKhoa: Boolean(row.DA_KHOA),
 });
 
 const getReferenceData = async () => {
   const pool = getPool();
   const [classes, subjects] = await Promise.all([
-    pool.request().execute("sp_GetLop"), pool.request().execute("sp_GetMonHoc"),
+    pool.request().execute("sp_GetLop"),
+    pool.request().execute("sp_GetMonHoc"),
   ]);
   return {
-    classes: classes.recordset.map((r) => ({ maLop: r.MALOP?.trim(), tenLop: r.TENLOP })),
-    subjects: subjects.recordset.map((r) => ({ maMonHoc: r.MAMH?.trim(), tenMonHoc: r.TENMH })),
+    classes: classes.recordset.map((r) => ({
+      maLop: r.MALOP?.trim(),
+      tenLop: r.TENLOP?.trim(),
+    })),
+    subjects: subjects.recordset.map((r) => ({
+      maMonHoc: r.MAMH?.trim(),
+      tenMonHoc: r.TENMH?.trim(),
+    })),
   };
 };
 
 const getRegistrations = async ({ maGiangVien, maLop, maMonHoc, trinhDo, keyword }) => {
-  const result = await getPool().request()
-    .input("MAGV", sql.NChar(8), maGiangVien || null).input("MALOP", sql.NChar(15), maLop || null)
-    .input("MAMH", sql.NChar(5), maMonHoc || null).input("TRINHDO", sql.Char(1), trinhDo || null)
-    .input("KEYWORD", sql.NVarChar(100), keyword || null).query(`
-      SELECT l.*,
-        CASE WHEN EXISTS (SELECT 1 FROM BAITHI b JOIN SINHVIEN s ON b.MASV=s.MASV WHERE RTRIM(s.MALOP)=RTRIM(l.MALOP) AND RTRIM(b.MAMH)=RTRIM(l.MAMH) AND b.LAN=l.LAN)
-          OR EXISTS (SELECT 1 FROM BANGDIEM b JOIN SINHVIEN s ON b.MASV=s.MASV WHERE RTRIM(s.MALOP)=RTRIM(l.MALOP) AND RTRIM(b.MAMH)=RTRIM(l.MAMH) AND b.LAN=l.LAN) THEN 1 ELSE 0 END DA_KHOA
-      FROM vw_LichThi l
-      WHERE (@MAGV IS NULL OR RTRIM(l.MAGV)=RTRIM(@MAGV)) AND (@MALOP IS NULL OR RTRIM(l.MALOP)=RTRIM(@MALOP))
-        AND (@MAMH IS NULL OR RTRIM(l.MAMH)=RTRIM(@MAMH)) AND (@TRINHDO IS NULL OR l.TRINHDO=@TRINHDO)
-        AND (@KEYWORD IS NULL OR l.TENLOP LIKE N'%'+@KEYWORD+'%' OR l.TENMH LIKE N'%'+@KEYWORD+'%')
-      ORDER BY l.NGAYTHI DESC`);
+  const pool = getPool();
+  const result = await pool
+    .request()
+    .input("MAGV", sql.NVarChar(50), maGiangVien || null)
+    .input("MALOP", sql.NVarChar(50), maLop || null)
+    .input("MAMH", sql.NVarChar(50), maMonHoc || null)
+    .input("TRINHDO", sql.Char(1), trinhDo || null)
+    .input("KEYWORD", sql.NVarChar(100), keyword || null)
+    .execute("sp_GetDanhSachDangKyThi");
+
   return result.recordset.map(mapRow);
 };
 
-const checkQuestions = async (p) => (await getPool().request().input("MAMH",sql.NChar(5),p.maMonHoc).input("TRINHDO",sql.Char(1),p.trinhDo).input("SOCAUTHI",sql.SmallInt,p.soCauThi).execute("sp_CheckDuSoCauThi")).recordset[0];
-const addInputs = (r,p) => r.input("MALOP",sql.NChar(15),p.maLop).input("MAMH",sql.NChar(5),p.maMonHoc).input("TRINHDO",sql.Char(1),p.trinhDo).input("NGAYTHI_TEXT",sql.VarChar(16),p.ngayThi).input("LAN",sql.SmallInt,p.lan).input("SOCAUTHI",sql.SmallInt,p.soCauThi).input("THOIGIAN",sql.SmallInt,p.thoiGian);
-const createRegistration = async (p) => (await addInputs(getPool().request().input("MAGV",sql.NChar(8),p.maGiangVien),p).query("DECLARE @D DATETIME=TRY_CONVERT(DATETIME,@NGAYTHI_TEXT,126); EXEC sp_DangKyThi @MAGV,@MALOP,@MAMH,@TRINHDO,@D,@LAN,@SOCAUTHI,@THOIGIAN")).recordset[0];
-const updateRegistration = async (old,p) => (await addInputs(getPool().request().input("MAGV",sql.NChar(8),p.maGiangVien).input("MAMH_CU",sql.NChar(5),old.maMonHoc).input("MALOP_CU",sql.NChar(15),old.maLop).input("LAN_CU",sql.SmallInt,old.lan),p).query("DECLARE @D DATETIME=TRY_CONVERT(DATETIME,@NGAYTHI_TEXT,126); EXEC sp_SuaDangKyThi @MAGV,@MAMH_CU,@MALOP_CU,@LAN_CU,@MAMH,@MALOP,@TRINHDO,@D,@LAN,@SOCAUTHI,@THOIGIAN")).recordset[0];
-const deleteRegistration = async (k,magv) => (await getPool().request().input("MAGV",sql.NChar(8),magv).input("MAMH",sql.NChar(5),k.maMonHoc).input("MALOP",sql.NChar(15),k.maLop).input("LAN",sql.SmallInt,k.lan).execute("sp_XoaDangKyThi")).recordset[0];
+const checkQuestions = async (p) => {
+  const pool = getPool();
+  const result = await pool
+    .request()
+    .input("MAMH", sql.NVarChar(50), p.maMonHoc)
+    .input("TRINHDO", sql.Char(1), p.trinhDo)
+    .input("SOCAUTHI", sql.SmallInt, p.soCauThi)
+    .execute("sp_CheckDuSoCauThi");
 
-module.exports={getReferenceData,getRegistrations,checkQuestions,createRegistration,updateRegistration,deleteRegistration};
+  return result.recordset[0];
+};
+
+const createRegistration = async (p) => {
+  const pool = getPool();
+  const result = await pool
+    .request()
+    .input("MAGV", sql.NVarChar(50), p.maGiangVien)
+    .input("MALOP", sql.NVarChar(50), p.maLop)
+    .input("MAMH", sql.NVarChar(50), p.maMonHoc)
+    .input("TRINHDO", sql.Char(1), p.trinhDo)
+    .input("NGAYTHI", sql.DateTime, p.ngayThi ? new Date(p.ngayThi) : null)
+    .input("LAN", sql.SmallInt, p.lan)
+    .input("SOCAUTHI", sql.SmallInt, p.soCauThi)
+    .input("THOIGIAN", sql.SmallInt, p.thoiGian)
+    .execute("sp_DangKyThi");
+
+  return result.recordset ? result.recordset[0] : null;
+};
+
+const updateRegistration = async (old, p) => {
+  const pool = getPool();
+  const result = await pool
+    .request()
+    .input("MAGV", sql.NVarChar(50), p.maGiangVien)
+    .input("MAMH_CU", sql.NVarChar(50), old.maMonHoc)
+    .input("MALOP_CU", sql.NVarChar(50), old.maLop)
+    .input("LAN_CU", sql.SmallInt, old.lan)
+    .input("MAMH", sql.NVarChar(50), p.maMonHoc)
+    .input("MALOP", sql.NVarChar(50), p.maLop)
+    .input("TRINHDO", sql.Char(1), p.trinhDo)
+    .input("NGAYTHI", sql.DateTime, p.ngayThi ? new Date(p.ngayThi) : null)
+    .input("LAN", sql.SmallInt, p.lan)
+    .input("SOCAUTHI", sql.SmallInt, p.soCauThi)
+    .input("THOIGIAN", sql.SmallInt, p.thoiGian)
+    .execute("sp_SuaDangKyThi");
+
+  return result.recordset ? result.recordset[0] : null;
+};
+
+const deleteRegistration = async (k, magv) => {
+  const pool = getPool();
+  const result = await pool
+    .request()
+    .input("MAGV", sql.NVarChar(50), magv)
+    .input("MAMH", sql.NVarChar(50), k.maMonHoc)
+    .input("MALOP", sql.NVarChar(50), k.maLop)
+    .input("LAN", sql.SmallInt, k.lan)
+    .execute("sp_XoaDangKyThi");
+
+  return result.recordset ? result.recordset[0] : null;
+};
+
+module.exports = {
+  getReferenceData,
+  getRegistrations,
+  checkQuestions,
+  createRegistration,
+  updateRegistration,
+  deleteRegistration,
+};

@@ -1,10 +1,14 @@
 extends ../layouts/default.pug
 include ../mixins/crud.pug
+include ../mixins/checkbox.pug
 
 block main
+	// ALERT MESSAGE
+	.inner-message-alert(id="alertMessage" style="display:none; padding: 12px; margin-bottom: 15px; border-radius: 6px; font-weight: 500;")
+
 	// FORM
 	.section-1.cols-2
-		form.inner-form(id="subjectForm")
+		form.inner-form(id="subjectForm" data-api-base="/admin/subject-management")
 			.inner-wrap
 				.group-item
 					label.inner-label(for="subjectCode")
@@ -54,26 +58,23 @@ block main
 						placeholder="Tìm kiếm..."
 					)
 
-				button.inner-filter-button(
-					type="button"
-				)
-					span.material-symbols-outlined
-						| filter_list
-
 		.table-2
 			table
 				thead
 					tr
+						th.text-left(style="width: 50px;")
+							+checkbox-30("checkAllSubjects", "checkAllSubjects", "all")
 						th.text-left Mã môn học
 						th.text-left Tên môn học
 						th.text-right Hành động
 
 				tbody#recordsTableBody
-					//- Render by javascript
+					tr
+						td(colspan="4" style="text-align: center; padding: 20px; color: #a0aec0;") Đang tải danh sách môn học...
 
 		// PAGINATION
 		.inner-pagination
-			p.inner-pagination-text
+			p.inner-pagination-text(id="paginationText")
 				| Displaying 0 of 0 records
 
 			.inner-pagination-buttons
@@ -94,3 +95,8 @@ block main
 				)
 					span.material-symbols-outlined
 						| chevron_right
+
+	// IMPORT SCRIPTS
+	script(src="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.js")
+	link(rel="stylesheet" href="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.css")
+	script(src="/admin/assets/js/subject-management.js")

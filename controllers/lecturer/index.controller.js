@@ -155,6 +155,37 @@ module.exports.deleteQuestion = async (req, res) => {
   }
 };
 
+module.exports.deleteMultipleQuestions = async (req, res) => {
+  try {
+    const { ids } = req.body;
+    const result = await questionBankService.deleteMultipleOwnQuestions(
+      getCurrentUser(req, res),
+      ids
+    );
+    return res.json({
+      success: true,
+      message: result?.ThongBao || "Xóa các câu hỏi đã chọn thành công.",
+    });
+  } catch (error) {
+    return sendQuestionBankError(res, error);
+  }
+};
+
+module.exports.deleteMultipleExamRegistrations = async (req, res) => {
+  try {
+    const { items } = req.body;
+    const result = await examRegistrationService.removeMultiple(
+      getCurrentUser(req, res),
+      items
+    );
+    return res.json({
+      success: true,
+      message: result?.ThongBao || "Xóa các lịch đăng ký thi đã chọn thành công.",
+    });
+  } catch (error) {
+    return sendExamRegistrationError(res, error);
+  }
+};
 
 module.exports.testExam =  (req, res) => {
   res.render('lecturer/pages/test-exam', {

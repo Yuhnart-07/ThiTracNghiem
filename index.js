@@ -7,12 +7,13 @@ const { connectDB } = require("./configs/database.config")
 const { getAuthUserFromRequest } = require("./configs/auth.config")
 
 const adminRoutes = require("./routes/admin/index.route");
-// const clientRoutes = require("./routes/client/index.route");
+const clientRoutes = require("./routes/client/index.route");
 const accountRoutes = require("./routes/account/index.route");
 const lecturerRoutes = require("./routes/lecturer/index.route");
 
+
 // PATH DÙNG CHUNG CHO FE
-const { pathAdmin } = require("./configs/variable.config");
+const { pathAdmin, pathLecturer } = require("./configs/variable.config");
 
 // THIẾT LẬP THƯ MỤC CHỨA FILE VIEW
 app.set('views', path.join(__dirname, 'views')); // PATH ĐỂ NỐI TÊN PROJECT VỚI /VIEW
@@ -25,6 +26,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // TẠO BIẾN TOÀN CỤC TRONG FILE PUG (CHỈ DÙNG ĐƯỢC TRONG FILE PUG, KHÔNG DÙNG ĐƯỢC TRONG CÁC FILE JS)
 app.locals.pathAdmin = pathAdmin;
+app.locals.pathLecturer = pathLecturer;
 
 
 // CHO PHÉP BE GỬI DỮ LIỆU BẰNG JSON && ĐỒNG THỜI CHUYỂN DỮ LIỆU TỪ JSON -> JS
@@ -44,7 +46,7 @@ app.use((req, res, next) => {
 
 // THIẾT LẬP ĐƯỜNG DẪN
 app.use(`/${pathAdmin}`, adminRoutes);
-// app.use('/client', clientRoutes);
+app.use('/client', clientRoutes);
 app.use('/lecturer', lecturerRoutes);
 app.use('/', accountRoutes);
 

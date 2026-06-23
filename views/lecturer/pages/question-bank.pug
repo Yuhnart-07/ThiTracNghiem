@@ -1,5 +1,6 @@
 extends ../layouts/default.pug
 include ../mixins/crud.pug
+include ../mixins/checkbox.pug
 
 block main
 	- const canMutateQuestions = currentUser && currentUser.role === "GIANGVIEN";
@@ -11,6 +12,8 @@ block main
 			id="questionBankForm"
 			data-can-mutate=canMutateQuestions ? "true" : "false"
 			data-user-role=currentUser ? currentUser.role : ""
+			data-ma-giang-vien=currentUser ? currentUser.maGiangVien : ""
+			data-username=currentUser ? currentUser.username : ""
 		)
 			input(type="hidden" id="questionId" name="questionId" value="")
 			.question-bank-message(id="questionBankMessage" role="status")
@@ -294,6 +297,8 @@ block main
 
 				thead
 					tr
+						th.text-left(style="width: 50px;")
+							+checkbox-30("checkAllQuestions", "checkAllQuestions", "all")
 						th.text-left Mã câu hỏi
 						th.text-left Tên môn học
 						th.text-left Trình độ
@@ -303,7 +308,7 @@ block main
 
 				tbody#recordsTableBody
 					tr
-						td(colspan="6" class="text-center")
+						td(colspan="7" class="text-center")
 							| Đang tải dữ liệu...
 
 		// PAGINATION

@@ -273,6 +273,20 @@ const deleteOwnQuestionIfUnused = async (currentUser, questionId) => {
   return questionBankRepository.deleteQuestion(parsedQuestionId, user.maGiangVien);
 };
 
+const deleteMultipleOwnQuestions = async (currentUser, idsString) => {
+  const user = assertCanMutateQuestions(currentUser);
+  if (!idsString) {
+    throw new QuestionBankError("Danh sách câu hỏi cần xóa không hợp lệ.", 400);
+  }
+  
+  const ids = idsString.split(",").map(id => validateQuestionId(id.trim()));
+  for (const id of ids) {
+    await assertQuestionCanBeChanged(id, user.maGiangVien);
+  }
+  
+  return questionBankRepository.deleteMultipleQuestions(ids.join(","), user.maGiangVien);
+};
+
 module.exports = {
   QuestionBankError,
   getQuestionBankPageData,
@@ -281,4 +295,5 @@ module.exports = {
   createQuestion,
   updateOwnQuestion,
   deleteOwnQuestionIfUnused,
+  deleteMultipleOwnQuestions,
 };

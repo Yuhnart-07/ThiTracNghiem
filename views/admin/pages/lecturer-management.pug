@@ -1,10 +1,14 @@
 extends ../layouts/default.pug
 include ../mixins/crud.pug
+include ../mixins/checkbox.pug
 
 block main
+	// ALERT MESSAGE
+	.inner-message-alert(id="alertMessage" style="display:none; padding: 12px; margin-bottom: 15px; border-radius: 6px; font-weight: 500;")
+
 	// FORM
 	.section-1
-		form.inner-form(id="lecturerForm")
+		form.inner-form(id="lecturerForm" data-api-base="/admin/lecturer-management")
 			.inner-wrap
 				.group-item
 					label.inner-label(for="lecturerCode")
@@ -15,7 +19,7 @@ block main
 						type="text"
 						id="lecturerCode"
 						name="lecturerCode"
-						placeholder="e.g. CS101"
+						placeholder="e.g. GV001"
 					)
 
 					p.inner-help
@@ -29,7 +33,8 @@ block main
 					input.inner-control(
 						type="text"
 						id="last-name"
-						name="last-name"
+						name="lastName"
+						placeholder="Nguyễn Văn"
 					)
 				.group-item
 					label.inner-label(for="first-name")
@@ -39,7 +44,8 @@ block main
 					input.inner-control(
 						type="text"
 						id="first-name"
-						name="first-name"
+						name="firstName"
+						placeholder="Bình"
 					)
 				.group-item
 					label.inner-label(for="phone")
@@ -50,6 +56,7 @@ block main
 						type="text"
 						id="phone"
 						name="phone"
+						placeholder="0987654321"
 					)
 				.group-item
 					label.inner-label(for="address")
@@ -60,6 +67,7 @@ block main
 						type="text"
 						id="address"
 						name="address"
+						placeholder="Quận 1, TP. HCM"
 					)
 				
 	+crud()
@@ -82,16 +90,12 @@ block main
 						placeholder="Tìm kiếm..."
 					)
 
-				button.inner-filter-button(
-					type="button"
-				)
-					span.material-symbols-outlined
-						| filter_list
-
 		.table-2
 			table
 				thead
 					tr
+						th.text-left(style="width: 50px;")
+							+checkbox-30("checkAllLecturers", "checkAllLecturers", "all")
 						th.text-left Mã giáo viên 
 						th.text-left Họ 
 						th.text-left Tên
@@ -100,11 +104,12 @@ block main
 						th.text-right Hành động
 
 				tbody#recordsTableBody
-					//- Render by javascript
+					tr
+						td(colspan="7" style="text-align: center; padding: 20px; color: #a0aec0;") Đang tải danh sách giảng viên...
 
 		// PAGINATION
 		.inner-pagination
-			p.inner-pagination-text
+			p.inner-pagination-text(id="paginationText")
 				| Displaying 0 of 0 records
 
 			.inner-pagination-buttons
@@ -125,3 +130,8 @@ block main
 				)
 					span.material-symbols-outlined
 						| chevron_right
+
+	// IMPORT SCRIPTS
+	script(src="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.js")
+	link(rel="stylesheet" href="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.css")
+	script(src="/admin/assets/js/lecturer-management.js")

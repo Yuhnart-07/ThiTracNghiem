@@ -11,6 +11,18 @@ const loginLecturerAdmin = async ({ username, password }) => {
   return result.recordset[0] || null;
 };
 
+const loginStudent = async ({ masv }) => {
+  const pool = getPool();
+  const result = await pool
+    .request()
+    .input("MASV", sql.NChar(8), masv)
+    .execute("sp_LoginSinhVien");
+
+  return result.recordset[0] || null;
+};
+
 module.exports = {
   loginLecturerAdmin,
+  loginStudent,
 };
+

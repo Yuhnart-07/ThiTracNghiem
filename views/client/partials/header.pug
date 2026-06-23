@@ -1,0 +1,16 @@
+header.header
+	.inner-wrap
+		.inner-button-menu
+			<i class="fa-solid fa-indent"></i>
+		.inner-logo
+			a(href="/client/exam")
+				span HP
+				span Exam
+	.inner-account
+		.inner-text
+			if currentUser
+				.inner-name #{currentUser.ho} #{currentUser.ten}
+				.inner-role Sinh viên
+			else
+				.inner-name Sinh viên
+				.inner-role Client

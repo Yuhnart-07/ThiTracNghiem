@@ -1,0 +1,26 @@
+extends ../layouts/default.pug
+
+block main
+	.section-3
+		.inner-head
+			h2.inner-title-main
+				span.inner-dot
+				span THI TRẮC NGHIỆM
+
+		.inner-wrap(style="padding: 24px; background: #fff; border-radius: 12px; margin-top: 20px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);")
+			h3(style="margin-top: 0; color: #2d3748; font-size: 1.5rem; font-weight: 600;") Danh sách phòng thi khả dụng
+			p(style="color: #718096; margin-bottom: 20px;") Danh sách các môn học được đăng ký thi hiện tại của bạn. Nhấp vào môn học để bắt đầu.
+
+			.table-2(style="margin-top: 20px;")
+				table
+					thead
+						tr
+							th.text-left Mã môn học
+							th.text-left Tên môn học
+							th.text-left Số câu hỏi
+							th.text-left Thời gian
+							th.text-left Lần thi
+							th.text-right Hành động
+					tbody
+						tr
+							td.text-left(colspan="6" style="text-align: center; color: #a0aec0; padding: 30px;") Chưa đến giờ thi hoặc chưa có phòng thi nào được kích hoạt.

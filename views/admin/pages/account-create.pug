@@ -1,31 +1,29 @@
 extends ../layouts/default.pug
 include ../mixins/crud.pug
+include ../mixins/checkbox.pug
 
 block main
+	// ALERT MESSAGE
+	.inner-message-alert(id="alertMessage" style="display:none; padding: 12px; margin-bottom: 15px; border-radius: 6px; font-weight: 500;")
+
 	// FORM
 	.section-1.cols-2
-		form.inner-form(id="accountCreateForm")
+		form.inner-form(id="accountCreateForm" data-api-base="/admin/account-create")
 			.inner-wrap
 				.group-item
 					label.inner-label(for="fullName")
-						| Họ tên
+						| Chọn giảng viên
 						span.inner-required *
 
 					select.inner-select(
 						id="fullName"
-						name="fullName"
+						name="maGiangVien"
 					)
-						option(value="DBMS")
-							| Database Management Systems
+						option(value="") -- Chọn giảng viên --
+						if lecturers && lecturers.length
+							each lec in lecturers
+								option(value=lec.maGiangVien, data-code=lec.maGiangVien) #{lec.ho} #{lec.ten}
 
-						option(value="AlgoDS")
-							| Data Structures & Algorithms
-
-						option(value="WebTech")
-							| Web Technologies
-
-						option(value="SE")
-							| Software Engineering
 				.group-item
 					label.inner-label(for="lecturerCode")
 						| Mã giáo viên
@@ -35,42 +33,48 @@ block main
 						id="lecturerCode"
 						name="lecturerCode"
 						readonly
+						placeholder="Tự động điền..."
 					)
+
 				.group-item
 					label.inner-label(for="username")
 						| Tài khoản
+						span.inner-required *
 
 					input.inner-control(
 						type="text"
 						id="username"
 						name="username"
+						placeholder="Nhập tên đăng nhập..."
 					)
-
 
 				.group-item
 					label.inner-label(for="password")
 						| Mật khẩu 
+						span.inner-required.password-required *
 
 					input.inner-control(
 						type="password"
 						id="password"
 						name="password"
+						placeholder="Nhập mật khẩu..."
 					)
+
 				.group-item
 					label.inner-label(for="role")
 						| Nhóm quyền 
+						span.inner-required *
 
 					select.inner-select(
 						id="role"
 						name="role"
+						required
 					)
-						option(value="admin")
+						option(value="PGV")
 							| PGV
 
-						option(value="lecturer")
+						option(value="GIANGVIEN")
 							| GIÁO VIÊN
-
-
 				
 	+crud()
 
@@ -79,7 +83,7 @@ block main
 		.inner-head
 			h2.inner-title-main
 				span.inner-dot
-				span DANH SÁCH GIÁO VIÊN
+				span DANH SÁCH TÀI KHOẢN
 
 			.inner-tools
 				.inner-filter
@@ -92,29 +96,25 @@ block main
 						placeholder="Tìm kiếm..."
 					)
 
-				button.inner-filter-button(
-					type="button"
-				)
-					span.material-symbols-outlined
-						| filter_list
-
 		.table-2
 			table
 				thead
 					tr
+						th.text-left(style="width: 50px;")
+							+checkbox-30("checkAllAccounts", "checkAllAccounts", "all")
+						th.text-left Tài khoản
 						th.text-left Mã giáo viên 
-						th.text-left Họ 
-						th.text-left Tên
-						th.text-left SDT
-						th.text-left Địa chỉ
+						th.text-left Họ tên
+						th.text-left Nhóm quyền
 						th.text-right Hành động
 
 				tbody#recordsTableBody
-					//- Render by javascript
+					tr
+						td(colspan="6" style="text-align: center; padding: 20px; color: #a0aec0;") Đang tải danh sách tài khoản...
 
 		// PAGINATION
 		.inner-pagination
-			p.inner-pagination-text
+			p.inner-pagination-text(id="paginationText")
 				| Displaying 0 of 0 records
 
 			.inner-pagination-buttons
@@ -135,3 +135,8 @@ block main
 				)
 					span.material-symbols-outlined
 						| chevron_right
+
+	// IMPORT SCRIPTS
+	script(src="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.js")
+	link(rel="stylesheet" href="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.css")
+	script(src="/admin/assets/js/account-create.js")

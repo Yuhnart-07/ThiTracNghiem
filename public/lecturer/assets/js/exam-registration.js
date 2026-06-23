@@ -39,6 +39,7 @@ if (registrationForm) {
     btnNextPage: document.querySelector("#btnNextPage"),
     pageList: document.querySelector("#pageList"),
     formBody: registrationForm.querySelector(".inner-wrap"),
+    checkAll: document.querySelector("#checkAllRegistrations"),
   };
 
   const apiBase = registrationForm.dataset.apiBase;
@@ -48,6 +49,7 @@ if (registrationForm) {
     mode: "view",
     registrations: [],
     selectedKey: null,
+    checkedKeys: [],
     currentPage: 1,
     availability: "idle",
     availabilitySequence: 0,
@@ -112,11 +114,14 @@ if (registrationForm) {
 
   function setButtonState() {
     const selected = getSelectedRegistration();
-    const canChangeSelected = canMutate && selected && !selected.daKhoa;
+    const isOwner = selected && selected.maGiangVien === registrationForm.dataset.maGiangVien;
+    const canChangeSelected = canMutate && selected && !selected.daKhoa && isOwner;
     const editing = isEditing();
+    const canDelete = canMutate && state.checkedKeys.length > 0 && !editing;
+
     setButtonLocked(elements.btnAdd, !canMutate || editing);
     setButtonLocked(elements.btnEdit, !canChangeSelected || editing);
-    setButtonLocked(elements.btnDelete, !canChangeSelected || editing);
+    setButtonLocked(elements.btnDelete, !canDelete);
     setButtonLocked(elements.btnUndo, !editing);
     setButtonLocked(elements.btnExitMode, !editing);
     setButtonLocked(elements.btnSave, !editing || state.availability !== "valid");
@@ -250,13 +255,38 @@ if (registrationForm) {
     state.currentPage = Math.min(state.currentPage, totalPages);
     const start = (state.currentPage - 1) * pageSize;
     const visible = state.registrations.slice(start, start + pageSize);
-    elements.tableBody.innerHTML = visible.length ? visible.map((item) => `
+
+    if (elements.checkAll) {
+      const activeVisible = visible.filter(
+        (item) => !item.daKhoa && item.maGiangVien === registrationForm.dataset.maGiangVien
+      );
+      const allVisibleChecked = activeVisible.length > 0 && activeVisible.every((item) => state.checkedKeys.includes(registrationKey(item)));
+      elements.checkAll.checked = allVisibleChecked;
+      elements.checkAll.disabled = !canMutate || activeVisible.length === 0;
+    }
+
+    elements.tableBody.innerHTML = visible.length ? visible.map((item) => {
+      const isChecked = state.checkedKeys.includes(registrationKey(item));
+      const isOwner = item.maGiangVien === registrationForm.dataset.maGiangVien;
+      const isDisabled = !canMutate || item.daKhoa || !isOwner;
+
+      return `
       <tr data-registration-key="${escapeHtml(registrationKey(item))}" class="${registrationKey(item) === state.selectedKey ? "selected" : ""}">
+        <td>
+          <div class="checkbox-wrapper-30">
+            <span class="checkbox">
+              <input type="checkbox" name="selectedRegistrationCheckbox" class="registration-checkbox" value="${escapeHtml(registrationKey(item))}" ${isChecked ? "checked" : ""} ${isDisabled ? "disabled" : ""} style="cursor:pointer;" />
+              <svg><use class="checkbox" xlink:href="#checkbox-30"></use></svg>
+            </span>
+          </div>
+        </td>
         <td>${escapeHtml(item.tenLop)}</td><td>${escapeHtml(item.tenMonHoc)}</td><td>${item.trinhDo}</td>
         <td>${item.lan}</td><td>${item.soCauThi}</td><td>${formatDate(item.ngayThi)}</td><td>${item.thoiGian}</td>
         <td><span class="status-badge ${item.daKhoa ? "locked" : "open"}">${item.daKhoa ? "Đã khóa" : "Có thể sửa"}</span></td>
         <td>${escapeHtml(item.hoTenGiangVien)}</td>
-      </tr>`).join("") : '<tr><td colspan="9" class="text-center">Không có dữ liệu</td></tr>';
+      </tr>`;
+    }).join("") : '<tr><td colspan="10" class="text-center">Không có dữ liệu</td></tr>';
+
     elements.paginationText.textContent = `Hiển thị ${visible.length} / ${state.registrations.length} đăng ký`;
     elements.btnPrevPage.disabled = state.currentPage <= 1;
     elements.btnNextPage.disabled = state.currentPage >= totalPages;
@@ -269,6 +299,7 @@ if (registrationForm) {
     const result = await requestJson(`${apiBase}/registrations${query ? `?${query}` : ""}`);
     state.registrations = result.data;
     state.selectedKey = null;
+    state.checkedKeys = [];
     state.currentPage = 1;
     clearForm();
     setMode("view");
@@ -280,6 +311,7 @@ if (registrationForm) {
     const item = state.registrations.find((registration) => registrationKey(registration) === key);
     if (!item) return;
     state.selectedKey = key;
+    state.checkedKeys = [key];
     fillForm(item);
     setMode("view");
     setMessage(item.daKhoa ? "Đăng ký đã phát sinh bài thi hoặc điểm nên chỉ được xem." : "Đã chọn đăng ký thi.", item.daKhoa ? "warning" : "info");
@@ -309,8 +341,13 @@ if (registrationForm) {
   };
 
   elements.tableBody.addEventListener("click", (event) => {
+    if (event.target.closest("td:first-child")) {
+      return;
+    }
     const row = event.target.closest("tr[data-registration-key]");
-    if (row) selectRegistration(row.dataset.registrationKey);
+    if (!row) return;
+    const key = row.dataset.registrationKey;
+    selectRegistration(key);
   });
 
   elements.formBody.addEventListener("pointerdown", (event) => {
@@ -367,14 +404,109 @@ if (registrationForm) {
   });
 
   elements.btnDelete?.addEventListener("click", async () => {
-    if (guardAction("delete")) return;
-    if (!window.confirm("Xóa đăng ký thi đã chọn?")) return;
-    const selected = getSelectedRegistration();
+    if (isEditing()) {
+      setMessage("Đang thao tác, hãy Ghi hoặc Thoát trước khi xóa.", "warning");
+      return;
+    }
+
+    const checkedCount = state.checkedKeys.length;
+    if (checkedCount === 0) {
+      setMessage("Vui lòng chọn ít nhất một lịch đăng ký để xóa.", "warning");
+      return;
+    }
+
+    const confirmMessage = checkedCount === 1
+      ? "Bạn có chắc chắn muốn xóa đăng ký thi đã chọn?"
+      : `Bạn có chắc chắn muốn xóa ${checkedCount} đăng ký thi đã chọn?`;
+
+    if (!window.confirm(confirmMessage)) return;
+
     try {
-      const result = await requestJson(`${apiBase}/registrations/${encodeURIComponent(selected.maMonHoc)}/${encodeURIComponent(selected.maLop)}/${selected.lan}`, { method: "DELETE" });
+      let result;
+      if (checkedCount === 1) {
+        const parts = state.checkedKeys[0].split("|");
+        const maMonHoc = parts[0];
+        const maLop = parts[1];
+        const lan = parts[2];
+        result = await requestJson(`${apiBase}/registrations/${encodeURIComponent(maMonHoc)}/${encodeURIComponent(maLop)}/${lan}`, { method: "DELETE" });
+      } else {
+        const items = state.checkedKeys.map(k => {
+          const parts = k.split("|");
+          return { maMonHoc: parts[0], maLop: parts[1], lan: Number(parts[2]) };
+        });
+        result = await requestJson(`${apiBase}/registrations`, {
+          method: "DELETE",
+          body: JSON.stringify({ items }),
+        });
+      }
+      state.checkedKeys = [];
+      state.selectedKey = null;
+      clearForm();
       await loadRegistrations();
       setMessage(result.message, "success");
-    } catch (error) { setMessage(error.message, "error"); }
+    } catch (error) {
+      setMessage(error.message, "error");
+    }
+  });
+
+  document.querySelector(".section-3").addEventListener("change", (e) => {
+    if (e.target.id === "checkAllRegistrations") {
+      const start = (state.currentPage - 1) * pageSize;
+      const visible = state.registrations.slice(start, start + pageSize);
+
+      const activeVisible = visible.filter(
+        (item) => !item.daKhoa && item.maGiangVien === registrationForm.dataset.maGiangVien
+      );
+
+      if (e.target.checked) {
+        activeVisible.forEach(item => {
+          const key = registrationKey(item);
+          if (!state.checkedKeys.includes(key)) {
+            state.checkedKeys.push(key);
+          }
+        });
+      } else {
+        activeVisible.forEach(item => {
+          const key = registrationKey(item);
+          const idx = state.checkedKeys.indexOf(key);
+          if (idx !== -1) state.checkedKeys.splice(idx, 1);
+        });
+      }
+
+      if (state.checkedKeys.length === 1) {
+        state.selectedKey = state.checkedKeys[0];
+        const item = state.registrations.find(registration => registrationKey(registration) === state.selectedKey);
+        if (item) fillForm(item);
+      } else {
+        state.selectedKey = null;
+        clearForm();
+      }
+      setButtonState();
+      renderRows();
+    }
+
+    if (e.target.classList.contains("registration-checkbox")) {
+      const val = e.target.value;
+      if (e.target.checked) {
+        if (!state.checkedKeys.includes(val)) {
+          state.checkedKeys.push(val);
+        }
+      } else {
+        const idx = state.checkedKeys.indexOf(val);
+        if (idx !== -1) state.checkedKeys.splice(idx, 1);
+      }
+
+      if (state.checkedKeys.length === 1) {
+        state.selectedKey = state.checkedKeys[0];
+        const item = state.registrations.find(registration => registrationKey(registration) === state.selectedKey);
+        if (item) fillForm(item);
+      } else {
+        state.selectedKey = null;
+        clearForm();
+      }
+      setButtonState();
+      renderRows();
+    }
   });
 
   [elements.subject, elements.level].forEach((input) => input.addEventListener("change", scheduleAvailabilityCheck));

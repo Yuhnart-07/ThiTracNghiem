@@ -1,0 +1,25 @@
+extends ../layouts/default.pug
+
+block main
+	.section-3
+		.inner-head
+			h2.inner-title-main
+				span.inner-dot
+				span XEM LẠI BÀI THI
+
+		.inner-wrap(style="padding: 24px; background: #fff; border-radius: 12px; margin-top: 20px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);")
+			h3(style="margin-top: 0; color: #2d3748; font-size: 1.5rem; font-weight: 600;") Lịch sử bài thi đã nộp
+			p(style="color: #718096; margin-bottom: 20px;") Xem lại chi tiết đáp án và điểm số của các bài kiểm tra đã thực hiện.
+
+			.table-2(style="margin-top: 20px;")
+				table
+					thead
+						tr
+							th.text-left Mã môn học
+							th.text-left Tên môn học
+							th.text-left Ngày nộp bài
+							th.text-left Điểm số
+							th.text-right Hành động
+					tbody
+						tr
+							td.text-left(colspan="5" style="text-align: center; color: #a0aec0; padding: 30px;") Bạn chưa tham gia kỳ thi nào hoặc chưa có bài làm để xem lại.

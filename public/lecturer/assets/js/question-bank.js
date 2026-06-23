@@ -32,6 +32,7 @@ if (questionBankForm) {
     btnNextPage: document.querySelector("#btnNextPage"),
     pageList: document.querySelector("#pageList"),
     formBody: questionBankForm.querySelector(".inner-wrap"),
+    checkAll: document.querySelector("#checkAllQuestions"),
   };
 
   const canMutate = questionBankForm.dataset.canMutate === "true";
@@ -40,6 +41,7 @@ if (questionBankForm) {
     mode: "view",
     questions: [],
     selectedQuestionId: null,
+    checkedKeys: [],
     currentPage: 1,
   };
 
@@ -174,13 +176,15 @@ if (questionBankForm) {
 
   const setButtonState = () => {
     const selectedQuestion = getSelectedQuestion();
-    const canChangeSelected = canMutate && selectedQuestion && !selectedQuestion.daSuDung;
+    const isOwner = selectedQuestion && selectedQuestion.maGiangVien === questionBankForm.dataset.maGiangVien;
+    const canChangeSelected = canMutate && selectedQuestion && !selectedQuestion.daSuDung && isOwner;
     const editing = isEditing();
+    const canDelete = canMutate && state.checkedKeys.length > 0 && !editing;
 
     const buttonStates = [
       [elements.btnAdd, !canMutate || editing],
       [elements.btnEdit, !canChangeSelected || editing],
-      [elements.btnDelete, !canChangeSelected || editing],
+      [elements.btnDelete, !canDelete],
       [elements.btnUndo, !editing],
       [elements.btnExitMode, !editing],
       [elements.btnSave, !editing],
@@ -317,25 +321,48 @@ if (questionBankForm) {
     const startIndex = (state.currentPage - 1) * pageSize;
     const visibleQuestions = questions.slice(startIndex, startIndex + pageSize);
 
+    if (elements.checkAll) {
+      const activeVisible = visibleQuestions.filter(
+        (q) => !q.daSuDung && q.maGiangVien === questionBankForm.dataset.maGiangVien
+      );
+      const allVisibleChecked = activeVisible.length > 0 && activeVisible.every((item) => state.checkedKeys.includes(item.cauHoi));
+      elements.checkAll.checked = allVisibleChecked;
+      elements.checkAll.disabled = !canMutate || activeVisible.length === 0;
+    }
+
     if (visibleQuestions.length === 0) {
-      elements.tableBody.innerHTML = `<tr><td colspan="6" class="text-center">Không có dữ liệu</td></tr>`;
+      elements.tableBody.innerHTML = `<tr><td colspan="7" class="text-center">Không có dữ liệu</td></tr>`;
     } else {
       elements.tableBody.innerHTML = visibleQuestions
         .map(
-          (question) => `
-            <tr data-question-id="${question.cauHoi}" tabindex="0" title="Nhấn để chọn câu hỏi" aria-selected="${question.cauHoi === state.selectedQuestionId}" class="${question.cauHoi === state.selectedQuestionId ? "selected" : ""}">
-              <td class="text-left">${question.cauHoi}</td>
-              <td class="text-left">${escapeHtml(question.tenMonHoc || question.maMonHoc)}</td>
-              <td class="text-left">${escapeHtml(question.trinhDo)}</td>
-              <td class="text-left question-content-cell">${escapeHtml(question.noiDung)}</td>
-              <td class="text-left">${escapeHtml(question.dapAnDung)}</td>
-              <td class="text-left">
-                <span class="status-badge ${question.daSuDung ? "locked" : "open"}">
-                  ${question.daSuDung ? "Đã dùng" : "Có thể sửa"}
-                </span>
-              </td>
-            </tr>
-          `,
+          (question) => {
+            const isChecked = state.checkedKeys.includes(question.cauHoi);
+            const isOwner = question.maGiangVien === questionBankForm.dataset.maGiangVien;
+            const isDisabled = !canMutate || question.daSuDung || !isOwner;
+
+            return `
+              <tr data-question-id="${question.cauHoi}" tabindex="0" title="Nhấn để chọn câu hỏi" aria-selected="${question.cauHoi === state.selectedQuestionId}" class="${question.cauHoi === state.selectedQuestionId ? "selected" : ""}">
+                <td>
+                  <div class="checkbox-wrapper-30">
+                    <span class="checkbox">
+                      <input type="checkbox" name="selectedQuestionCheckbox" class="question-checkbox" value="${question.cauHoi}" ${isChecked ? "checked" : ""} ${isDisabled ? "disabled" : ""} style="cursor:pointer;" />
+                      <svg><use class="checkbox" xlink:href="#checkbox-30"></use></svg>
+                    </span>
+                  </div>
+                </td>
+                <td class="text-left">${question.cauHoi}</td>
+                <td class="text-left">${escapeHtml(question.tenMonHoc || question.maMonHoc)}</td>
+                <td class="text-left">${escapeHtml(question.trinhDo)}</td>
+                <td class="text-left question-content-cell">${escapeHtml(question.noiDung)}</td>
+                <td class="text-left">${escapeHtml(question.dapAnDung)}</td>
+                <td class="text-left">
+                  <span class="status-badge ${question.daSuDung ? "locked" : "open"}">
+                    ${question.daSuDung ? "Đã dùng" : "Có thể sửa"}
+                  </span>
+                </td>
+              </tr>
+            `;
+          }
         )
         .join("");
     }
@@ -361,6 +388,7 @@ if (questionBankForm) {
     state.questions = result.data;
     state.currentPage = 1;
     state.selectedQuestionId = null;
+    state.checkedKeys = [];
     clearForm();
     setMode("view");
     updateFilterSummary();
@@ -387,6 +415,7 @@ if (questionBankForm) {
     if (!question) return;
 
     state.selectedQuestionId = question.cauHoi;
+    state.checkedKeys = [question.cauHoi];
     fillForm(question);
     setMode("view");
     setMessage(
@@ -397,8 +426,13 @@ if (questionBankForm) {
   };
 
   elements.tableBody.addEventListener("click", (event) => {
+    if (event.target.closest("td:first-child")) {
+      return;
+    }
     const row = event.target.closest("tr[data-question-id]");
-    if (row) selectQuestion(row.dataset.questionId);
+    if (!row) return;
+    const questionId = Number(row.dataset.questionId);
+    selectQuestion(questionId);
   });
 
   elements.tableBody.addEventListener("keydown", (event) => {
@@ -497,20 +531,42 @@ if (questionBankForm) {
   });
 
   elements.btnDelete.addEventListener("click", async () => {
-    if (showLockedActionMessage("delete")) return;
+    if (isEditing()) {
+      setMessage("Đang thao tác, hãy Ghi hoặc Thoát trước khi xóa câu hỏi.", "warning");
+      return;
+    }
 
-    const confirmed = window.confirm("Xóa câu hỏi đã chọn?");
-    if (!confirmed) return;
+    const checkedCount = state.checkedKeys.length;
+    if (checkedCount === 0) {
+      setMessage("Vui lòng chọn ít nhất một câu hỏi cần xóa.", "warning");
+      return;
+    }
+
+    const confirmMessage = checkedCount === 1
+      ? "Bạn có chắc chắn muốn xóa câu hỏi đã chọn?"
+      : `Bạn có chắc chắn muốn xóa ${checkedCount} câu hỏi đã chọn?`;
+
+    if (!window.confirm(confirmMessage)) return;
 
     try {
-      await requestJson(`/lecturer/question-bank/questions/${state.selectedQuestionId}`, {
-        method: "DELETE",
-      });
+      if (checkedCount === 1) {
+        await requestJson(`/lecturer/question-bank/questions/${state.checkedKeys[0]}`, {
+          method: "DELETE",
+        });
+      } else {
+        const idsString = state.checkedKeys.join(",");
+        await requestJson(`/lecturer/question-bank/questions`, {
+          method: "DELETE",
+          body: JSON.stringify({ ids: idsString }),
+        });
+      }
       setMessage("Xóa câu hỏi thành công.", "success");
+      state.checkedKeys = [];
+      state.selectedQuestionId = null;
+      clearForm();
       await loadQuestions();
     } catch (error) {
       setMessage(error.message, "error");
-      setModeBadge(state.mode);
     }
   });
 
@@ -569,6 +625,65 @@ if (questionBankForm) {
       const input = item.querySelector("input[name='correctAnswer']");
       if (input && !input.disabled) input.checked = true;
     });
+  });
+
+  document.querySelector(".section-3").addEventListener("change", (e) => {
+    if (e.target.id === "checkAllQuestions") {
+      const questions = getVisibleQuestions();
+      const startIndex = (state.currentPage - 1) * pageSize;
+      const visibleQuestions = questions.slice(startIndex, startIndex + pageSize);
+
+      const activeVisible = visibleQuestions.filter(
+        (q) => !q.daSuDung && q.maGiangVien === questionBankForm.dataset.maGiangVien
+      );
+
+      if (e.target.checked) {
+        activeVisible.forEach(item => {
+          if (!state.checkedKeys.includes(item.cauHoi)) {
+            state.checkedKeys.push(item.cauHoi);
+          }
+        });
+      } else {
+        activeVisible.forEach(item => {
+          const idx = state.checkedKeys.indexOf(item.cauHoi);
+          if (idx !== -1) state.checkedKeys.splice(idx, 1);
+        });
+      }
+
+      if (state.checkedKeys.length === 1) {
+        state.selectedQuestionId = state.checkedKeys[0];
+        const q = state.questions.find(item => item.cauHoi === state.selectedQuestionId);
+        if (q) fillForm(q);
+      } else {
+        state.selectedQuestionId = null;
+        clearForm();
+      }
+      setButtonState();
+      renderRows();
+    }
+
+    if (e.target.classList.contains("question-checkbox")) {
+      const val = Number(e.target.value);
+      if (e.target.checked) {
+        if (!state.checkedKeys.includes(val)) {
+          state.checkedKeys.push(val);
+        }
+      } else {
+        const idx = state.checkedKeys.indexOf(val);
+        if (idx !== -1) state.checkedKeys.splice(idx, 1);
+      }
+
+      if (state.checkedKeys.length === 1) {
+        state.selectedQuestionId = state.checkedKeys[0];
+        const q = state.questions.find(item => item.cauHoi === state.selectedQuestionId);
+        if (q) fillForm(q);
+      } else {
+        state.selectedQuestionId = null;
+        clearForm();
+      }
+      setButtonState();
+      renderRows();
+    }
   });
 
   elements.btnPrevPage.addEventListener("click", () => {
