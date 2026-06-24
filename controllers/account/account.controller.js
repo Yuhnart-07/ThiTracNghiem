@@ -11,9 +11,11 @@ module.exports.login = (req, res) => {
 
 module.exports.loginSubmit = async (req, res) => {
   const role = req.body.role;
+  console.log(`[DEBUG] Login attempt - role: ${role}`);
 
   if (role === "student") {
     const student_id = req.body.student_id?.trim();
+    console.log(`[DEBUG] Student login ID: "${student_id}"`);
     if (!student_id) {
       return res.status(400).render("account/login", {
         pageTitle: "Đăng nhập",
@@ -24,6 +26,7 @@ module.exports.loginSubmit = async (req, res) => {
     }
 
     const user = await accountRepository.loginStudent({ masv: student_id });
+    console.log(`[DEBUG] Database result for student ID "${student_id}":`, user);
     if (!user) {
       return res.status(401).render("account/login", {
         pageTitle: "Đăng nhập",
@@ -65,7 +68,7 @@ module.exports.loginSubmit = async (req, res) => {
     // Redirect based on role
     const normalizedRole = String(user.ROLE || user.role || "").toUpperCase();
     if (normalizedRole === "PGV") {
-      return res.redirect(`/${pathAdmin}/subject-management`);
+      return res.redirect(`/${pathAdmin}/dashboard`);
     } else {
       return res.redirect("/lecturer/question-bank");
     }

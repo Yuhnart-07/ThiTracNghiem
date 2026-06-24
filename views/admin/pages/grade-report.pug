@@ -4,7 +4,10 @@ include ../mixins/crud.pug
 block main
 	// FORM
 	.section-1
-		form.inner-form(id="gradeReportForm")
+		form.inner-form(
+			id="gradeReportForm"
+			data-api-base="/admin/grade-report"
+		)
 			.inner-wrap
 				.group-item
 					label.inner-label(for="classSelect")

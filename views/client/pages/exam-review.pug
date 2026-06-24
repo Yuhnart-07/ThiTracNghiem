@@ -7,6 +7,15 @@ block main
 				span.inner-dot
 				span XEM LẠI BÀI THI
 
+			.inner-tools(style="display: flex; align-items: center; gap: 12px;")
+				.inner-filter
+					span.material-symbols-outlined search
+					input.inner-filter-input(
+						type="text"
+						id="tableFilter"
+						placeholder="Tìm môn học..."
+					)
+
 		.inner-wrap(style="padding: 24px; background: #fff; border-radius: 12px; margin-top: 20px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);")
 			h3(style="margin-top: 0; color: #2d3748; font-size: 1.5rem; font-weight: 600;") Lịch sử bài thi đã nộp
 			p(style="color: #718096; margin-bottom: 20px;") Xem lại chi tiết đáp án và điểm số của các bài kiểm tra đã thực hiện.
@@ -15,11 +24,133 @@ block main
 				table
 					thead
 						tr
+							th.text-left STT
 							th.text-left Mã môn học
 							th.text-left Tên môn học
+							th.text-left Lần thi
+							th.text-left Trình độ
 							th.text-left Ngày nộp bài
 							th.text-left Điểm số
 							th.text-right Hành động
-					tbody
+					tbody#recordsTableBody
 						tr
-							td.text-left(colspan="5" style="text-align: center; color: #a0aec0; padding: 30px;") Bạn chưa tham gia kỳ thi nào hoặc chưa có bài làm để xem lại.
+							td.text-left(colspan="8" style="text-align: center; color: #a0aec0; padding: 30px;") Đang tải lịch sử làm bài...
+
+			// PAGINATION
+			.inner-pagination(style="margin-top: 20px;")
+				p.inner-pagination-text(id="paginationText") Displaying 0 of 0 records
+				.inner-pagination-buttons
+					button.inner-page-button(type="button" id="btnPrevPage")
+						span.material-symbols-outlined chevron_left
+					.inner-page-list(id="pageList")
+					button.inner-page-button(type="button" id="btnNextPage")
+						span.material-symbols-outlined chevron_right
+
+block scripts
+	script(src="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.js")
+	link(rel="stylesheet" href="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.css")
+	script.
+		(function () {
+			const notify = new Notyf({ duration: 3000, position: { x: 'right', y: 'top' }, dismissible: true });
+			const apiBase = "/client/exam-review";
+			const pageSize = 10;
+
+			const state = {
+				list: [],
+				currentPage: 1,
+				filterKeyword: "",
+			};
+
+			const buttons = {
+				prevPage: document.querySelector("#btnPrevPage"),
+				nextPage: document.querySelector("#btnNextPage"),
+				pageList: document.querySelector("#pageList"),
+				paginationText: document.querySelector("#paginationText"),
+				tableBody: document.querySelector("#recordsTableBody"),
+				filter: document.querySelector("#tableFilter"),
+			};
+
+			const formatDate = (value) => {
+				if (!value) return "N/A";
+				return new Intl.DateTimeFormat("vi-VN", { dateStyle: "short", timeStyle: "short" }).format(new Date(value));
+			};
+
+			const renderRows = () => {
+				let filtered = state.list;
+				if (state.filterKeyword) {
+					const kw = state.filterKeyword.toLowerCase();
+					filtered = filtered.filter(row => 
+						row.MAMH.toLowerCase().includes(kw) || 
+						row.TENMH.toLowerCase().includes(kw)
+					);
+				}
+
+				const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
+				state.currentPage = Math.min(state.currentPage, totalPages);
+				const start = (state.currentPage - 1) * pageSize;
+				const visible = filtered.slice(start, start + pageSize);
+
+				buttons.tableBody.innerHTML = visible.length ? visible.map((item, idx) => {
+					return `
+					<tr>
+						<td>${start + idx + 1}</td>
+						<td>${item.MAMH.trim()}</td>
+						<td>${item.TENMH.trim()}</td>
+						<td>Lần ${item.LAN}</td>
+						<td>${item.TRINHDO}</td>
+						<td>${formatDate(item.NGAYTHI)}</td>
+						<td style="font-weight: 700; color: #10b981;">${item.DIEM !== null ? item.DIEM.toFixed(1) : "N/A"}</td>
+						<td class="text-right">
+							<a href="${apiBase}/detail/${item.ID}" class="inner-button-actions" style="display: inline-flex; align-items: center; gap: 4px; padding: 6px 12px; background: #e0e7ff; color: #4338ca; border-radius: 6px; text-decoration: none; font-size: 0.85rem; font-weight: 500; border: 1px solid #c7d2fe; transition: all 0.2s;">
+								<span class="material-symbols-outlined" style="font-size: 16px;">visibility</span>
+								<span>Xem chi tiết</span>
+							</a>
+						</td>
+					</tr>`;
+				}).join("") : '<tr><td colspan="8" class="text-center" style="color: #a0aec0; padding: 20px;">Bạn chưa tham gia kỳ thi nào hoặc chưa có bài làm để xem lại.</td></tr>';
+
+				buttons.paginationText.textContent = `Hiển thị ${visible.length} / ${filtered.length} bài thi`;
+				buttons.prevPage.disabled = state.currentPage <= 1;
+				buttons.nextPage.disabled = state.currentPage >= totalPages;
+				buttons.pageList.textContent = `${state.currentPage} / ${totalPages}`;
+			};
+
+			const fetchHistory = async () => {
+				try {
+					const response = await fetch(`${apiBase}/list`);
+					const data = await response.json();
+					if (data.success) {
+						state.list = data.data;
+						state.currentPage = 1;
+						renderRows();
+					} else {
+						notify.error(data.message || "Không thể tải lịch sử làm bài.");
+					}
+				} catch (e) {
+					notify.error("Lỗi kết nối máy chủ.");
+				}
+			};
+
+			buttons.filter.addEventListener("input", (e) => {
+				state.filterKeyword = e.target.value;
+				state.currentPage = 1;
+				renderRows();
+			});
+
+			buttons.prevPage.addEventListener("click", () => {
+				if (state.currentPage > 1) {
+					state.currentPage--;
+					renderRows();
+				}
+			});
+
+			buttons.nextPage.addEventListener("click", () => {
+				const totalPages = Math.ceil(state.list.length / pageSize);
+				if (state.currentPage < totalPages) {
+					state.currentPage++;
+					renderRows();
+				}
+			});
+
+			fetchHistory();
+		})();

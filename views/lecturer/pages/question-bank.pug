@@ -3,7 +3,7 @@ include ../mixins/crud.pug
 include ../mixins/checkbox.pug
 
 block main
-	- const canMutateQuestions = currentUser && currentUser.role === "GIANGVIEN";
+	- const canMutateQuestions = currentUser && (currentUser.role === "GIANGVIEN" || currentUser.role === "PGV");
 	- const initialSubjects = subjects || [];
 
 	// SECTION 4

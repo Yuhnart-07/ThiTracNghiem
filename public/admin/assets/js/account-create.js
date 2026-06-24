@@ -156,15 +156,10 @@
               <td>${escapeHtml(maGV)}</td>
               <td>${escapeHtml(fullName)}</td>
               <td><span class="badge ${item.role === "PGV" ? "badge-success" : "badge-info"}" style="padding: 2px 6px; border-radius: 4px; font-size: 0.75rem; background: ${item.role === "PGV" ? "#2f855a" : "#2b6cb0"}; color: #fff;">${escapeHtml(item.role)}</span></td>
-              <td class="text-right">
-                <button class="inner-button select-account-btn" data-account-key="${idStr}" style="padding: 4px 8px; font-size: 0.8rem; background: #3182ce; color: #fff;">
-                  Chọn
-                </button>
-              </td>
             </tr>`;
           })
           .join("")
-      : '<tr><td colspan="6" class="text-center">Không có tài khoản nào</td></tr>';
+      : '<tr><td colspan="5" class="text-center">Không có tài khoản nào</td></tr>';
 
     buttons.paginationText.textContent = `Hiển thị ${visible.length} / ${filtered.length} tài khoản`;
     buttons.prevPage.disabled = state.currentPage <= 1;
@@ -413,7 +408,7 @@
       ? `Bạn có chắc chắn muốn xóa tài khoản này không?`
       : `Bạn có chắc chắn muốn xóa ${checkedCount} tài khoản đã chọn không?`;
 
-    if (!confirm(confirmMessage)) return;
+    if (!window.confirm(confirmMessage)) return;
 
     try {
       if (checkedCount === 1) {

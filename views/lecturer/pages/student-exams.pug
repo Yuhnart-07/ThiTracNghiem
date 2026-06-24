@@ -1,0 +1,105 @@
+extends ../layouts/default.pug
+include ../mixins/crud.pug
+
+block main
+	// FORM
+	.section-1
+		form.inner-form(
+			id="studentExamsForm"
+			data-api-base="/lecturer/student-exams"
+		)
+			.inner-wrap
+				.group-item
+					label.inner-label(for="classSelect")
+						| Tên lớp
+						span.inner-required *
+
+					select.inner-select(
+						id="classSelect"
+						name="maLop"
+						required
+					)
+						option(value="") -- Chọn lớp --
+						if classes && classes.length
+							each cls in classes
+								option(value=cls.maLop) #{cls.tenLop} (#{cls.maLop})
+
+				.group-item
+					label.inner-label(for="subjectSelect")
+						| Tên môn học
+						span.inner-required *
+
+					select.inner-select(
+						id="subjectSelect"
+						name="maMonHoc"
+						required
+					)
+						option(value="") -- Chọn môn học --
+						if subjects && subjects.length
+							each sub in subjects
+								option(value=sub.maMonHoc) #{sub.tenMonHoc} (#{sub.maMonHoc})
+
+
+	// TABLE
+	.section-3
+		.inner-head
+			h2.inner-title-main
+				span.inner-dot
+				span DANH SÁCH BÀI THI CỦA SINH VIÊN
+
+			.inner-tools(style="display: flex; align-items: center; gap: 12px;")
+				.inner-filter
+					span.material-symbols-outlined
+						| search
+
+					input.inner-filter-input(
+						type="text"
+						id="tableFilter"
+						placeholder="Tìm kiếm..."
+					)
+
+		.table-2
+			table
+				thead
+					tr
+						th.text-left STT
+						th.text-left Mã sinh viên
+						th.text-left Họ tên
+						th.text-left Lần thi
+						th.text-left Trình độ
+						th.text-left Ngày thi
+						th.text-left Điểm
+						th.text-right Hành động
+
+				tbody#recordsTableBody
+					tr
+						td(colspan="8" style="text-align: center; padding: 20px; color: #a0aec0;") Vui lòng chọn Lớp và Môn học để xem danh sách bài thi.
+
+		// PAGINATION
+		.inner-pagination
+			p.inner-pagination-text(id="paginationText")
+				| Displaying 0 of 0 records
+
+			.inner-pagination-buttons
+				button.inner-page-button(
+					type="button"
+					id="btnPrevPage"
+				)
+					span.material-symbols-outlined
+						| chevron_left
+
+				.inner-page-list(
+					id="pageList"
+				)
+
+				button.inner-page-button(
+					type="button"
+					id="btnNextPage"
+				)
+					span.material-symbols-outlined
+						| chevron_right
+
+	// IMPORT SCRIPTS
+	script(src="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.js")
+	link(rel="stylesheet" href="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.css")
+	script(src="/lecturer/assets/js/student-exams.js")

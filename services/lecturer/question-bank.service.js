@@ -55,11 +55,6 @@ const assertCanViewQuestions = (currentUser) => {
 
 const assertCanMutateQuestions = (currentUser) => {
   const user = assertCanViewQuestions(currentUser);
-
-  if (user.role !== ROLE.GIANGVIEN) {
-    throw new QuestionBankError("PGV chỉ được xem danh sách câu hỏi, không được thêm, sửa hoặc xóa.", 403);
-  }
-
   return user;
 };
 
@@ -168,26 +163,27 @@ const validateQuestionId = (questionId) => {
   return parsedQuestionId;
 };
 
-const assertQuestionBelongsToTeacher = (question, maGiangVien) => {
+const assertQuestionBelongsToTeacher = (question, user) => {
   if (!question) {
     throw new QuestionBankError("Câu hỏi không tồn tại.", 404);
   }
 
-  if (question.maGiangVien !== maGiangVien) {
+  if (user.role === ROLE.GIANGVIEN && question.maGiangVien !== user.maGiangVien) {
     throw new QuestionBankError("Không được sửa hoặc xóa câu hỏi của giảng viên khác.", 403);
   }
 };
 
-const assertQuestionCanBeChanged = async (questionId, maGiangVien) => {
+const assertQuestionCanBeChanged = async (questionId, user) => {
   const question = await questionBankRepository.getQuestionById(questionId);
 
   // Bước kiểm tra quyền sở hữu nằm ở service để repository chỉ làm nhiệm vụ truy vấn dữ liệu.
-  assertQuestionBelongsToTeacher(question, maGiangVien);
+  assertQuestionBelongsToTeacher(question, user);
 
   const usedInExamDetail = await questionBankRepository.checkQuestionUsedInExamDetail(questionId);
   if (usedInExamDetail) {
     throw new QuestionBankError("Câu hỏi đã xuất hiện trong BAITHI_CHITIET nên không được sửa hoặc xóa.", 409);
   }
+  return question;
 };
 
 const assertReferenceDataExists = async (payload) => {
@@ -257,10 +253,12 @@ const updateOwnQuestion = async (currentUser, questionId, body) => {
   const parsedQuestionId = validateQuestionId(questionId);
 
   rejectIdentityFieldsFromBody(body, { rejectQuestionId: true });
-  const payload = buildQuestionPayload(body, user.maGiangVien);
+  const question = await assertQuestionCanBeChanged(parsedQuestionId, user);
+  const targetMaGiangVien = user.role === ROLE.GIANGVIEN ? user.maGiangVien : question.maGiangVien;
+  
+  const payload = buildQuestionPayload(body, targetMaGiangVien);
   validateQuestionPayload(payload);
   await assertReferenceDataExists(payload);
-  await assertQuestionCanBeChanged(parsedQuestionId, user.maGiangVien);
 
   return questionBankRepository.updateQuestion(parsedQuestionId, payload);
 };
@@ -269,8 +267,10 @@ const deleteOwnQuestionIfUnused = async (currentUser, questionId) => {
   const user = assertCanMutateQuestions(currentUser);
   const parsedQuestionId = validateQuestionId(questionId);
 
-  await assertQuestionCanBeChanged(parsedQuestionId, user.maGiangVien);
-  return questionBankRepository.deleteQuestion(parsedQuestionId, user.maGiangVien);
+  const question = await assertQuestionCanBeChanged(parsedQuestionId, user);
+  const targetMaGiangVien = user.role === ROLE.GIANGVIEN ? user.maGiangVien : question.maGiangVien;
+
+  return questionBankRepository.deleteQuestion(parsedQuestionId, targetMaGiangVien);
 };
 
 const deleteMultipleOwnQuestions = async (currentUser, idsString) => {
@@ -281,10 +281,12 @@ const deleteMultipleOwnQuestions = async (currentUser, idsString) => {
   
   const ids = idsString.split(",").map(id => validateQuestionId(id.trim()));
   for (const id of ids) {
-    await assertQuestionCanBeChanged(id, user.maGiangVien);
+    const question = await assertQuestionCanBeChanged(id, user);
+    const targetMaGiangVien = user.role === ROLE.GIANGVIEN ? user.maGiangVien : question.maGiangVien;
+    await questionBankRepository.deleteQuestion(id, targetMaGiangVien);
   }
   
-  return questionBankRepository.deleteMultipleQuestions(ids.join(","), user.maGiangVien);
+  return { ThongBao: "Xóa các câu hỏi đã chọn thành công." };
 };
 
 module.exports = {

@@ -1,0 +1,233 @@
+extends ../layouts/default.pug
+
+block main
+	style.
+		.dashboard-container {
+			padding: 24px;
+			font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+		}
+		.welcome-section {
+			background: linear-gradient(135deg, #4f46e5 0%, #3b82f6 100%);
+			border-radius: 16px;
+			padding: 32px;
+			color: #ffffff;
+			margin-bottom: 32px;
+			box-shadow: 0 10px 25px -5px rgba(59, 130, 246, 0.3);
+			position: relative;
+			overflow: hidden;
+		}
+		.welcome-section::after {
+			content: '';
+			position: absolute;
+			top: -50%;
+			right: -20%;
+			width: 300px;
+			height: 300px;
+			border-radius: 50%;
+			background: rgba(255, 255, 255, 0.1);
+			pointer-events: none;
+		}
+		.welcome-title {
+			font-size: 28px;
+			font-weight: 700;
+			margin-bottom: 8px;
+			letter-spacing: -0.5px;
+		}
+		.welcome-subtitle {
+			font-size: 16px;
+			opacity: 0.9;
+			font-weight: 400;
+		}
+		.stats-grid {
+			display: grid;
+			grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+			gap: 24px;
+			margin-bottom: 32px;
+		}
+		.stat-card {
+			background: #ffffff;
+			border: 1px solid #e2e8f0;
+			border-radius: 16px;
+			padding: 24px;
+			display: flex;
+			align-items: center;
+			transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+			cursor: pointer;
+			position: relative;
+			overflow: hidden;
+		}
+		.stat-card:hover {
+			transform: translateY(-5px);
+			box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.05), 0 10px 10px -5px rgba(0, 0, 0, 0.02);
+			border-color: #cbd5e1;
+		}
+		.stat-icon-wrapper {
+			width: 56px;
+			height: 56px;
+			border-radius: 12px;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			margin-right: 18px;
+			font-size: 24px;
+			transition: all 0.3s ease;
+		}
+		.stat-info {
+			flex: 1;
+		}
+		.stat-value {
+			font-size: 24px;
+			font-weight: 700;
+			color: #1e293b;
+			line-height: 1;
+			margin-bottom: 4px;
+		}
+		.stat-label {
+			font-size: 14px;
+			color: #64748b;
+			font-weight: 500;
+		}
+		/* Colors */
+		.icon-blue { background-color: #eff6ff; color: #3b82f6; }
+		.stat-card:hover .icon-blue { background-color: #3b82f6; color: #ffffff; }
+		
+		.icon-green { background-color: #f0fdf4; color: #22c55e; }
+		.stat-card:hover .icon-green { background-color: #22c55e; color: #ffffff; }
+		
+		.icon-purple { background-color: #faf5ff; color: #a855f7; }
+		.stat-card:hover .icon-purple { background-color: #a855f7; color: #ffffff; }
+		
+		.icon-amber { background-color: #fffbeb; color: #f59e0b; }
+		.stat-card:hover .icon-amber { background-color: #f59e0b; color: #ffffff; }
+		
+		.icon-rose { background-color: #fff1f2; color: #f43f5e; }
+		.stat-card:hover .icon-rose { background-color: #f43f5e; color: #ffffff; }
+
+		.icon-indigo { background-color: #eef2ff; color: #6366f1; }
+		.stat-card:hover .icon-indigo { background-color: #6366f1; color: #ffffff; }
+
+		.quick-actions {
+			background: #ffffff;
+			border: 1px solid #e2e8f0;
+			border-radius: 16px;
+			padding: 24px;
+		}
+		.quick-actions-title {
+			font-size: 18px;
+			font-weight: 700;
+			color: #1e293b;
+			margin-bottom: 20px;
+			display: flex;
+			align-items: center;
+			gap: 8px;
+		}
+		.actions-grid {
+			display: grid;
+			grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+			gap: 16px;
+		}
+		.action-btn {
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			gap: 8px;
+			padding: 14px;
+			border-radius: 12px;
+			font-weight: 600;
+			font-size: 14px;
+			text-decoration: none;
+			transition: all 0.2s ease;
+			border: 1px solid transparent;
+		}
+		.action-primary {
+			background-color: #4f46e5;
+			color: #ffffff;
+		}
+		.action-primary:hover {
+			background-color: #4338ca;
+			box-shadow: 0 4px 12px rgba(79, 70, 229, 0.2);
+		}
+		.action-secondary {
+			background-color: #f8fafc;
+			color: #334155;
+			border-color: #e2e8f0;
+		}
+		.action-secondary:hover {
+			background-color: #f1f5f9;
+			border-color: #cbd5e1;
+		}
+
+	.dashboard-container
+		if error
+			.inner-message-alert.alert-danger(style="display:block; padding: 12px; margin-bottom: 20px; border-radius: 6px; background-color: #fef2f2; border: 1px solid #fca5a5; color: #b91c1c;") #{error}
+		
+		.welcome-section
+			h1.welcome-title Xin chào, #{currentUser ? `${currentUser.ho || ""} ${currentUser.ten || currentUser.username || ""}` : "Quản trị viên"}!
+			p.welcome-subtitle Chào mừng bạn quay trở lại hệ thống quản lý thi trắc nghiệm HP Exam. Dưới đây là tổng quan trạng thái hệ thống hôm nay.
+
+		.stats-grid
+			// Lớp học
+			a.stat-card(href=`/${pathAdmin}/class-management`)
+				.stat-icon-wrapper.icon-blue
+					i.fa-solid.fa-user-graduate
+				.stat-info
+					.stat-value #{stats.classes}
+					.stat-label Lớp học
+			
+			// Sinh viên
+			a.stat-card(href=`/${pathAdmin}/class-management`)
+				.stat-icon-wrapper.icon-green
+					i.fa-solid.fa-users
+				.stat-info
+					.stat-value #{stats.students}
+					.stat-label Sinh viên
+
+			// Giảng viên
+			a.stat-card(href=`/${pathAdmin}/lecturer-management`)
+				.stat-icon-wrapper.icon-purple
+					i.fa-solid.fa-chalkboard-user
+				.stat-info
+					.stat-value #{stats.lecturers}
+					.stat-label Giảng viên
+
+			// Môn học
+			a.stat-card(href=`/${pathAdmin}/subject-management`)
+				.stat-icon-wrapper.icon-amber
+					i.fa-solid.fa-book
+				.stat-info
+					.stat-value #{stats.subjects}
+					.stat-label Môn học
+
+			// Ngân hàng câu hỏi
+			.stat-card
+				.stat-icon-wrapper.icon-rose
+					i.fa-solid.fa-database
+				.stat-info
+					.stat-value #{stats.questions}
+					.stat-label Câu hỏi thi
+
+			// Đăng ký thi
+			a.stat-card(href=`/${pathAdmin}/exam-registration`)
+				.stat-icon-wrapper.icon-indigo
+					i.fa-solid.fa-registered
+				.stat-info
+					.stat-value #{stats.registrations}
+					.stat-label Đăng ký thi
+
+		.quick-actions
+			h2.quick-actions-title
+				i.fa-solid.fa-bolt(style="color: #f59e0b;")
+				| Phím tắt nhanh
+			.actions-grid
+				a.action-btn.action-primary(href=`/${pathAdmin}/exam-registration`)
+					i.fa-solid.fa-plus
+					| Đăng ký thi mới
+				a.action-btn.action-secondary(href=`/${pathAdmin}/subject-management`)
+					i.fa-solid.fa-folder-plus
+					| Thêm môn học
+				a.action-btn.action-secondary(href=`/${pathAdmin}/account-create`)
+					i.fa-solid.fa-user-plus
+					| Cấp tài khoản mới
+				a.action-btn.action-secondary(href=`/${pathAdmin}/grade-report`)
+					i.fa-solid.fa-file-invoice
+					| Xem bảng điểm

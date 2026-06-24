@@ -22,5 +22,29 @@ block main
 							th.text-left Lần thi
 							th.text-right Hành động
 					tbody
-						tr
-							td.text-left(colspan="6" style="text-align: center; color: #a0aec0; padding: 30px;") Chưa đến giờ thi hoặc chưa có phòng thi nào được kích hoạt.
+						if rooms && rooms.length > 0
+							each room in rooms
+								tr
+									td.text-left(style="font-weight: 600; color: #2d3748;") #{room.maMonHoc}
+									td.text-left #{room.tenMonHoc}
+									td.text-left(style="text-align: center;") #{room.soCauThi}
+									td.text-left(style="text-align: center;") #{room.thoiGian} phút
+									td.text-left Lần #{room.lan} (Trình độ #{room.trinhDo})
+									td.text-right(style="text-align: right;")
+										if room.status === "AVAILABLE"
+											form(action="/client/exam/start" method="POST" style="display: inline-block;")
+												input(type="hidden" name="maMonHoc" value=room.maMonHoc)
+												input(type="hidden" name="lan" value=room.lan)
+												button(type="submit" style="background: #3182ce; color: white; border: none; padding: 6px 16px; border-radius: 6px; font-weight: 500; cursor: pointer; transition: all 0.2s;") Bắt đầu thi
+										else if room.status === "IN_PROGRESS"
+											a(href=`/client/exam/take/${room.baithiId}` style="background: #dd6b20; color: white; padding: 6px 16px; border-radius: 6px; font-weight: 500; text-decoration: none; display: inline-block; transition: all 0.2s;") Tiếp tục thi
+										else if room.status === "COMPLETED"
+											span(style="display: inline-block; padding: 4px 12px; background: #c6f6d5; color: #22543d; border-radius: 9999px; font-size: 0.875rem; font-weight: 600; margin-right: 8px;") Đã nộp bài
+											a(href=`/client/exam-review/detail/${room.baithiId}` style="color: #3182ce; text-decoration: none; font-weight: 600;") Xem lại
+										else if room.status === "UPCOMING"
+											span(style="display: inline-block; padding: 4px 12px; background: #feebc8; color: #744210; border-radius: 9999px; font-size: 0.875rem; font-weight: 500;") Chưa đến giờ thi
+										else if room.status === "EXPIRED"
+											span(style="display: inline-block; padding: 4px 12px; background: #fed7d7; color: #742a2a; border-radius: 9999px; font-size: 0.875rem; font-weight: 500;") Hết hạn ca thi
+						else
+							tr
+								td.text-left(colspan="6" style="text-align: center; color: #a0aec0; padding: 30px;") Chưa có phòng thi nào được kích hoạt hoặc chưa đến lịch thi của bạn.

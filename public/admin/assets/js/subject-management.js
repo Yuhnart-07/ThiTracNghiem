@@ -126,15 +126,10 @@
               </td>
               <td>${escapeHtml(item.maMonHoc)}</td>
               <td>${escapeHtml(item.tenMonHoc)}</td>
-              <td class="text-right">
-                <button class="inner-button select-subject-btn" data-subject-key="${escapeHtml(item.maMonHoc)}" style="padding: 4px 8px; font-size: 0.8rem; background: #3182ce; color: #fff;">
-                  Chọn
-                </button>
-              </td>
             </tr>`;
           })
           .join("")
-      : '<tr><td colspan="4" class="text-center">Không có môn học nào</td></tr>';
+      : '<tr><td colspan="3" class="text-center">Không có môn học nào</td></tr>';
 
     buttons.paginationText.textContent = `Hiển thị ${visible.length} / ${filtered.length} môn học`;
     buttons.prevPage.disabled = state.currentPage <= 1;
@@ -312,7 +307,7 @@
       ? `Bạn có chắc chắn muốn xóa môn học ${state.checkedKeys[0]} không?`
       : `Bạn có chắc chắn muốn xóa ${checkedCount} môn học đã chọn không?`;
 
-    if (!confirm(confirmMessage)) return;
+    if (!window.confirm(confirmMessage)) return;
 
     try {
       if (checkedCount === 1) {

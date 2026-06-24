@@ -1,0 +1,88 @@
+extends ../layouts/default.pug
+
+block main
+	.section-3
+		.inner-head(style="margin-bottom: 24px;")
+			h2.inner-title-main
+				span.inner-dot
+				span CHI TIẾT BÀI LÀM SINH VIÊN
+			button.inner-button.inner-button-secondary(type="button" onclick="history.back()" style="display: flex; align-items: center; gap: 6px; padding: 8px 16px; border-radius: 6px; cursor: pointer; border: 1px solid #cbd5e1; background: #fff; font-weight: 500;")
+				span.material-symbols-outlined(style="font-size: 20px;") arrow_back
+				span Quay lại
+
+		.inner-wrap(style="padding: 28px; background: #fff; border-radius: 16px; margin-top: 20px; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.05), 0 4px 6px -2px rgba(0,0,0,0.02);")
+			// Meta Grid
+			.student-meta-grid(style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; border-bottom: 1px solid #e2e8f0; padding-bottom: 24px; margin-bottom: 28px;")
+				div
+					p(style="margin: 0; font-size: 0.85rem; color: #a0aec0; text-transform: uppercase; font-weight: 600; letter-spacing: 0.05em;") Sinh viên
+					p(style="margin: 4px 0 0 0; font-size: 1.1rem; color: #2d3748; font-weight: 700;") #{exam.HO} #{exam.TEN}
+					p(style="margin: 2px 0 0 0; font-size: 0.9rem; color: #718096;") Mã số: #{exam.MASV}
+				div
+					p(style="margin: 0; font-size: 0.85rem; color: #a0aec0; text-transform: uppercase; font-weight: 600; letter-spacing: 0.05em;") Lớp học
+					p(style="margin: 4px 0 0 0; font-size: 1.1rem; color: #2d3748; font-weight: 700;") #{exam.TENLOP}
+				div
+					p(style="margin: 0; font-size: 0.85rem; color: #a0aec0; text-transform: uppercase; font-weight: 600; letter-spacing: 0.05em;") Môn thi
+					p(style="margin: 4px 0 0 0; font-size: 1.1rem; color: #2d3748; font-weight: 700;") #{exam.TENMH}
+					p(style="margin: 2px 0 0 0; font-size: 0.9rem; color: #718096;") Mã môn: #{exam.MAMH}
+				div
+					p(style="margin: 0; font-size: 0.85rem; color: #a0aec0; text-transform: uppercase; font-weight: 600; letter-spacing: 0.05em;") Kết quả thi
+					p(style="margin: 4px 0 0 0; font-size: 1.6rem; color: #10b981; font-weight: 800; line-height: 1.2;") #{exam.DIEM !== null ? exam.DIEM.toFixed(1) : "N/A"} #[span(style="font-size: 0.9rem; font-weight: 500; color: #718096;") điểm]
+				div
+					p(style="margin: 0; font-size: 0.85rem; color: #a0aec0; text-transform: uppercase; font-weight: 600; letter-spacing: 0.05em;") Chi tiết môn thi
+					p(style="margin: 4px 0 0 0; font-size: 0.95rem; color: #4a5568; font-weight: 600;") Lần thi: #{exam.LAN} | Đề: #{exam.TRINHDO}
+					p(style="margin: 2px 0 0 0; font-size: 0.9rem; color: #718096;") Số câu: #{exam.SOCAUTHI} | Thời gian: #{exam.THOIGIAN} phút
+
+			// Questions List
+			.questions-review-list(style="display: flex; flex-direction: column; gap: 24px;")
+				each q, index in questions
+					.question-card(style="padding: 20px; border: 1px solid #e2e8f0; border-radius: 12px; transition: all 0.2s;")
+						.question-card-header(style="display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; margin-bottom: 14px;")
+							h4(style="margin: 0; font-size: 1.05rem; color: #2d3748; font-weight: 600; line-height: 1.5;")
+								span(style="color: #4f46e5; margin-right: 8px; font-weight: 700;") Câu #{q.STT}:
+								| #{q.NOIDUNG}
+							
+							// Correct/Incorrect Badge
+							if q.DUNG_SAI === true
+								span(style="display: inline-flex; align-items: center; gap: 4px; padding: 4px 10px; background: #ecfdf5; color: #047857; font-weight: 600; font-size: 0.85rem; border-radius: 9999px;")
+									span.material-symbols-outlined(style="font-size: 16px; font-weight: bold;") check
+									| Đúng
+							else if q.DAP_AN_CHON === null || q.DAP_AN_CHON.trim() === ""
+								span(style="display: inline-flex; align-items: center; gap: 4px; padding: 4px 10px; background: #fff7ed; color: #c2410c; font-weight: 600; font-size: 0.85rem; border-radius: 9999px;")
+									span.material-symbols-outlined(style="font-size: 16px; font-weight: bold;") hr
+									| Không trả lời
+							else
+								span(style="display: inline-flex; align-items: center; gap: 4px; padding: 4px 10px; background: #fef2f2; color: #b91c1c; font-weight: 600; font-size: 0.85rem; border-radius: 9999px;")
+									span.material-symbols-outlined(style="font-size: 16px; font-weight: bold;") close
+									| Sai
+
+						// Options
+						.options-review-grid(style="display: grid; grid-template-columns: 1fr; gap: 10px;")
+							each opt in ['A', 'B', 'C', 'D']
+								- const optText = q[opt]
+								- const isChosen = q.DAP_AN_CHON && q.DAP_AN_CHON.trim() === opt
+								- const isCorrect = q.DAP_AN && q.DAP_AN.trim() === opt
+								
+								// Style choices
+								- let cardBg = '#f8fafc'
+								- let cardBorder = '1px solid #e2e8f0'
+								- let checkIcon = ''
+								- let textColor = '#4a5568'
+								
+								if isCorrect
+									- cardBg = '#f0fdf4'
+									- cardBorder = '1px solid #86efac'
+									- textColor = '#15803d'
+									- checkIcon = '✅ '
+								else if isChosen && !isCorrect
+									- cardBg = '#fef2f2'
+									- cardBorder = '1px solid #fca5a5'
+									- textColor = '#991b1b'
+									- checkIcon = '❌ '
+
+								.option-review-item(style=`display: flex; align-items: center; padding: 12px 16px; background: ${cardBg}; border: ${cardBorder}; border-radius: 8px; font-size: 0.95rem; color: ${textColor}; font-weight: ${(isCorrect || isChosen) ? '600' : '400'};`)
+									span(style="margin-right: 8px; font-weight: 700;") #{opt}.
+									span(style="flex: 1;") #{optText}
+									if isChosen
+										span(style="font-size: 0.8rem; text-transform: uppercase; font-weight: bold; margin-left: 8px; padding: 2px 6px; background: rgba(0,0,0,0.05); border-radius: 4px;") Đã chọn
+									if isCorrect
+										span(style="font-size: 0.8rem; text-transform: uppercase; font-weight: bold; margin-left: 8px; padding: 2px 6px; background: #d1fae5; color: #065f46; border-radius: 4px;") Đáp án đúng

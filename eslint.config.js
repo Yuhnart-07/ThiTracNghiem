@@ -27,6 +27,7 @@ module.exports = [
         sessionStorage: "readonly",
         window: "readonly",
         tinymce: "readonly",
+        confirm: "readonly",
       },
     },
     rules: {

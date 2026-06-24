@@ -1,3 +1,4 @@
+process.env.TZ = 'Asia/Ho_Chi_Minh';
 const express = require('express') // TƯƠNG TỰ LỆNH IMPORT
 require('dotenv').config();
 const path = require('path')
@@ -44,10 +45,12 @@ app.use((req, res, next) => {
   next();
 });
 
+const { requireAuth, requireRole } = require("./middlewares/auth.middleware");
+
 // THIẾT LẬP ĐƯỜNG DẪN
-app.use(`/${pathAdmin}`, adminRoutes);
-app.use('/client', clientRoutes);
-app.use('/lecturer', lecturerRoutes);
+app.use(`/${pathAdmin}`, requireAuth, requireRole(["PGV"]), adminRoutes);
+app.use('/client', requireAuth, requireRole(["SINHVIEN"]), clientRoutes);
+app.use('/lecturer', requireAuth, requireRole(["GIANGVIEN"]), lecturerRoutes);
 app.use('/', accountRoutes);
 
 

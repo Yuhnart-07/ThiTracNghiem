@@ -1,37 +1,26 @@
 const repo = require("../../repositories/admin/subject-management.repository");
 
-const assertPgv = (req) => {
-  if (String(req.user?.role || "").toUpperCase() !== "PGV") {
-    const error = new Error("Chỉ PGV được phép thực hiện thao tác này.");
-    error.statusCode = req.user ? 403 : 401;
-    throw error;
-  }
-};
-
 module.exports.list = async (req, res) => {
   try {
-    assertPgv(req);
     res.render("admin/pages/subject-management", {
       pageTitle: "Quản lý môn học",
     });
   } catch (e) {
-    res.status(e.statusCode || 500).send(e.message);
+    res.status(500).send(e.message);
   }
 };
 
 module.exports.getSubjects = async (req, res) => {
   try {
-    assertPgv(req);
     const data = await repo.getSubjects();
     res.json({ success: true, data });
   } catch (e) {
-    res.status(e.statusCode || 500).json({ success: false, message: e.message });
+    res.status(500).json({ success: false, message: e.message });
   }
 };
 
 module.exports.createSubject = async (req, res) => {
   try {
-    assertPgv(req);
     const { maMonHoc, tenMonHoc } = req.body;
     if (!maMonHoc || !tenMonHoc) {
       return res.status(400).json({ success: false, message: "Vui lòng nhập Mã môn học và Tên môn học." });
@@ -39,13 +28,12 @@ module.exports.createSubject = async (req, res) => {
     await repo.createSubject({ maMonHoc, tenMonHoc });
     res.json({ success: true, message: "Thêm môn học thành công." });
   } catch (e) {
-    res.status(e.statusCode || 500).json({ success: false, message: e.message });
+    res.status(500).json({ success: false, message: e.message });
   }
 };
 
 module.exports.updateSubject = async (req, res) => {
   try {
-    assertPgv(req);
     const { mamh } = req.params;
     const { tenMonHoc } = req.body;
     if (!tenMonHoc) {
@@ -54,24 +42,22 @@ module.exports.updateSubject = async (req, res) => {
     await repo.updateSubject({ maMonHoc: mamh, tenMonHoc });
     res.json({ success: true, message: "Cập nhật môn học thành công." });
   } catch (e) {
-    res.status(e.statusCode || 500).json({ success: false, message: e.message });
+    res.status(500).json({ success: false, message: e.message });
   }
 };
 
 module.exports.deleteSubject = async (req, res) => {
   try {
-    assertPgv(req);
     const { mamh } = req.params;
     await repo.deleteSubject(mamh);
     res.json({ success: true, message: "Xóa môn học thành công." });
   } catch (e) {
-    res.status(e.statusCode || 500).json({ success: false, message: e.message });
+    res.status(500).json({ success: false, message: e.message });
   }
 };
 
 module.exports.deleteMultipleSubjects = async (req, res) => {
   try {
-    assertPgv(req);
     const { ids } = req.body;
     if (!ids) {
       return res.status(400).json({ success: false, message: "Danh sách môn học cần xóa không hợp lệ." });
@@ -79,6 +65,6 @@ module.exports.deleteMultipleSubjects = async (req, res) => {
     await repo.deleteMultipleSubjects(ids);
     res.json({ success: true, message: "Xóa các môn học đã chọn thành công." });
   } catch (e) {
-    res.status(e.statusCode || 500).json({ success: false, message: e.message });
+    res.status(500).json({ success: false, message: e.message });
   }
 };

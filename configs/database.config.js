@@ -17,6 +17,7 @@ const dbConfig = {
   options: {
     encrypt: toBoolean(process.env.DB_ENCRYPT, false),
     trustServerCertificate: toBoolean(process.env.DB_TRUST_SERVER_CERTIFICATE, true),
+    useUTC: false,
   },
 };
 

@@ -1,142 +1,122 @@
-//- BẢN PUG ĐÃ ĐƯỢC THIẾT KẾ ĐẠT CHUẨN CLASS (container, inner-wrap, inner-image, inner-button)
-doctype html
-html(lang="vi")
-  head
-    meta(charset="utf-8")
-    meta(name="viewport" content="width=device-width, initial-scale=1.0")
-    title ExamCore Pro Simulator
-    link(rel="stylesheet" href="style.css")
-  body.exam-container
-    //- Header Nav Bar
-    header.header-bar
-      div.header-left
-        div.student-avatar
-          img(src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=128" alt="Alexander")
-        div.student-info
-          h1 Alexander Hamilton
-          p ID: CS-404 | EXAMCORE PRO
-      div.header-right
-        div.timer-display
-          span#time-counter 00:45:00
-        button.inner-button-primary.btn-submit Submit Exam
+extends ../layouts/default.pug
 
-    //- Main Dynamic Wrap Container
-    div.inner-wrap
-      //- Left Navigator panel area
-      aside.sidebar-nav
-        div.section-meta
-          h2 Section A: Core Logic
-          p 40 Questions Total
-        div.questions-scroll-grid
-          div.digits-grid
-            - for (var x = 1; x <= 40; x++)
-              button.q-digit(class=(x == 12 ? 'active' : ''))= x
-        div.sidebar-utils
-          button.btn-util#open-calc Máy tính bỏ túi
-          button.btn-util#open-rules Hướng dẫn thi
+block main
+	.section-3
+		.inner-head
+			h2.inner-title-main
+				span.inner-dot
+				span THI THỬ (LECTURER SIMULATOR)
 
-      //- Main Workspace screen
-      main.central-workspace
-        div.question-card
-          div.card-header
-            span.badge Question 12 of 40
-            button.btn-flag Mark for Review
-          div.card-body
-            h2 According to the "Kinetic Ledger" design philosophy, how should structural boundaries be established...
-            
-            //- Graphic diagram visual component
-            div.inner-image-container
-              svg(viewBox="0 0 800 240")
-                //- Drawing blueprint schematic SVGs in here
-            
-            //- Multiple choice alternatives group list
-            div.options-group
-              label.option-row
-                input(type="radio" name="option")
-                span.option-index A
-                span.option-text By using 1px solid black borders...
-              label.option-row.checked
-                input(type="radio" name="option" checked)
-                span.option-index B
-                span.option-text Through intentional tonal shifts...
+		.inner-wrap(style="padding: 30px; background: #fff; border-radius: 12px; margin-top: 20px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); max-width: 600px;")
+			h3(style="margin-top: 0; color: #2d3748; font-size: 1.35rem; font-weight: 600; margin-bottom: 8px;") Cấu hình đề thi thử
+			p(style="color: #718096; margin-bottom: 24px; font-size: 0.95rem;") Thiết lập các thông số dưới đây để sinh đề thi thử nghiệm trực tiếp từ ngân hàng câu hỏi.
 
+			form(action="/lecturer/test-exam/start" method="POST")
+				.group-item(style="margin-bottom: 20px;")
+					label.inner-label(for="subjectSelect" style="display: block; font-weight: 600; margin-bottom: 8px; color: #4a5568;")
+						| Chọn môn học
+						span.inner-required(style="color: red; margin-left: 4px;") *
+					select.inner-select(
+						id="subjectSelect"
+						name="maMonHoc"
+						required
+						style="width: 100%; padding: 10px; border: 1px solid #cbd5e0; border-radius: 6px; font-size: 1rem; color: #4a5568;"
+					)
+						option(value="") -- Chọn môn học --
+						if subjects && subjects.length
+							each sub in subjects
+								option(value=sub.MAMH) #{sub.TENMH} (#{sub.MAMH})
 
+				.group-item(style="margin-bottom: 20px;")
+					label.inner-label(for="trinhDoSelect" style="display: block; font-weight: 600; margin-bottom: 8px; color: #4a5568;")
+						| Trình độ đề thi
+						span.inner-required(style="color: red; margin-left: 4px;") *
+					select.inner-select(
+						id="trinhDoSelect"
+						name="trinhDo"
+						required
+						style="width: 100%; padding: 10px; border: 1px solid #cbd5e0; border-radius: 6px; font-size: 1rem; color: #4a5568;"
+					)
+						option(value="A") Trình độ A (70% A, 30% B)
+						option(value="B") Trình độ B (70% B, 30% C)
+						option(value="C") Trình độ C (100% C)
 
+				.group-item(style="margin-bottom: 20px; display: flex; gap: 20px;")
+					div(style="flex: 1;")
+						label.inner-label(for="soCauInput" style="display: block; font-weight: 600; margin-bottom: 8px; color: #4a5568;")
+							| Số câu hỏi
+							span.inner-required(style="color: red; margin-left: 4px;") *
+						input.inner-input(
+							type="number"
+							id="soCauInput"
+							name="soCauThi"
+							min="10"
+							max="100"
+							value="40"
+							required
+							style="width: 100%; padding: 10px; border: 1px solid #cbd5e0; border-radius: 6px; font-size: 1rem; color: #4a5568;"
+						)
+					div(style="flex: 1;")
+						label.inner-label(for="thoiGianInput" style="display: block; font-weight: 600; margin-bottom: 8px; color: #4a5568;")
+							| Thời gian thi (phút)
+							span.inner-required(style="color: red; margin-left: 4px;") *
+						input.inner-input(
+							type="number"
+							id="thoiGianInput"
+							name="thoiGian"
+							min="5"
+							max="180"
+							value="45"
+							required
+							style="width: 100%; padding: 10px; border: 1px solid #cbd5e0; border-radius: 6px; font-size: 1rem; color: #4a5568;"
+						)
 
-//- 		/* TỆP ĐỊNH KIỂU CSS THƯƠNG HIỆU - CHUẨN ĐƯỜNG NÉT NHẬN DIỆN */
-//- :root {
-//-   --primary: #00488d;
-//-   --primary-container: #005fb8;
-//-   --background: #f6fafe;
-//-   --surface-container-lowest: #ffffff;
-//-   --surface-container-low: #f0f4f8;
-//-   --on-surface: #171c1f;
-//-   --error: #ba1a1a;
-//- }
+				button.inner-button-primary(
+					type="submit"
+					style="margin-top: 10px; background: #3182ce; color: #fff; border: none; padding: 12px 24px; border-radius: 6px; font-weight: 600; font-size: 1rem; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; transition: all 0.2s;"
+				)
+					span.material-symbols-outlined(style="font-size: 1.25rem;") play_arrow
+					| Bắt đầu thi thử
 
-//- body {
-//-   font-family: 'Inter', sans-serif;
-//-   background-color: var(--background);
-//-   color: var(--on-surface);
-//- }
+	script.
+		document.querySelector('form').addEventListener('submit', async (e) => {
+			e.preventDefault();
+			const form = e.target;
+			const submitBtn = form.querySelector('button[type="submit"]');
+			submitBtn.disabled = true;
+			submitBtn.innerHTML = '<span class="material-symbols-outlined">sync</span> Đang tạo đề...';
 
-//- .exam-container {
-//-   display: flex;
-//-   flex-direction: column;
-//-   height: 100vh;
-//- }
+			try {
+				const formData = new FormData(form);
+				const payload = {};
+				formData.forEach((value, key) => { payload[key] = value; });
 
-//- .inner-wrap {
-//-   display: flex;
-//-   height: calc(100vh - 4rem);
-//- }
+				const response = await fetch(form.action, {
+					method: 'POST',
+					headers: { 'Content-Type': 'application/json' },
+					body: JSON.stringify(payload)
+				});
 
-//- .inner-image-container {
-//-   width: 100%;
-//-   background-color: #0f172a;
-//-   border-radius: 0.75rem;
-//-   padding: 1rem;
-//-   margin: 1.5rem 0;
-//- }
+				if (!response.ok) {
+					const errText = await response.text();
+					throw new Error(errText || 'Có lỗi xảy ra khi tạo đề.');
+				}
 
-//- .inner-button-primary {
-//-   background: linear-gradient(135deg, var(--primary), var(--primary-container));
-//-   color: #ffffff;
-//-   padding: 0.6rem 1.5rem;
-//-   border: none;
-//-   border-radius: 0.375rem;
-//-   font-weight: 700;
-//-   cursor: pointer;
-//- }
-
-//- .option-row.checked {
-//-   border: 2px solid var(--primary);
-//-   background-color: rgba(0, 72, 141, 0.04);
-//- }
-
-//- // TRÌNH ĐIỀU KHIỂN CHẠY ĐỘNG (VANILLA JAVASCRIPT)
-//- document.addEventListener("DOMContentLoaded", () => {
-//-   let timerSecs = 2700; 
-//-   const timerLabel = document.getElementById("time-counter");
-
-//-   // Timer Tick implementation
-//-   setInterval(() => {
-//-     if (timerSecs <= 0) return;
-//-     timerSecs--;
-//-     const hrs = Math.floor(timerSecs / 3600).toString().padStart(2, '0');
-//-     const mins = Math.floor((timerSecs % 3600) / 60).toString().padStart(2, '0');
-//-     const secs = (timerSecs % 60).toString().padStart(2, '0');
-//-     if (timerLabel) {
-//-       timerLabel.textContent = `${hrs}:${mins}:${secs}`;
-//-     }
-//-   }, 1000);
-
-//-   // Toggle option choices row check styling
-//-   const optionRows = document.querySelectorAll(".option-row");
-//-   optionRows.forEach(row => {
-//-     row.addEventListener("click", () => {
-//-       optionRows.forEach(r => r.classList.remove("checked"));
-//-       row.classList.add("checked");
-//-     });
-//-   });
-//- });
+				const result = await response.json();
+				if (result.success) {
+					localStorage.setItem('trial_exam_questions', JSON.stringify(result.questions));
+					localStorage.setItem('trial_exam_info', JSON.stringify(result.info));
+					localStorage.setItem('trial_exam_start_time', new Date().toISOString());
+					localStorage.removeItem('trial_answers');
+					window.location.href = '/lecturer/test-exam/take';
+				} else {
+					alert(result.message || 'Lỗi không xác định.');
+					submitBtn.disabled = false;
+					submitBtn.innerHTML = '<span class="material-symbols-outlined">play_arrow</span> Bắt đầu thi thử';
+				}
+			} catch (err) {
+				alert(err.message);
+				submitBtn.disabled = false;
+				submitBtn.innerHTML = '<span class="material-symbols-outlined">play_arrow</span> Bắt đầu thi thử';
+			}
+		});

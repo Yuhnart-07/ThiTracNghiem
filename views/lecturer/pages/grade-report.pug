@@ -1,0 +1,164 @@
+extends ../layouts/default.pug
+include ../mixins/crud.pug
+
+block main
+	// FORM
+	.section-1
+		form.inner-form(
+			id="gradeReportForm"
+			data-api-base="/lecturer/grade-report"
+		)
+			.inner-wrap
+				.group-item
+					label.inner-label(for="classSelect")
+						| Tên lớp
+						span.inner-required *
+
+					select.inner-select(
+						id="classSelect"
+						name="maLop"
+						required
+					)
+						option(value="") -- Chọn lớp --
+						if classes && classes.length
+							each cls in classes
+								option(value=cls.maLop) #{cls.tenLop} (#{cls.maLop})
+
+				.group-item
+					label.inner-label(for="subjectSelect")
+						| Tên môn học
+						span.inner-required *
+
+					select.inner-select(
+						id="subjectSelect"
+						name="maMonHoc"
+						required
+					)
+						option(value="") -- Chọn môn học --
+						if subjects && subjects.length
+							each sub in subjects
+								option(value=sub.maMonHoc) #{sub.tenMonHoc} (#{sub.maMonHoc})
+
+				.group-item
+					label.inner-label(for="count")
+						| Lần thi
+						span.inner-required *
+
+					input.inner-control(
+						type="number"
+						id="count"
+						name="lanThi"
+						value="1"
+						min="1"
+						required
+					)
+
+
+	// TABLE
+	.section-3
+		.print-header(style="display: none;")
+			h3(style="text-align: center; margin: 0; font-size: 1.2rem; font-weight: bold; text-transform: uppercase;") Học viện Công nghệ Bưu chính Viễn thông
+			h2(style="text-align: center; margin: 15px 0 5px 0; font-size: 1.6rem; font-weight: bold; text-transform: uppercase;") Bảng điểm thi hết môn
+			.print-meta(style="display: flex; justify-content: center; gap: 30px; margin-bottom: 25px; font-weight: bold; font-size: 1.1rem;")
+				span(id="printClass") Lớp: --
+				span(id="printSubject") Môn học: --
+				span(id="printAttempt") Lần thi: --
+
+		.inner-head
+			h2.inner-title-main
+				span.inner-dot
+				span BẢNG ĐIỂM CHI TIẾT
+
+			.inner-tools(style="display: flex; align-items: center; gap: 12px;")
+				button.inner-button.inner-button-secondary(
+					type="button"
+					id="btnPrintReport"
+					title="In bảng điểm"
+					style="display: flex; align-items: center; gap: 6px; padding: 8px 16px; border-radius: 6px; cursor: pointer; border: 1px solid #cbd5e1; background: #fff; font-weight: 500;"
+				)
+					span.material-symbols-outlined(style="font-size: 20px;")
+						| print
+					span In bảng điểm
+
+				.inner-filter
+					span.material-symbols-outlined
+						| search
+
+					input.inner-filter-input(
+						type="text"
+						id="tableFilter"
+						placeholder="Tìm kiếm..."
+					)
+
+		style.
+			@media print {
+				.sider, .header, .section-1, .inner-head, .inner-pagination, #gradeReportForm {
+					display: none !important;
+				}
+				.main-content {
+					margin-left: 0 !important;
+					padding: 0 !important;
+				}
+				.section-3 {
+					box-shadow: none !important;
+					border: none !important;
+					padding: 0 !important;
+					margin: 0 !important;
+				}
+				.print-header {
+					display: block !important;
+				}
+				.table-2 table {
+					width: 100% !important;
+					border-collapse: collapse !important;
+				}
+				.table-2 table th, .table-2 table td {
+					border: 1px solid #000 !important;
+					color: #000 !important;
+					padding: 10px !important;
+				}
+			}
+
+		.table-2
+			table
+				thead
+					tr
+						th.text-left STT
+						th.text-left Mã sinh viên
+						th.text-left Họ
+						th.text-left Tên 
+						th.text-left Điểm số
+						th.text-left Điểm chữ
+
+				tbody#recordsTableBody
+					tr
+						td(colspan="6" style="text-align: center; padding: 20px; color: #a0aec0;") Vui lòng chọn Lớp, Môn học và Lần thi để xem bảng điểm.
+
+		// PAGINATION
+		.inner-pagination
+			p.inner-pagination-text(id="paginationText")
+				| Displaying 0 of 0 records
+
+			.inner-pagination-buttons
+				button.inner-page-button(
+					type="button"
+					id="btnPrevPage"
+				)
+					span.material-symbols-outlined
+						| chevron_left
+
+				.inner-page-list(
+					id="pageList"
+				)
+
+				button.inner-page-button(
+					type="button"
+					id="btnNextPage"
+				)
+					span.material-symbols-outlined
+						| chevron_right
+
+	// IMPORT SCRIPTS
+	script(src="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.js")
+	link(rel="stylesheet" href="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.css")
+	script(src="/admin/assets/js/grade-report.js")

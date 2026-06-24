@@ -5,7 +5,7 @@
     dismissible: true
   });
 
-  const apiBase = "/admin/grade-report";
+  const apiBase = document.querySelector("#gradeReportForm").dataset.apiBase || "/admin/grade-report";
   const pageSize = 10;
 
   const state = {

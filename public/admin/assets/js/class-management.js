@@ -442,7 +442,7 @@
       ? `Bạn có chắc chắn muốn xóa lớp học ${classState.checkedKeys[0]} không? Tất cả sinh viên trong lớp phải được xóa trước.`
       : `Bạn có chắc chắn muốn xóa ${checkedCount} lớp học đã chọn không? Tất cả sinh viên trong các lớp phải được xóa trước.`;
 
-    if (!confirm(confirmMessage)) return;
+    if (!window.confirm(confirmMessage)) return;
 
     try {
       if (checkedCount === 1) {
@@ -655,7 +655,7 @@
 
     if (deleteBtn) {
       e.stopPropagation();
-      if (!confirm(`Bạn có chắc muốn xóa sinh viên ${maSinhVien}?`)) return;
+      if (!window.confirm(`Bạn có chắc muốn xóa sinh viên ${maSinhVien}?`)) return;
       try {
         const res = await requestJson(`${apiBase}/students/${encodeURIComponent(maSinhVien)}`, {
           method: "DELETE",
@@ -805,7 +805,7 @@
       ? `Bạn có chắc muốn xóa sinh viên ${studentState.checkedKeys[0]}?`
       : `Bạn có chắc muốn xóa ${checkedCount} sinh viên đã chọn?`;
 
-    if (!confirm(confirmMessage)) return;
+    if (!window.confirm(confirmMessage)) return;
 
     try {
       if (checkedCount === 1) {

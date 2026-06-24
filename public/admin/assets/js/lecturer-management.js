@@ -142,15 +142,10 @@
               <td>${escapeHtml(item.ten)}</td>
               <td>${escapeHtml(item.sdt)}</td>
               <td>${escapeHtml(item.diaChi)}</td>
-              <td class="text-right">
-                <button class="inner-button select-lecturer-btn" data-lecturer-key="${escapeHtml(item.maGiangVien)}" style="padding: 4px 8px; font-size: 0.8rem; background: #3182ce; color: #fff;">
-                  Chọn
-                </button>
-              </td>
             </tr>`;
           })
           .join("")
-      : '<tr><td colspan="7" class="text-center">Không có giảng viên nào</td></tr>';
+      : '<tr><td colspan="6" class="text-center">Không có giảng viên nào</td></tr>';
 
     buttons.paginationText.textContent = `Hiển thị ${visible.length} / ${filtered.length} giảng viên`;
     buttons.prevPage.disabled = state.currentPage <= 1;
@@ -351,7 +346,7 @@
       ? `Bạn có chắc chắn muốn xóa giảng viên ${state.checkedKeys[0]} không?`
       : `Bạn có chắc chắn muốn xóa ${checkedCount} giảng viên đã chọn không?`;
 
-    if (!confirm(confirmMessage)) return;
+    if (!window.confirm(confirmMessage)) return;
 
     try {
       if (checkedCount === 1) {
