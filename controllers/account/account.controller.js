@@ -18,6 +18,8 @@ module.exports.loginSubmit = async (req, res) => {
       return res.status(400).render("account/login", {
         pageTitle: "Đăng nhập",
         errorMessage: "Vui lòng nhập mã sinh viên.",
+        role,
+        student_id,
       });
     }
 
@@ -26,6 +28,8 @@ module.exports.loginSubmit = async (req, res) => {
       return res.status(401).render("account/login", {
         pageTitle: "Đăng nhập",
         errorMessage: "Mã sinh viên không đúng hoặc không tồn tại.",
+        role,
+        student_id,
       });
     }
 
@@ -40,6 +44,8 @@ module.exports.loginSubmit = async (req, res) => {
       return res.status(400).render("account/login", {
         pageTitle: "Đăng nhập",
         errorMessage: "Vui lòng nhập tài khoản và mật khẩu.",
+        role,
+        username,
       });
     }
 
@@ -49,6 +55,8 @@ module.exports.loginSubmit = async (req, res) => {
       return res.status(401).render("account/login", {
         pageTitle: "Đăng nhập",
         errorMessage: "Tài khoản hoặc mật khẩu không đúng.",
+        role,
+        username,
       });
     }
 

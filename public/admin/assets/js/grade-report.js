@@ -28,6 +28,13 @@
     paginationText: document.querySelector("#paginationText"),
     tableBody: document.querySelector("#recordsTableBody"),
     filter: document.querySelector("#tableFilter"),
+    print: document.querySelector("#btnPrintReport"),
+  };
+
+  const printHeader = {
+    class: document.querySelector("#printClass"),
+    subject: document.querySelector("#printSubject"),
+    attempt: document.querySelector("#printAttempt"),
   };
 
   const requestJson = async (url, options = {}) => {
@@ -104,6 +111,19 @@
       state.list = res.data;
       state.currentPage = 1;
       renderRows();
+
+      // Populate print header
+      if (printHeader.class) {
+        const classText = inputs.maLop.options[inputs.maLop.selectedIndex]?.textContent || maLop;
+        printHeader.class.textContent = `Lớp: ${classText}`;
+      }
+      if (printHeader.subject) {
+        const subjectText = inputs.maMonHoc.options[inputs.maMonHoc.selectedIndex]?.textContent || maMonHoc;
+        printHeader.subject.textContent = `Môn học: ${subjectText}`;
+      }
+      if (printHeader.attempt) {
+        printHeader.attempt.textContent = `Lần thi: ${lanThi}`;
+      }
     } catch (e) {
       notify.error(e.message);
       state.list = [];
@@ -142,5 +162,19 @@
       renderRows();
     }
   });
+
+  if (buttons.print) {
+    buttons.print.addEventListener("click", () => {
+      if (!inputs.maLop.value || !inputs.maMonHoc.value || !inputs.lanThi.value) {
+        notify.error("Vui lòng chọn đầy đủ thông tin để hiển thị bảng điểm trước khi in.");
+        return;
+      }
+      if (!state.list || state.list.length === 0) {
+        notify.error("Không có dữ liệu điểm để in.");
+        return;
+      }
+      window.print();
+    });
+  }
 
 })();

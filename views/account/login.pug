@@ -57,7 +57,7 @@ html(lang="vi")
               id="student"
               name="role"
               value="student"
-              checked
+              checked=(role !== 'admin')
             )
 
             input.hidden-radio(
@@ -65,6 +65,7 @@ html(lang="vi")
               id="lecturer-admin"
               name="role"
               value="admin"
+              checked=(role === 'admin')
             )
 
             .inner-role-bg
@@ -88,6 +89,7 @@ html(lang="vi")
                   id="username"
                   name="username"
                   placeholder="Tên đăng nhập"
+                  value=username || ""
                 )
 
             .inner-group
@@ -119,6 +121,7 @@ html(lang="vi")
                   id="student_id"
                   name="student_id"
                   placeholder="Ví dụ: SV123456"
+                  value=student_id || ""
                 )
 
             .inner-info

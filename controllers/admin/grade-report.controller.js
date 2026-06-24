@@ -2,9 +2,10 @@ const classRepo = require("../../repositories/admin/class-management.repository"
 const subjectRepo = require("../../repositories/admin/subject-management.repository");
 const gradeRepo = require("../../repositories/admin/grade-report.repository");
 
-const assertPgv = (req) => {
-  if (String(req.user?.role || "").toUpperCase() !== "PGV") {
-    const error = new Error("Chỉ PGV được phép thực hiện thao tác này.");
+const assertCanAccessReport = (req) => {
+  const role = String(req.user?.role || "").toUpperCase();
+  if (role !== "PGV" && role !== "GIANGVIEN") {
+    const error = new Error("Chỉ PGV hoặc Giảng viên được phép thực hiện thao tác này.");
     error.statusCode = req.user ? 403 : 401;
     throw error;
   }
@@ -12,7 +13,7 @@ const assertPgv = (req) => {
 
 module.exports.list = async (req, res) => {
   try {
-    assertPgv(req);
+    assertCanAccessReport(req);
     const classes = await classRepo.getDanhSachLop();
     const subjects = await subjectRepo.getSubjects();
     res.render("admin/pages/grade-report", {
@@ -27,7 +28,7 @@ module.exports.list = async (req, res) => {
 
 module.exports.getReport = async (req, res) => {
   try {
-    assertPgv(req);
+    assertCanAccessReport(req);
     const { maLop, maMonHoc, lanThi } = req.query;
     if (!maLop || !maMonHoc || !lanThi) {
       return res.status(400).json({ success: false, message: "Vui lòng chọn đầy đủ Lớp, Môn học và Lần thi." });

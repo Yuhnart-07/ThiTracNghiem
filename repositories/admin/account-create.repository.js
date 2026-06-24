@@ -33,16 +33,29 @@ const getAccounts = async () => {
 
 const createAccount = async ({ username, password, role, maGiangVien }) => {
   const pool = getPool();
-  // For PGV role, DB constraint requires MAGV to be NULL
-  const finalMaGV = role === "PGV" ? null : maGiangVien;
   const result = await pool
     .request()
-    .input("USERNAME", sql.NVarChar(50), username)
-    .input("PASSWORD_HASH", sql.NVarChar(255), password)
-    .input("ROLE", sql.VarChar(20), role)
-    .input("MAGV", sql.NVarChar(50), finalMaGV)
-    .execute("sp_ThemTaiKhoan");
-  return result.recordset ? result.recordset[0] : null;
+    .input("LGNAME", sql.NVarChar(128), username)
+    .input("PASS", sql.NVarChar(128), password)
+    .input("MAGV", sql.NVarChar(50), maGiangVien)
+    .input("ROLE", sql.NVarChar(30), role)
+    .execute("SP_TAOTAIKHOAN");
+
+  const returnVal = result.returnValue;
+  if (returnVal !== 0) {
+    const errorMap = {
+      1: "Tên đăng nhập không được để trống.",
+      2: "Mật khẩu không được để trống.",
+      3: "Mã giảng viên không được để trống và tối đa 8 ký tự.",
+      4: "Nhóm quyền không hợp lệ.",
+      5: "Mã giảng viên không tồn tại trong hệ thống.",
+      6: "Tên đăng nhập đã tồn tại trên Server.",
+      7: "Giảng viên này đã có tài khoản rồi.",
+      8: "Nhóm quyền chưa được tạo trong SQL Server."
+    };
+    throw new Error(errorMap[returnVal] || "Có lỗi xảy ra khi tạo tài khoản.");
+  }
+  return { success: true };
 };
 
 const updateAccount = async ({ id, password, role }) => {

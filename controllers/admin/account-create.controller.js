@@ -45,11 +45,8 @@ module.exports.createAccount = async (req, res) => {
   try {
     assertPgv(req);
     const { username, password, role, maGiangVien } = req.body;
-    if (!username || !password || !role) {
-      return res.status(400).json({ success: false, message: "Vui lòng điền đầy đủ tài khoản, mật khẩu và nhóm quyền." });
-    }
-    if (role === "GIANGVIEN" && !maGiangVien) {
-      return res.status(400).json({ success: false, message: "Nhóm quyền giáo viên bắt buộc chọn giảng viên tương ứng." });
+    if (!username || !password || !role || !maGiangVien) {
+      return res.status(400).json({ success: false, message: "Vui lòng điền đầy đủ tài khoản, mật khẩu, nhóm quyền và giảng viên tương ứng." });
     }
     await repo.createAccount({ username, password, role, maGiangVien });
     res.json({ success: true, message: "Tạo tài khoản thành công." });

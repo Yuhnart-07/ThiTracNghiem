@@ -53,12 +53,30 @@ block main
 
 	// TABLE
 	.section-3
+		.print-header(style="display: none;")
+			h3(style="text-align: center; margin: 0; font-size: 1.2rem; font-weight: bold; text-transform: uppercase;") Học viện Công nghệ Bưu chính Viễn thông
+			h2(style="text-align: center; margin: 15px 0 5px 0; font-size: 1.6rem; font-weight: bold; text-transform: uppercase;") Bảng điểm thi hết môn
+			.print-meta(style="display: flex; justify-content: center; gap: 30px; margin-bottom: 25px; font-weight: bold; font-size: 1.1rem;")
+				span(id="printClass") Lớp: --
+				span(id="printSubject") Môn học: --
+				span(id="printAttempt") Lần thi: --
+
 		.inner-head
 			h2.inner-title-main
 				span.inner-dot
 				span BẢNG ĐIỂM CHI TIẾT
 
-			.inner-tools
+			.inner-tools(style="display: flex; align-items: center; gap: 12px;")
+				button.inner-button.inner-button-secondary(
+					type="button"
+					id="btnPrintReport"
+					title="In bảng điểm"
+					style="display: flex; align-items: center; gap: 6px; padding: 8px 16px; border-radius: 6px; cursor: pointer; border: 1px solid #cbd5e1; background: #fff; font-weight: 500;"
+				)
+					span.material-symbols-outlined(style="font-size: 20px;")
+						| print
+					span In bảng điểm
+
 				.inner-filter
 					span.material-symbols-outlined
 						| search
@@ -68,6 +86,35 @@ block main
 						id="tableFilter"
 						placeholder="Tìm kiếm..."
 					)
+
+		style.
+			@media print {
+				.sider, .header, .section-1, .inner-head, .inner-pagination, #gradeReportForm {
+					display: none !important;
+				}
+				.main-content {
+					margin-left: 0 !important;
+					padding: 0 !important;
+				}
+				.section-3 {
+					box-shadow: none !important;
+					border: none !important;
+					padding: 0 !important;
+					margin: 0 !important;
+				}
+				.print-header {
+					display: block !important;
+				}
+				.table-2 table {
+					width: 100% !important;
+					border-collapse: collapse !important;
+				}
+				.table-2 table th, .table-2 table td {
+					border: 1px solid #000 !important;
+					color: #000 !important;
+					padding: 10px !important;
+				}
+			}
 
 		.table-2
 			table

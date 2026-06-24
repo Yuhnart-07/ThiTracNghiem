@@ -370,14 +370,54 @@ GO
 -- =============================================
 -- TÀI KHOẢN (ACCOUNT CREATE)
 -- =============================================
+
+IF OBJECT_ID('sp_LoginGiangVienAdmin', 'P') IS NOT NULL
+    DROP PROCEDURE sp_LoginGiangVienAdmin;
+GO
+CREATE PROCEDURE sp_LoginGiangVienAdmin
+    @USERNAME NVARCHAR(50)
+AS
+BEGIN
+  SET NOCOUNT ON;
+  
+  -- Ánh xạ từ Tên Login sang Tên Database User (MAGV)
+  DECLARE @MAGV NVARCHAR(50);
+  SELECT @MAGV = dp.name 
+  FROM sys.database_principals dp
+  JOIN sys.server_principals sp ON dp.sid = sp.sid
+  WHERE sp.name = @USERNAME;
+  
+  IF @MAGV IS NULL
+  BEGIN
+    SET @MAGV = @USERNAME;
+  END
+
+  SELECT 
+    gv.MAGV,
+    gv.HO,
+    gv.TEN,
+    @USERNAME AS USERNAME,
+    CASE 
+      WHEN IS_MEMBER('PGV') = 1 OR IS_ROLEMEMBER('PGV', @MAGV) = 1 THEN 'PGV'
+      WHEN IS_MEMBER('GIANGVIEN') = 1 OR IS_ROLEMEMBER('GIANGVIEN', @MAGV) = 1 THEN 'GIANGVIEN'
+      ELSE NULL
+    END AS ROLE
+  FROM GIAOVIEN gv
+  WHERE RTRIM(gv.MAGV) = RTRIM(@MAGV);
+END;
+GO
+
 IF OBJECT_ID('sp_GetGiangVienChuaCoTaiKhoan', 'P') IS NOT NULL
     DROP PROCEDURE sp_GetGiangVienChuaCoTaiKhoan;
 GO
 CREATE PROCEDURE sp_GetGiangVienChuaCoTaiKhoan
 AS
 BEGIN
+  SET NOCOUNT ON;
   SELECT MAGV, HO, TEN FROM GIAOVIEN 
-  WHERE MAGV NOT IN (SELECT MAGV FROM TAIKHOAN WHERE MAGV IS NOT NULL)
+  WHERE RTRIM(MAGV) NOT IN (
+    SELECT name FROM sys.database_principals WHERE type IN ('S', 'U')
+  )
   ORDER BY HO, TEN;
 END;
 GO
@@ -388,24 +428,73 @@ GO
 CREATE PROCEDURE sp_GetDanhSachTaiKhoan
 AS
 BEGIN
+  SET NOCOUNT ON;
   SELECT 
-    tk.ID, tk.USERNAME, tk.ROLE, tk.IS_ACTIVE,
-    gv.MAGV, gv.HO, gv.TEN, gv.SODTLL, gv.DIACHI
-  FROM TAIKHOAN tk
-  INNER JOIN GIAOVIEN gv ON tk.MAGV = gv.MAGV
-  ORDER BY tk.CREATED_AT DESC;
+    dp.principal_id AS ID,
+    dp.name AS USERNAME,
+    r.name AS ROLE,
+    1 AS IS_ACTIVE,
+    gv.MAGV,
+    gv.HO,
+    gv.TEN,
+    gv.SODTLL,
+    gv.DIACHI
+  FROM sys.database_role_members drm
+  JOIN sys.database_principals r ON drm.role_principal_id = r.principal_id
+  JOIN sys.database_principals dp ON drm.member_principal_id = dp.principal_id
+  LEFT JOIN GIAOVIEN gv ON RTRIM(gv.MAGV) = RTRIM(dp.name)
+  WHERE r.name IN ('PGV', 'GIANGVIEN')
+  ORDER BY dp.name ASC;
 END;
 GO
 
-IF OBJECT_ID('sp_ThemTaiKhoan', 'P') IS NOT NULL
-    DROP PROCEDURE sp_ThemTaiKhoan;
+IF OBJECT_ID('dbo.SP_TAOTAIKHOAN', 'P') IS NOT NULL
+    DROP PROCEDURE dbo.SP_TAOTAIKHOAN;
 GO
-CREATE PROCEDURE sp_ThemTaiKhoan
-  @USERNAME NVARCHAR(50), @PASSWORD_HASH NVARCHAR(255), @ROLE VARCHAR(20), @MAGV NCHAR(8)
+CREATE PROCEDURE dbo.SP_TAOTAIKHOAN
+    @LGNAME NVARCHAR(128),
+    @PASS NVARCHAR(128),
+    @MAGV NVARCHAR(50),
+    @ROLE NVARCHAR(30)
 AS
 BEGIN
-  INSERT INTO TAIKHOAN (USERNAME, PASSWORD_HASH, ROLE, MAGV, IS_ACTIVE, CREATED_AT)
-  VALUES (@USERNAME, @PASSWORD_HASH, @ROLE, @MAGV, 1, GETDATE());
+  SET NOCOUNT ON;
+  
+  -- 1. Kiểm tra đầu vào trống
+  IF (LEN(LTRIM(RTRIM(@LGNAME))) = 0) RETURN 1;
+  IF (LEN(@PASS) = 0) RETURN 2;
+  IF (LEN(LTRIM(RTRIM(@MAGV))) = 0 OR LEN(LTRIM(RTRIM(@MAGV))) > 8) RETURN 3;
+  
+  -- 2. Kiểm tra nhóm quyền hợp lệ
+  IF (@ROLE NOT IN ('PGV', 'GIANGVIEN')) RETURN 4;
+  
+  -- 3. Kiểm tra giáo viên tồn tại
+  IF NOT EXISTS (SELECT 1 FROM GIAOVIEN WHERE RTRIM(MAGV) = RTRIM(@MAGV)) RETURN 5;
+  
+  -- 4. Kiểm tra trùng Login trên Server
+  IF EXISTS (SELECT 1 FROM sys.server_principals WHERE name = @LGNAME) RETURN 6;
+  
+  -- 5. Kiểm tra trùng User trong Database
+  IF EXISTS (SELECT 1 FROM sys.database_principals WHERE name = @MAGV) RETURN 7;
+  
+  -- 6. Kiểm tra Role đã tồn tại trong DB chưa
+  IF NOT EXISTS (SELECT 1 FROM sys.database_principals WHERE name = @ROLE AND type = 'R') RETURN 8;
+  
+  DECLARE @sql NVARCHAR(MAX);
+  
+  -- Tạo Server Login
+  SET @sql = N'CREATE LOGIN ' + QUOTENAME(@LGNAME) + N' WITH PASSWORD = ' + QUOTENAME(@PASS, '''') + N', DEFAULT_DATABASE = [THITRACNGHIEM];';
+  EXEC sp_executesql @sql;
+  
+  -- Tạo Database User tương ứng
+  SET @sql = N'CREATE USER ' + QUOTENAME(@MAGV) + N' FOR LOGIN ' + QUOTENAME(@LGNAME) + N';';
+  EXEC sp_executesql @sql;
+  
+  -- Thêm User vào Database Role
+  SET @sql = N'ALTER ROLE ' + QUOTENAME(@ROLE) + N' ADD MEMBER ' + QUOTENAME(@MAGV) + N';';
+  EXEC sp_executesql @sql;
+  
+  RETURN 0;
 END;
 GO
 
@@ -413,17 +502,51 @@ IF OBJECT_ID('sp_SuaTaiKhoan', 'P') IS NOT NULL
     DROP PROCEDURE sp_SuaTaiKhoan;
 GO
 CREATE PROCEDURE sp_SuaTaiKhoan
-  @ID INT, @PASSWORD_HASH NVARCHAR(255) = NULL, @ROLE VARCHAR(20)
+  @ID INT,
+  @PASSWORD_HASH NVARCHAR(255) = NULL,
+  @ROLE VARCHAR(20)
 AS
 BEGIN
-  IF @PASSWORD_HASH IS NOT NULL
+  SET NOCOUNT ON;
+  DECLARE @MAGV NVARCHAR(50);
+  SELECT @MAGV = name FROM sys.database_principals WHERE principal_id = @ID;
+  
+  IF @MAGV IS NULL
   BEGIN
-    UPDATE TAIKHOAN SET PASSWORD_HASH = @PASSWORD_HASH, ROLE = @ROLE WHERE ID = @ID;
+    THROW 50009, N'Tài khoản không tồn tại.', 1;
   END
-  ELSE
+  
+  -- Tìm tên login tương ứng với user
+  DECLARE @LGNAME NVARCHAR(128);
+  SELECT @LGNAME = s.name 
+  FROM sys.database_principals d
+  JOIN sys.server_principals s ON d.sid = s.sid
+  WHERE d.name = @MAGV;
+  
+  DECLARE @sql NVARCHAR(MAX);
+  
+  -- Thay đổi password nếu có
+  IF @PASSWORD_HASH IS NOT NULL AND @PASSWORD_HASH <> ''
   BEGIN
-    UPDATE TAIKHOAN SET ROLE = @ROLE WHERE ID = @ID;
+    IF @LGNAME IS NOT NULL
+    BEGIN
+      SET @sql = N'ALTER LOGIN ' + QUOTENAME(@LGNAME) + N' WITH PASSWORD = ' + QUOTENAME(@PASSWORD_HASH, '''') + N';';
+      EXEC sp_executesql @sql;
+    END
   END
+  
+  -- Thay đổi Role
+  -- Trước hết xóa khỏi cả 2 role
+  SET @sql = N'ALTER ROLE [PGV] DROP MEMBER ' + QUOTENAME(@MAGV) + N';';
+  BEGIN TRY EXEC sp_executesql @sql; END TRY BEGIN CATCH END CATCH;
+  SET @sql = N'ALTER ROLE [GIANGVIEN] DROP MEMBER ' + QUOTENAME(@MAGV) + N';';
+  BEGIN TRY EXEC sp_executesql @sql; END TRY BEGIN CATCH END CATCH;
+  
+  -- Gán vào role mới
+  SET @sql = N'ALTER ROLE ' + QUOTENAME(@ROLE) + N' ADD MEMBER ' + QUOTENAME(@MAGV) + N';';
+  EXEC sp_executesql @sql;
+  
+  SELECT 1 AS Success, N'Cập nhật tài khoản thành công.' AS ThongBao;
 END;
 GO
 
@@ -434,7 +557,42 @@ CREATE PROCEDURE sp_XoaTaiKhoan
   @ID INT
 AS
 BEGIN
-  DELETE FROM TAIKHOAN WHERE ID = @ID;
+  SET NOCOUNT ON;
+  DECLARE @MAGV NVARCHAR(50);
+  SELECT @MAGV = name FROM sys.database_principals WHERE principal_id = @ID;
+  
+  IF @MAGV IS NULL
+  BEGIN
+    THROW 50010, N'Tài khoản không tồn tại.', 1;
+  END
+  
+  -- Tìm tên login tương ứng với user
+  DECLARE @LGNAME NVARCHAR(128);
+  SELECT @LGNAME = s.name 
+  FROM sys.database_principals d
+  JOIN sys.server_principals s ON d.sid = s.sid
+  WHERE d.name = @MAGV;
+  
+  DECLARE @sql NVARCHAR(MAX);
+  
+  -- Xóa khỏi các Role
+  SET @sql = N'ALTER ROLE [PGV] DROP MEMBER ' + QUOTENAME(@MAGV) + N';';
+  BEGIN TRY EXEC sp_executesql @sql; END TRY BEGIN CATCH END CATCH;
+  SET @sql = N'ALTER ROLE [GIANGVIEN] DROP MEMBER ' + QUOTENAME(@MAGV) + N';';
+  BEGIN TRY EXEC sp_executesql @sql; END TRY BEGIN CATCH END CATCH;
+  
+  -- Xóa Database User
+  SET @sql = N'DROP USER ' + QUOTENAME(@MAGV) + N';';
+  EXEC sp_executesql @sql;
+  
+  -- Xóa Server Login
+  IF @LGNAME IS NOT NULL
+  BEGIN
+    SET @sql = N'DROP LOGIN ' + QUOTENAME(@LGNAME) + N';';
+    EXEC sp_executesql @sql;
+  END
+  
+  SELECT 1 AS Success, N'Xóa tài khoản thành công.' AS ThongBao;
 END;
 GO
 
@@ -445,7 +603,25 @@ CREATE PROCEDURE sp_XoaNhieuTaiKhoan
   @DanhSachID NVARCHAR(MAX)
 AS
 BEGIN
-  DELETE FROM TAIKHOAN WHERE ID IN (SELECT CAST(value AS INT) FROM STRING_SPLIT(@DanhSachID, ','));
+  SET NOCOUNT ON;
+  DECLARE @ID INT;
+  
+  DECLARE cur CURSOR FOR 
+  SELECT CAST(value AS INT) FROM STRING_SPLIT(@DanhSachID, ',');
+  
+  OPEN cur;
+  FETCH NEXT FROM cur INTO @ID;
+  
+  WHILE @@FETCH_STATUS = 0
+  BEGIN
+    EXEC sp_XoaTaiKhoan @ID;
+    FETCH NEXT FROM cur INTO @ID;
+  END;
+  
+  CLOSE cur;
+  DEALLOCATE cur;
+  
+  SELECT 1 AS Success, N'Xóa các tài khoản đã chọn thành công.' AS ThongBao;
 END;
 GO
 
@@ -650,5 +826,9 @@ BEGIN
 END;
 GO
 
-
-
+-- =============================================
+-- CẤP QUYỀN EXECUTE CHO CÁC ROLE HỆ THỐNG
+-- =============================================
+GRANT EXECUTE ON dbo.sp_LoginGiangVienAdmin TO PGV;
+GRANT EXECUTE ON dbo.sp_LoginGiangVienAdmin TO GIANGVIEN;
+GO
